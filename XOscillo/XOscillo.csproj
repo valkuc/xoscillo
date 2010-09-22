@@ -1,0 +1,179 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EB1EAE75-67E2-4BE3-9CB2-C5E0A4F3ED62}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>XOscillo</RootNamespace>
+    <AssemblyName>XOscillo</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BaseForm.Designer.cs">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="tools\DecodeFSK.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tools\DecodeFSK.Designer.cs">
+      <DependentUpon>DecodeFSK.cs</DependentUpon>
+    </Compile>
+    <Compile Include="fft.cs" />
+    <Compile Include="tools\DecodeBeeper.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tools\DecodeBeeper.Designer.cs">
+      <DependentUpon>DecodeBeeper.cs</DependentUpon>
+    </Compile>
+    <Compile Include="tools\DecodeFrequency.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tools\DecodeFrequency.Designer.cs">
+      <DependentUpon>DecodeFrequency.cs</DependentUpon>
+    </Compile>
+    <Compile Include="arduino\VizArduino.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="arduino\VizArduino.Designer.cs">
+      <DependentUpon>VizArduino.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataRing.cs" />
+    <Compile Include="VizBuffer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VizBuffer.Designer.cs">
+      <DependentUpon>VizBuffer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VizForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VizForm.Designer.cs">
+      <DependentUpon>VizForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="parallax\VizParallax.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="parallax\VizParallax.Designer.cs">
+      <DependentUpon>VizParallax.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MDIParent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MDIParent.Designer.cs">
+      <DependentUpon>MDIParent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Oscillo.cs" />
+    <Compile Include="arduino\OscilloArduino.cs" />
+    <Compile Include="OscilloFile.cs" />
+    <Compile Include="parallax\OscilloSerial.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="tools\DecodeFSK.resx">
+      <DependentUpon>DecodeFSK.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="tools\DecodeBeeper.resx">
+      <DependentUpon>DecodeBeeper.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="tools\DecodeFrequency.resx">
+      <DependentUpon>DecodeFrequency.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="arduino\VizArduino.resx">
+      <DependentUpon>VizArduino.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VizForm.resx">
+      <DependentUpon>VizForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="parallax\VizParallax.resx">
+      <DependentUpon>VizParallax.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MDIParent.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MDIParent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GraphControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GraphControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="GraphControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GraphControl.Designer.cs">
+      <DependentUpon>GraphControl.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\play.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pause.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
