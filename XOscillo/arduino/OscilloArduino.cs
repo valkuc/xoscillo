@@ -10,7 +10,8 @@ namespace XOscillo
       SerialPort serialPort;
       byte m_triggerValue = 127;
       int m_numSamples = 1024;
-      static int baudrate = 153600;
+      //static int baudrate = 153600;
+      static int baudrate = 115200;
 
       /*
             153600 / 8 = 19200 bytes/s
@@ -34,29 +35,50 @@ namespace XOscillo
       private bool AutoDetect()
       {
          string[] ports = SerialPort.GetPortNames();
-
+         
          foreach (string portName in ports)
          {
             try
             {
-               serialPort.PortName = portName;
-               serialPort.BaudRate = (int)baudrate;
+               serialPort = new SerialPort(portName, baudrate, Parity.None, 8,StopBits.One);
+               serialPort.Handshake = Handshake.None;
+               
+               System.Console.Write(portName + ", rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString() + "   trying...");
+
+               serialPort.RtsEnable = false;    
                serialPort.Open();
-
-               serialPort.WriteTimeout = 1000;
-               serialPort.ReadTimeout = 1000;
-
-               if (Ping() == true)
-               {
-                  return true;
-               }
-
-               serialPort.Close();
+               
             }
             catch
             {
+               System.Console.WriteLine("Can't open!");
+               continue;
             }
+
+            try
+            {
+               serialPort.WriteTimeout = 1000;
+               serialPort.ReadTimeout = 1000;
+
+               System.Console.Write("pinging...");
+               if (Ping() == true)
+               {
+                  System.Console.WriteLine("Found!");
+                  return true;
+               }
+               else
+               {
+                  System.Console.WriteLine("Bad reply");
+               }
+            }
+            catch
+            {
+               System.Console.WriteLine("Timeout");
+            }
+
+            serialPort.Close();
          }
+
          return false;
       }
 
@@ -96,22 +118,7 @@ namespace XOscillo
          return true;
       }
 
-      private void SetTextMemo(string txt)
-      {
-         /*
-         if (this.Memo.InvokeRequired)
-         {
-            this.Invoke(SetTextMemo, txt); //error here
-         }
-         else
-         {
-            this.Memo.Text += txt + "\n";
-         }
-          */
-      }
-
-
-      public bool Read(byte[] readBuffer, int length)
+       public bool Read(byte[] readBuffer, int length)
       {
          int dataread = 0;
          while (dataread < length)

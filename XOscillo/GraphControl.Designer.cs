@@ -48,7 +48,6 @@ namespace XOscillo
          this.DoubleBuffered = true;
          this.Name = "displayControl";
          this.Size = new System.Drawing.Size(195, 167);
-         this.Load += new System.EventHandler(this.displayControl_Load);
          this.Paint += new System.Windows.Forms.PaintEventHandler(this.UserControl1_Paint);
          this.Resize += new System.EventHandler(this.UserControl1_Resize);
          this.ResumeLayout(false);

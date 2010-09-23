@@ -140,7 +140,7 @@ namespace XOscillo
          //LoadCSV(file);
       }
 
-      public int GetDataSize()
+      public int GetChannelLength()
       {
          return m_Buffer.Length / m_channels;
       }
@@ -157,7 +157,7 @@ namespace XOscillo
 
       public float GetTotalTime()
       {
-         return GetDataSize() / (float)m_sampleRate;
+         return (float)GetChannelLength() / (float)m_sampleRate;
       }
    };
 

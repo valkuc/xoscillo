@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
-
+using System.IO.Ports;
 namespace XOscillo
 {
    public partial class VizArduino : XOscillo.VizForm
@@ -69,10 +69,16 @@ namespace XOscillo
       {
          oscillo = new OscilloArduino();
          dr = new DataRing(oscillo.GetDataBlock);
+         
+         
 
          while (oscillo.Open() == false)
          {
-            MessageBox.Show("Arduino with proper firmware not fount, click ok to try again", "Can't connect", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            DialogResult res = MessageBox.Show("Arduino with proper firmware not fount, scanned ports:\n" + string.Join("\n", SerialPort.GetPortNames()) + "\nclick ok to try again", "Can't connect", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+            if (res == DialogResult.Cancel)
+            {
+               return;
+            }
          }
 
          channels.SelectedItem = "1";
