@@ -12,14 +12,14 @@ namespace XOscillo
    public partial class VizParallax : VizForm
    {
       OscilloSerial oscillo;
-      DataRing dr;
+      OldRing dr;
 
       Thread m_t;
 
       public VizParallax( )
       {
          oscillo = new OscilloSerial();
-         dr = new DataRing( oscillo.GetDataBlock );
+         dr = new OldRing( oscillo.GetDataBlock );
          oscillo.Open();
          oscillo.Ping();
 

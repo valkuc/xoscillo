@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
+using System.Threading;
 
 namespace XOscillo
 {
@@ -43,11 +44,23 @@ namespace XOscillo
                serialPort = new SerialPort(portName, baudrate, Parity.None, 8,StopBits.One);
                serialPort.Handshake = Handshake.None;
                
+               serialPort.Open();
                System.Console.Write(portName + ", rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString() + "   trying...");
 
-               serialPort.RtsEnable = false;    
-               serialPort.Open();
-               
+               //serialPort.RtsEnable = true;
+               /*
+               //if (serialPort.RtsEnable == true)
+               {
+                  System.Console.Write("lowering RTS");
+                  serialPort.RtsEnable = false;
+                  for (int i = 0; i < 8; i++)
+                  {
+                     Thread.Sleep(250);
+                     System.Console.Write(".");
+                  }
+               }
+               */
+
             }
             catch
             {
@@ -57,10 +70,10 @@ namespace XOscillo
 
             try
             {
-               serialPort.WriteTimeout = 1000;
-               serialPort.ReadTimeout = 1000;
+               serialPort.WriteTimeout = 4000;
+               serialPort.ReadTimeout = 4000;
 
-               System.Console.Write("pinging...");
+               System.Console.Write("pinging....");
                if (Ping() == true)
                {
                   System.Console.WriteLine("Found!");

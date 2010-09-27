@@ -12,20 +12,15 @@ namespace XOscillo
 {
 	public partial class GraphControl : UserControl
 	{
-		Graphics drawingArea;
-		Bitmap backBuffer;
-      
-		DateTime oldTime = DateTime.Now;
+      private Rectangle oldBounds = new Rectangle();
 
-      SolidBrush m_brushWhite = new SolidBrush(Color.White);
+      private DateTime oldTime = DateTime.Now;
 
-      double ts = 1;
-
-      public DataBlock ScopeData;
+      public DataBlock ScopeData = new DataBlock();
 
       public bool m_drawFFT = false;
 
-      Pen[] m_pens = { new Pen(Color.Red), new Pen(Color.Blue), new Pen(Color.Green) };
+      Pen[] m_pens = { Pens.Red, Pens.Blue, Pens.Green };
 
       public List<int> Lines = new List<int>();
 
@@ -34,10 +29,7 @@ namespace XOscillo
 			InitializeComponent();
 
 			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
-			backBuffer = new Bitmap(this.Width, this.Height);
-			drawingArea = Graphics.FromImage(backBuffer);
 
-         ScopeData = new DataBlock();
 		}
 
       public int lerp( int y0, int y1, int x0, int x1, int x )
@@ -90,32 +82,21 @@ namespace XOscillo
          }
       }
 
-      public void DrawHorizontalLines(Rectangle r)
+      public void DrawHorizontalLines(Graphics g, Rectangle r)
       {
-         float yCentre = (float)r.Height / 2.0f;
+         float yDelta = (float)Height / 8.0f;
 
-         float yDelta = (float)yCentre / 4.0f;
-         float yFineDelta = (float)yDelta / 5.0f;
+         Pen p = new Pen(Color.Gray );
+         p.DashStyle= System.Drawing.Drawing2D.DashStyle.Custom;
+         p.DashPattern = new float[] {1,5 };
 
-         for (int y = 0; y < 4; y++)
+         for (int y = 0; y < 8; y++)
          {
-            for (int i = 0; ; i++)
-            {
-               int x = (int)(yFineDelta * i);
-               if (x < backBuffer.Width)
-               {
-                  backBuffer.SetPixel(x, (int)(yCentre + yDelta * y), Color.Gray);
-                  backBuffer.SetPixel(x, (int)(yCentre - yDelta * y), Color.Gray);
-               }
-               else
-               {
-                  break;
-               }
-            }
+            g.DrawLine(p, 0, (int)(yDelta * y), r.Width, (int)(yDelta * y));
          }
       }
 
-      public void DrawVerticalLines(Rectangle r)
+      public void DrawVerticalLines(Graphics g, Rectangle r)
       {
          double timeoffset = 0;
          if (hScrollBar1.Visible)
@@ -130,18 +111,18 @@ namespace XOscillo
 
             int t = (int)lerp(0, r.Height / 8.0, 0, m_secondsPerDiv, (time - timeoffset) );
 
-            drawingArea.DrawLine(Pens.Gray, t, r.Y, t, r.Y + r.Height);
+            g.DrawLine(Pens.Gray, t, r.Y, t, r.Y + r.Height);
 
             pp.X = t;
             pp.Y = 0;
-            drawingArea.DrawString( FormatSeconds(time), this.Font, m_brushWhite, pp );
+            g.DrawString( FormatSeconds(time), this.Font, Brushes.White, pp );
 
             if (t > r.Width)
                break;
          }
       }
 
-      void DrawGraph(Rectangle r, Pen p, int channel )
+      void DrawGraph(Graphics g, Rectangle r, Pen p, int channel )
       {
          float timeoffset = 0;
 
@@ -165,7 +146,7 @@ namespace XOscillo
 
             if (i > 0)
             {
-               drawingArea.DrawLine(p, xx, yy, x, y);
+               g.DrawLine(p, xx, yy, x, y);
             }
 
             yy = y;
@@ -174,27 +155,40 @@ namespace XOscillo
             if (xx > r.Width)
                break;
          }
-      
       }
 
-      public void DrawOscillo(Rectangle r)
+      public void DrawOscillo(Graphics g, Rectangle r)
       {
-         hScrollBar1.Maximum = lerp(0, 32, 0, (int)(ScopeData.m_sampleRate * m_secondsPerDiv), ScopeData.GetChannelLength());
-         int x2 = backBuffer.Width * 256 / backBuffer.Height;
-         hScrollBar1.Visible = (x2 <= hScrollBar1.Maximum);
+         if (oldBounds.Width != Width || oldBounds.Height != Height)
+         {
+            if (hScrollBar1 != null)
+            {
+               int i = 256 * r.Width / r.Height;
+               int nv = (hScrollBar1.LargeChange / 2) - (i / 2);
+               if (hScrollBar1.Value + nv > 0)
+                  hScrollBar1.Value += nv;
+               hScrollBar1.LargeChange = i;
 
-         DrawHorizontalLines(r);
-         DrawVerticalLines(r);
+               hScrollBar1.Maximum = lerp(0, 32, 0, (int)(ScopeData.m_sampleRate * m_secondsPerDiv), ScopeData.GetChannelLength());
+
+               hScrollBar1.Visible = (i <= hScrollBar1.Maximum);
+            }
+
+            oldBounds = this.Bounds;
+         }
+
+         DrawHorizontalLines(g, r);
+         DrawVerticalLines(g, r);
 
          //draw channels
          for (int ch = 0; ch < ScopeData.m_channels; ch++)
          {
-            DrawGraph(r, m_pens[ch], ch);
+            DrawGraph(g,r, m_pens[ch], ch);
          }
       }
 
       fft f;
-      public void DrawFFT( Rectangle r )
+      public void DrawFFT( Graphics g, Rectangle r )
       {
          int samplesPerChannel = ScopeData.m_Buffer.Length / ScopeData.m_channels;
 
@@ -206,15 +200,12 @@ namespace XOscillo
          f.SetData(ScopeData.m_Buffer, 0, samplesPerChannel);
          f.FFT(0);
 
-         Point pp = new Point();
-
          hScrollBar1.Maximum = 1024;
          hScrollBar1.LargeChange = r.Width;
-         hScrollBar1.Visible = r.Width < 1024;
-         
+         hScrollBar1.Visible = (r.Width < 1024);
 
          int maxFreq = ScopeData.m_sampleRate / 2;
-         int minFreq = 0;// (float)ScopeData.m_sampleRate / length;
+         int minFreq = 0;
 
          double power = 10000.0/f.Power(0);
 
@@ -225,16 +216,18 @@ namespace XOscillo
          if (hScrollBar1.Visible)
          {
             timeoffset = (int)lerp(0, 512, 0, hScrollBar1.Maximum, hScrollBar1.Value);
+            r.Height -= hScrollBar1.Height;
          }
 
          //draw bars
          for (int i = 0 ; i < 512; i++)         
          {
             int x = 2 * (i - timeoffset);
-            drawingArea.DrawLine(Pens.Red, x, r.Bottom, x, r.Bottom - (int)(f.Power(i) * power));
+            g.DrawLine(Pens.Red, x, r.Bottom, x, r.Bottom - (int)(f.Power(i) * power));
          }
 
          //draw legend
+         Point pp = new Point(); 
          for (int i = 0; i < (int)maxFreq; i += 500)
          {
             int x = lerp(0, 512, minFreq, maxFreq, i );
@@ -242,8 +235,8 @@ namespace XOscillo
             pp.X = 2 * (x - timeoffset);
             pp.Y = r.Bottom;
 
-            drawingArea.DrawLine(Pens.Gray, pp.X, 0, pp.X, pp.Y);
-            drawingArea.DrawString(string.Format("{0}", i ), this.Font, m_brushWhite, pp);
+            g.DrawLine(Pens.Gray, pp.X, 0, pp.X, pp.Y);
+            g.DrawString(string.Format("{0}", i ), this.Font, Brushes.White, pp);
          }
       }
 
@@ -254,7 +247,7 @@ namespace XOscillo
          TimeSpan duration = currentTime - oldTime;
          oldTime = currentTime;
 
-         if ( e.ClipRectangle.Width == 0 || e.ClipRectangle.Height == 0 )
+         if ( Width == 0 || Height == 0 )
          {
             return;
          }
@@ -264,28 +257,28 @@ namespace XOscillo
             return;
          }
 
-         drawingArea.Clear(Color.Black);
-
+         e.Graphics.Clear(Color.Black);
          if (m_drawFFT)
          {
-            DrawFFT(e.ClipRectangle);
+            DrawFFT(e.Graphics, this.Bounds);
          }
          else
          {
-            DrawOscillo(e.ClipRectangle);
+            DrawOscillo(e.Graphics, this.Bounds);
          }
 
-         Pen[] pens = { new Pen(Color.Red), new Pen(Color.Blue) };
+         //draw horizontal lines
          foreach (int i in Lines)
          {
-            int y = lerp(0, backBuffer.Height, 255, 0, i);
-            drawingArea.DrawLine(pens[0], 0, y, backBuffer.Width, y);
+            int y = lerp(0, Bounds.Height, 255, 0, i);
+            e.Graphics.DrawLine(m_pens[0], 0, y, Bounds.Width, y);
          }
-         /*
+
+         Point pp = new Point();
          pp.X = 0;
          pp.Y += 16;
-         drawingArea.DrawString(string.Format("{0} fps", 1000/duration.Milliseconds), this.Font, m_brushWhite, pp);
-          */
+         e.Graphics.DrawString(string.Format("{0} fps", 1000 / duration.Milliseconds), this.Font, Brushes.White, pp);
+         
          /*
          pp.Y += 16;
          ts = (ScopeData.m_stop - ScopeData.m_start).TotalMilliseconds; 
@@ -299,26 +292,12 @@ namespace XOscillo
          }
          */
 
-         e.Graphics.DrawImageUnscaled(backBuffer, 0, 0);
+         //e.Graphics.DrawImageUnscaled(backBuffer, 0, 0);
       }
 
 
 		private void UserControl1_Resize(object sender, EventArgs e)
 		{
-         if (Height == 0 || Width == 0)
-            return;
-
-			backBuffer = new Bitmap(this.Width, this.Height);
-			drawingArea = Graphics.FromImage(backBuffer);
-
-			if (hScrollBar1 != null)
-			{
-				int i = 256 * backBuffer.Width / backBuffer.Height;
-				int nv = (hScrollBar1.LargeChange / 2) - (i / 2);
-				if (hScrollBar1.Value + nv > 0)
-					hScrollBar1.Value += nv;
-				hScrollBar1.LargeChange = i;
-			}
          Invalidate();
 		}
 

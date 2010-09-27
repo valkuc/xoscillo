@@ -48,6 +48,7 @@
     <Compile Include="BaseForm.Designer.cs">
       <DependentUpon>BaseForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ring.cs" />
     <Compile Include="tools\DecodeFSK.cs">
       <SubType>Form</SubType>
     </Compile>

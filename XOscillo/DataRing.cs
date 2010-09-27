@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace XOscillo
 {
-   class DataRing
+   class OldRing
    {
       Thread oThread;
       int Samples;
@@ -19,7 +19,7 @@ namespace XOscillo
 		int len = 0;
 		bool m_running = false;
 
-      public DataRing( GetDataBlock getData )
+      public OldRing( GetDataBlock getData )
       {
          m_getData = getData;
          Samples = 0;
@@ -122,6 +122,8 @@ namespace XOscillo
 		{
 			return Samples;
 		}
-  
+ 
    }
+
+
 }

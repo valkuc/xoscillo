@@ -12,28 +12,40 @@ namespace XOscillo
    public partial class VizArduino : XOscillo.VizForm
    {
       OscilloArduino oscillo;
-      DataRing dr;
 
-      Thread m_t;
+      Ring<DataBlock> m_ring = new Ring<DataBlock>(16);
+
+      Thread m_threadProvider;
+      Thread m_threadConsumer;
+      bool m_running = false;
 
       public VizArduino()
       {
          InitializeComponent();
       }
 
-      public void Run()
+      public void Provider()
       {
-         DataBlock data;
+         DataBlock db;
 
-         while (dr.GetRunning())
+         while (m_running)
          {
-            if (dr.Lock(out data))
-            {
-               graphControl.ScopeData.Copy(data);
-               graphControl.Invalidate();
+            m_ring.putLock( out db);
+            oscillo.GetDataBlock( ref db );
+            m_ring.putUnlock();
+         }
+      }
 
-               dr.Unlock();
-            }
+      public void Consumer()
+      {
+         DataBlock db;
+
+         while (m_running)
+         {
+            m_ring.getLock( out db );
+            graphControl.ScopeData.Copy(db);
+            m_ring.getUnlock();
+            graphControl.Invalidate();
          }
       }
 
@@ -68,9 +80,6 @@ namespace XOscillo
       private void Form1_Load(object sender, EventArgs e)
       {
          oscillo = new OscilloArduino();
-         dr = new DataRing(oscillo.GetDataBlock);
-         
-         
 
          while (oscillo.Open() == false)
          {
@@ -88,19 +97,22 @@ namespace XOscillo
 
       private void play_CheckedChanged(object sender, EventArgs e)
       {
-         dr.SetRunning(play.Checked);
+         m_running = play.Checked;
+         
          if (play.Checked)
          {
-            m_t = new Thread(new ThreadStart(Run));
-            m_t.Start();
+            m_threadProvider = new Thread(new ThreadStart(Provider));
+            m_threadProvider.Start();
+
+            m_threadConsumer = new Thread(new ThreadStart(Consumer));
+            m_threadConsumer.Start();
+            
             play.Image = global::XOscillo.Properties.Resources.pause;
          }
          else
          {
             play.Image = global::XOscillo.Properties.Resources.play;
          }
-
-         
       }
 
       private void clone_Click(object sender, EventArgs e)
@@ -112,19 +124,15 @@ namespace XOscillo
          childForm.Show();
          childForm.WindowState = FormWindowState.Maximized;
 
-         childForm.CopyFrom(this);//.SampleRateIndex = SampleRateIndex;
-
+         childForm.CopyFrom(this);
       }
 
       private void Form1_FormClosing(object sender, FormClosingEventArgs e)
       {
-         dr.SetRunning(false);
+         m_running = false;
+         m_threadConsumer.Join();
+         m_threadProvider.Join();
          oscillo.Close();
-      }
-
-      private void toolStrip3_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-      {
-
       }
 
       private void graphControl_KeyDown(object sender, KeyEventArgs e)
