@@ -69,6 +69,7 @@ namespace XOscillo
       {
          lock (this)
          {
+            
             m_len++;
             Monitor.Pulse(this);
          }

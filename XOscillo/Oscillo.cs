@@ -15,6 +15,7 @@ namespace XOscillo
       public DateTime m_stop = new DateTime();
       public int m_channels;
       public int m_stride;
+      public int m_channelOffset;
       public int m_sampleRate;
       public int m_trigger;
       public byte[] m_Buffer = null;
@@ -32,6 +33,7 @@ namespace XOscillo
          this.m_start = db.m_start;
          this.m_stop = db.m_stop;
          this.m_stride = db.m_stride;
+         this.m_channelOffset = db.m_channelOffset;
          this.m_sampleRate = db.m_sampleRate;
          this.m_trigger = db.m_trigger;
       }
@@ -44,12 +46,14 @@ namespace XOscillo
          }
 
          System.Array.Copy(db.m_Buffer, 0, m_Buffer, 0, db.m_Buffer.Length);
-         m_channels = db.m_channels;
-         m_sample = db.m_sample;
-         m_start = db.m_start;
-         m_stop = db.m_stop;
-         m_sampleRate = db.m_sampleRate;
-         m_trigger = db.m_trigger;
+         this.m_channels = db.m_channels;
+         this.m_sample = db.m_sample;
+         this.m_start = db.m_start;
+         this.m_stop = db.m_stop;
+         this.m_stride = db.m_stride;
+         this.m_channelOffset = db.m_channelOffset;
+         this.m_sampleRate = db.m_sampleRate;
+         this.m_trigger = db.m_trigger;
       }
       public void Alloc(int size)
       {
@@ -146,9 +150,9 @@ namespace XOscillo
          return m_Buffer.Length / m_channels;
       }
 
-      public byte GetVoltage(int channel, int index)
+      public virtual byte GetVoltage(int channel, int index)
       {
-         return m_Buffer[index * m_channels + channel];
+         return m_Buffer[index * m_stride + m_channelOffset*channel];
       }
 
       public float GetTime(int index)
@@ -200,7 +204,7 @@ namespace XOscillo
          return m_sampleRates;
       }
 
-      virtual public bool SetSampleRate(int smp)
+      virtual public bool SetSamplingRate(int smp)
       {
          return false;
       }

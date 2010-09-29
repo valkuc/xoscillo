@@ -13,3 +13,4 @@ L:\Users\raguaviv\Documents\Visual Studio 2008\Projects\XOscillo\XOscillo\obj\Re
 L:\Users\raguaviv\Documents\Visual Studio 2008\Projects\XOscillo\XOscillo\obj\Release\XOscillo.csproj.GenerateResource.Cache
 L:\Users\raguaviv\Documents\Visual Studio 2008\Projects\XOscillo\XOscillo\obj\Release\XOscillo.exe
 L:\Users\raguaviv\Documents\Visual Studio 2008\Projects\XOscillo\XOscillo\obj\Release\XOscillo.pdb
+L:\Users\raguaviv\Documents\Visual Studio 2008\Projects\XOscillo\XOscillo\obj\Release\XOscillo.VizBuffer.resources

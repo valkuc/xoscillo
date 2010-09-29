@@ -15,31 +15,6 @@ namespace XOscillo
 		public MDIParent()
 		{
 			InitializeComponent();
-
-			//ShowNewForm(null, null);
-         /*
-         DataBlock db;
-         VizForm childForm;
-
-         childForm = new DecodeFSK();
-         // Make it a child of this MDI form before showing it.
-         childForm.MdiParent = this;
-         childForm.Text = "L:\\Users\\raguaviv\\Documents\\500micros.xml";
-         db = new DataBlock();
-         db.LoadXML(childForm.Text);
-         childForm.SetDataBlock(db);
-         childForm.Show();
-
-         childForm = new DecodeFSK();
-         // Make it a child of this MDI form before showing it.
-         childForm.MdiParent = this;
-         childForm.Text = "L:\\Users\\raguaviv\\Documents\\billete_bru_072729837.xml";
-         db = new DataBlock();
-         db.LoadXML(childForm.Text);
-         childForm.SetDataBlock(db);
-         childForm.Show();
-         */
-
 		}
 
       private void toolStripMenuItem1_Click(object sender, EventArgs e)
@@ -52,20 +27,6 @@ namespace XOscillo
          childForm.Show();
          childForm.WindowState = FormWindowState.Maximized;
       }
-
-      private void newArduino2_Click(object sender, EventArgs e)
-      {
-         /*
-         // Create a new instance of the child form.
-         Form childForm;
-         childForm = new ArduinoForm2();
-         childForm.MdiParent = this;
-         childForm.Text = "Arduino2";
-         childForm.Show();
-         childForm.WindowState = FormWindowState.Maximized;
-          */
-      }
-
 
       private void newParallax_Click(object sender, EventArgs e)
       {
@@ -93,17 +54,7 @@ namespace XOscillo
             childForm.Text = FileName;
             childForm.Show();
             childForm.WindowState = FormWindowState.Maximized;
-
-
-            DataBlock db = new DataBlock();
-            //db.GenerateSin(20);
-            db.LoadXML(FileName);
-            childForm.SetDataBlock(db);
-            
-            //childForm.SetBbasicOscillo.GetGraphControl();
-            //basicOscillo.SetSampleRates(new UInt32[15] { 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000 });
-            //basicOscillo.SampleRateIndex = 7;         
-
+            childForm.LoadDataFromFile(FileName);
          }
 		}
 
@@ -178,42 +129,6 @@ namespace XOscillo
 			}
 		}
 
-		private void toolStripTime_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			//oscillo.currentTimeBase = oscillo.GetTimeBase()[toolStripTime.SelectedIndex];
-		}
-
-		private void toolStripTime_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void toolStripEdge_Click(object sender, EventArgs e)
-		{
-
-		}
-
-
-		private void MDIParent1_FormClosed(object sender, FormClosedEventArgs e)
-		{
-			//oscillo.ExitRun();
-		}
-
-      private void button1_Click(object sender, EventArgs e)
-      {
-
-      }
-
-      private void play_CheckedChanged(object sender, EventArgs e)
-      {
-         //oscillo.pause = play.Checked;
-      }
-
-      private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-      {
-         //MdiChildren.
-      }
-
       private void decodeToolStripMenuItem_Click(object sender, EventArgs e)
       {
          BaseForm childForm = new DecodeFSK();
@@ -222,7 +137,6 @@ namespace XOscillo
          childForm.Text = ActiveMdiChild.Text;
          childForm.SetDataBlock(((BaseForm)ActiveMdiChild).GetDataBlock());
          childForm.Show();
-         //childForm.WindowState = FormWindowState.Maximized;
       }
 
       private void decodeBeeperToolStripMenuItem_Click(object sender, EventArgs e)
@@ -233,7 +147,6 @@ namespace XOscillo
          childForm.Text = ActiveMdiChild.Text;
          childForm.SetDataBlock(((BaseForm)ActiveMdiChild).GetDataBlock());
          childForm.Show();
-
       }
 
       private void decodeFrequencyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -244,10 +157,7 @@ namespace XOscillo
          childForm.Text = ActiveMdiChild.Text;
          childForm.SetDataBlock(((BaseForm)ActiveMdiChild).GetDataBlock());
          childForm.Show();
-
       }
-
-
 
 	}
 }

@@ -18,7 +18,7 @@ namespace XOscillo
 
       public DataBlock ScopeData = new DataBlock();
 
-      public bool m_drawFFT = false;
+      private bool m_drawFFT = false;
 
       Pen[] m_pens = { Pens.Red, Pens.Blue, Pens.Green };
 
@@ -32,19 +32,31 @@ namespace XOscillo
 
 		}
 
-      public int lerp( int y0, int y1, int x0, int x1, int x )
+      public void SetSecondsPerDivision(float secondsPerDiv)
+      {
+         m_secondsPerDiv = secondsPerDiv;
+         Invalidate();
+      }
+
+      public void DrawFFT(bool value)
+      {
+         m_drawFFT = value;
+         Invalidate();
+      }
+
+      private int lerp(int y0, int y1, int x0, int x1, int x)
       {
          if (x0 == x1)
             return 0;
          return y0 + ((x-x0)*(y1-y0))/(x1-x0);
       }
 
-      public double lerp(double y0, double y1, double x0, double x1, double x)
+      private double lerp(double y0, double y1, double x0, double x1, double x)
       {
          return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
       }
 
-      string GetTime(double f)
+      private string GetTime(double f)
       {
          double z = Math.Log10(f);
          if (z < -2)
@@ -61,12 +73,7 @@ namespace XOscillo
 
       float m_secondsPerDiv=1.0f;
 
-      public void SetSecondsPerDivision( float secondsPerDiv )
-      {
-         m_secondsPerDiv = secondsPerDiv;
-      }
-
-      public string FormatSeconds( double value )
+      private string FormatSeconds(double value)
       {
          if (Math.Abs(value) < .0009)
          {
@@ -82,7 +89,7 @@ namespace XOscillo
          }
       }
 
-      public void DrawHorizontalLines(Graphics g, Rectangle r)
+      private void DrawHorizontalLines(Graphics g, Rectangle r)
       {
          float yDelta = (float)Height / 8.0f;
 
@@ -96,7 +103,7 @@ namespace XOscillo
          }
       }
 
-      public void DrawVerticalLines(Graphics g, Rectangle r)
+      private void DrawVerticalLines(Graphics g, Rectangle r)
       {
          double timeoffset = 0;
          if (hScrollBar1.Visible)
@@ -122,7 +129,7 @@ namespace XOscillo
          }
       }
 
-      void DrawGraph(Graphics g, Rectangle r, Pen p, int channel )
+      private void DrawGraph(Graphics g, Rectangle r, Pen p, int channel)
       {
          float timeoffset = 0;
 
@@ -188,7 +195,7 @@ namespace XOscillo
       }
 
       fft f;
-      public void DrawFFT( Graphics g, Rectangle r )
+      private void DrawFFT(Graphics g, Rectangle r)
       {
          int samplesPerChannel = ScopeData.m_Buffer.Length / ScopeData.m_channels;
 
@@ -226,9 +233,18 @@ namespace XOscillo
             g.DrawLine(Pens.Red, x, r.Bottom, x, r.Bottom - (int)(f.Power(i) * power));
          }
 
+         int freqStep;
+
+         for (freqStep = 500; freqStep < maxFreq; freqStep+=500)
+         {
+            int ft = lerp(0, 512, minFreq, maxFreq, freqStep); 
+            if (ft > 30)
+               break ;
+         }
+
          //draw legend
-         Point pp = new Point(); 
-         for (int i = 0; i < (int)maxFreq; i += 500)
+         Point pp = new Point();
+         for (int i = 0; i < (int)maxFreq; i += freqStep)
          {
             int x = lerp(0, 512, minFreq, maxFreq, i );
 

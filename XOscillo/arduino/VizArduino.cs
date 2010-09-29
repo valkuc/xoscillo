@@ -11,7 +11,7 @@ namespace XOscillo
 {
    public partial class VizArduino : XOscillo.VizForm
    {
-      OscilloArduino oscillo;
+      SerialArduino oscillo;
 
       Ring<DataBlock> m_ring = new Ring<DataBlock>(16);
 
@@ -22,6 +22,11 @@ namespace XOscillo
       public VizArduino()
       {
          InitializeComponent();
+      }
+
+      override public DataBlock GetDataBlock()
+      {
+         return graphControl.ScopeData;
       }
 
       public void Provider()
@@ -47,6 +52,11 @@ namespace XOscillo
             m_ring.getUnlock();
             graphControl.Invalidate();
          }
+      }
+
+      private void time_SelectedIndexChanged(object sender, EventArgs e)
+      {
+         graphControl.SetSecondsPerDivision( float.Parse(time.SelectedItem.ToString()));
       }
 
       private void channels_SelectedIndexChanged(object sender, EventArgs e)
@@ -79,7 +89,7 @@ namespace XOscillo
 
       private void Form1_Load(object sender, EventArgs e)
       {
-         oscillo = new OscilloArduino();
+         oscillo = new SerialArduino();
 
          while (oscillo.Open() == false)
          {
@@ -89,9 +99,23 @@ namespace XOscillo
                return;
             }
          }
+         oscillo.Ping();
+
+         time.Items.Add(1.0);
+         time.Items.Add(0.5);
+         time.Items.Add(0.2);
+         time.Items.Add(0.1);
+         time.Items.Add(0.05);
+         time.Items.Add(0.02);
+         time.Items.Add(0.01);
+         time.Items.Add(0.005);
+         time.Items.Add(0.002);
+         time.Items.Add(0.001);
+         time.Items.Add(0.0005);
+         time.Items.Add(0.0002);
+         time.SelectedIndex = 10;
 
          channels.SelectedItem = "1";
-         toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStrip2);
          play.Checked = true;
       }
 
@@ -112,19 +136,10 @@ namespace XOscillo
          else
          {
             play.Image = global::XOscillo.Properties.Resources.play;
+            m_threadConsumer.Join();
+            m_threadProvider.Join();
+            oscillo.Reset();
          }
-      }
-
-      private void clone_Click(object sender, EventArgs e)
-      {
-         VizBuffer childForm = new VizBuffer();
-         // Make it a child of this MDI form before showing it.
-         childForm.MdiParent = MdiParent;
-         childForm.Text = Text;// +Parent.childFormNumber++;
-         childForm.Show();
-         childForm.WindowState = FormWindowState.Maximized;
-
-         childForm.CopyFrom(this);
       }
 
       private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -135,8 +150,21 @@ namespace XOscillo
          oscillo.Close();
       }
 
+
+      private void clone_Click(object sender, EventArgs e)
+      {
+         VizBuffer childForm = new VizBuffer();
+         childForm.MdiParent = MdiParent;
+         childForm.Text = Text;// +Parent.childFormNumber++;
+         childForm.Show();
+         childForm.WindowState = FormWindowState.Maximized;
+         childForm.CopyFrom(this);
+      }
+
+
       private void graphControl_KeyDown(object sender, KeyEventArgs e)
       {
+         /*
          int s = oscillo.GetSampleRate();
          if (e.KeyCode == Keys.Add)
          {
@@ -147,8 +175,14 @@ namespace XOscillo
             s-=10;
          }
 
-         oscillo.SetSampleRate(s);
-
+         oscillo.SetMicrosecondsPerDivision(s);
+         */
       }
+
+      private void fft_CheckStateChanged(object sender, EventArgs e)
+      {
+         graphControl.DrawFFT( fft.Checked );
+      }
+
    }
 }
