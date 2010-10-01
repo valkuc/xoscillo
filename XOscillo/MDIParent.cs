@@ -159,5 +159,10 @@ namespace XOscillo
          childForm.Show();
       }
 
+      private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
+      {
+         MessageBox.Show( "Written by Raul Aguaviva\nThis is work in progress", "Xoscillo");
+      }
+
 	}
 }
