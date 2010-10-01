@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using System.IO.Ports;
 
 namespace XOscillo
 {
@@ -60,7 +61,14 @@ namespace XOscillo
       private void VizParallax_Load(object sender, EventArgs e)
       {
          oscillo = new SerialParallax();
-         oscillo.Open();
+         while (oscillo.Open() == false)
+         {
+            DialogResult res = MessageBox.Show("Parallax USB oscilloscope not fount, scanned ports:\n" + string.Join("\n", SerialPort.GetPortNames()) + "\nclick ok to try again", "Can't connect", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+            if (res == DialogResult.Cancel)
+            {
+               return;
+            }
+         }
          oscillo.Ping();
 
          time.Items.Add(1.0);
@@ -151,27 +159,27 @@ namespace XOscillo
       {
          switch (triggerMode.SelectedIndex)
          {
-            case 1:
+            case 0:
                oscillo.triggerChannel = TriggerChannel.TC_CH1;
                oscillo.edge = Edge.EDGE_RAISING;
                oscillo.externalTrigger = false;
                break;
-            case 2:
+            case 1:
                oscillo.triggerChannel = TriggerChannel.TC_CH1;
                oscillo.edge = Edge.EDGE_FALLING;
+               oscillo.externalTrigger = false;
+               break;
+            case 2:
+               oscillo.triggerChannel = TriggerChannel.TC_CH2;
+               oscillo.edge = Edge.EDGE_RAISING;
                oscillo.externalTrigger = false;
                break;
             case 3:
                oscillo.triggerChannel = TriggerChannel.TC_CH2;
-               oscillo.edge = Edge.EDGE_RAISING;
-               oscillo.externalTrigger = false;
-               break;
-            case 4:
-               oscillo.triggerChannel = TriggerChannel.TC_CH2;
                oscillo.edge = Edge.EDGE_FALLING;
                oscillo.externalTrigger = false;
                break;
-            case 5:
+            case 4:
                oscillo.externalTrigger = true;
                break;
 

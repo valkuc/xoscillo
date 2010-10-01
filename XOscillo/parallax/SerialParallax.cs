@@ -205,26 +205,31 @@ namespace XOscillo
          {
             try
             {
+               Console.Write("trying: " + portName + "...");
                serialPort = new SerialPort(portName);
                serialPort.Open();
             }
             catch
             {
+               Console.WriteLine("Can't open");
                continue;
             }
 
             try
             {
+               Console.Write("is parallax...");
                serialPort.WriteTimeout = 4000;
                serialPort.ReadTimeout = 4000;
 
                if (Ping() == true)
                {
+                  Console.WriteLine("Yes!");
                   return true;
                }
             }
             catch
             {
+               Console.WriteLine("nope.");
             }
 
             serialPort.Close();

@@ -90,7 +90,6 @@ namespace XOscillo
       private void Form1_Load(object sender, EventArgs e)
       {
          oscillo = new SerialArduino();
-
          while (oscillo.Open() == false)
          {
             DialogResult res = MessageBox.Show("Arduino with proper firmware not fount, scanned ports:\n" + string.Join("\n", SerialPort.GetPortNames()) + "\nclick ok to try again", "Can't connect", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);

@@ -68,7 +68,7 @@
             this.fft});
          this.toolStrip2.Location = new System.Drawing.Point(3, 0);
          this.toolStrip2.Name = "toolStrip2";
-         this.toolStrip2.Size = new System.Drawing.Size(525, 25);
+         this.toolStrip2.Size = new System.Drawing.Size(530, 25);
          this.toolStrip2.TabIndex = 1;
          this.toolStrip2.Text = "toolStrip2";
          // 
@@ -113,7 +113,7 @@
          this.toolStripLabel1.Size = new System.Drawing.Size(90, 22);
          this.toolStripLabel1.Text = "trigger  channel";
          // 
-         // channels
+         // triggerMode
          // 
          this.triggerMode.Items.AddRange(new object[] {
             "ch1 rising",
@@ -121,8 +121,8 @@
             "ch2 rising",
             "ch2 falling",
             "external rising"});
-         this.triggerMode.Name = "channels";
-         this.triggerMode.Size = new System.Drawing.Size(75, 25);
+         this.triggerMode.Name = "triggerMode";
+         this.triggerMode.Size = new System.Drawing.Size(80, 25);
          this.triggerMode.SelectedIndexChanged += new System.EventHandler(this.triggerMode_SelectedIndexChanged);
          // 
          // toolStripSeparator3
