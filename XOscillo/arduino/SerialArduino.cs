@@ -11,16 +11,11 @@ namespace XOscillo
       SerialPort serialPort;
       byte m_triggerValue = 127;
       int m_numSamples = 1024;
-      //static int baudrate = 153600;
-      static int baudrate = 115200;
-
+      int baudrate;
       /*
             153600 / 8 = 19200 bytes/s
-            
-             1024 samples -> 0.053 seconds
-       
-       */
-      //static uint baudrate = 230400;
+            1024 samples -> 0.053 seconds
+      */
 
       public SerialArduino()
       {
@@ -30,7 +25,17 @@ namespace XOscillo
          m_sampleRates = new int[1] { baudrate / 8 };
 
          //needs tunning
-         m_sampleRate = 15400;
+         /*
+         {
+            baudrate = 153600;
+            m_sampleRate = 15400;
+         }
+         */
+         {
+            baudrate = 115200;
+            m_sampleRate = 11800;
+         }
+         
       }
 
       private bool AutoDetect()

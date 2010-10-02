@@ -42,9 +42,9 @@
          this.clone = new System.Windows.Forms.ToolStripButton();
          this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
          this.play = new System.Windows.Forms.ToolStripButton();
+         this.fft = new System.Windows.Forms.ToolStripButton();
          this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
          this.graphControl = new XOscillo.GraphControl();
-         this.fft = new System.Windows.Forms.ToolStripButton();
          this.toolStrip2.SuspendLayout();
          this.toolStripContainer1.ContentPanel.SuspendLayout();
          this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -70,7 +70,7 @@
             this.fft});
          this.toolStrip2.Location = new System.Drawing.Point(3, 0);
          this.toolStrip2.Name = "toolStrip2";
-         this.toolStrip2.Size = new System.Drawing.Size(497, 25);
+         this.toolStrip2.Size = new System.Drawing.Size(466, 25);
          this.toolStrip2.TabIndex = 1;
          this.toolStrip2.Text = "toolStrip2";
          // 
@@ -159,6 +159,17 @@
          this.play.Text = "toolStripButton2";
          this.play.CheckedChanged += new System.EventHandler(this.play_CheckedChanged);
          // 
+         // fft
+         // 
+         this.fft.CheckOnClick = true;
+         this.fft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+         this.fft.Image = ((System.Drawing.Image)(resources.GetObject("fft.Image")));
+         this.fft.ImageTransparentColor = System.Drawing.Color.Magenta;
+         this.fft.Name = "fft";
+         this.fft.Size = new System.Drawing.Size(30, 22);
+         this.fft.Text = "FFT";
+         this.fft.CheckStateChanged += new System.EventHandler(this.fft_CheckStateChanged);
+         // 
          // toolStripContainer1
          // 
          // 
@@ -184,17 +195,6 @@
          this.graphControl.Name = "graphControl";
          this.graphControl.Size = new System.Drawing.Size(787, 418);
          this.graphControl.TabIndex = 0;
-         // 
-         // fft
-         // 
-         this.fft.CheckOnClick = true;
-         this.fft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-         this.fft.Image = ((System.Drawing.Image)(resources.GetObject("fft.Image")));
-         this.fft.ImageTransparentColor = System.Drawing.Color.Magenta;
-         this.fft.Name = "fft";
-         this.fft.Size = new System.Drawing.Size(30, 22);
-         this.fft.Text = "FFT";
-         this.fft.CheckStateChanged += new System.EventHandler(this.fft_CheckStateChanged);
          // 
          // VizArduino
          // 

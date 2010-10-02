@@ -43,13 +43,9 @@ namespace XOscillo
 
       public void Consumer()
       {
-         DataBlock db;
-
          while (m_running)
          {
-            m_ring.getLock( out db );
-            graphControl.ScopeData.Copy(db);
-            m_ring.getUnlock();
+            graphControl.ScopeData = m_ring.GetFirstElementButDoNotRemoveIfLastOne();
             graphControl.Invalidate();
          }
       }
@@ -182,6 +178,7 @@ namespace XOscillo
       {
          graphControl.DrawFFT( fft.Checked );
       }
+
 
    }
 }
