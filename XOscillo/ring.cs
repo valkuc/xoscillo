@@ -50,6 +50,25 @@ namespace XOscillo
          }
       }
 
+      public virtual T GetFirstElementButDoNotRemoveIfLastOne()
+      {
+         lock (this)
+         {
+            while (GetLength() <= 1)
+            {
+               Monitor.Wait(this);
+            }
+
+            T data = m_ring[m_read];
+
+            m_read = (m_read + 1) % m_ring.Length;
+            m_len--;
+            Monitor.Pulse(this);
+
+            return data;
+         }         
+      }
+
       public virtual void putLock( out T data)
       {
          lock (this)

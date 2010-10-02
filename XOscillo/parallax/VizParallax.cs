@@ -47,13 +47,9 @@ namespace XOscillo
 
       public void Consumer()
       {
-         DataBlock db;
-
          while (m_running)
          {
-            m_ring.getLock(out db);
-            graphControl.ScopeData.Copy(db);
-            m_ring.getUnlock();
+            graphControl.ScopeData = m_ring.GetFirstElementButDoNotRemoveIfLastOne();            
             graphControl.Invalidate();
          }
       }
@@ -71,9 +67,6 @@ namespace XOscillo
          }
          oscillo.Ping();
 
-         time.Items.Add(1.0);
-         time.Items.Add(0.5);
-         time.Items.Add(0.2);
          time.Items.Add(0.1);
          time.Items.Add(0.05);
          time.Items.Add(0.02);
@@ -85,6 +78,9 @@ namespace XOscillo
          time.Items.Add(0.0002);
          time.Items.Add(0.0001);
          time.Items.Add(0.00005);
+         time.Items.Add(0.00002);
+         time.Items.Add(0.00001);
+         time.Items.Add(0.000005);
          time.SelectedIndex = 10;
 
          triggerMode.SelectedIndex = 1;
@@ -129,30 +125,32 @@ namespace XOscillo
 
       private void time_SelectedIndexChanged(object sender, EventArgs e)
       {
+         
          int sampleRate = 0;
          switch (time.SelectedIndex)
          {
-            case 0: sampleRate = 100; break;
-            case 1: sampleRate = 250; break;
-            case 2: sampleRate = 500; break;
-            case 3: sampleRate = 1000; break;
-            case 4: sampleRate = 2500; break;
-            case 5: sampleRate = 5000; break;
-            case 6: sampleRate = 10000; break;
-            case 7: sampleRate = 25000; break;
-            case 8: sampleRate = 50000; break;
-            case 9: sampleRate = 100000; break;
-            case 10: sampleRate = 250000; break;
-            case 11: sampleRate = 500000; break;
-            case 12: sampleRate = 1000000; break;
-            case 13: sampleRate = 2500000; break;
-            case 14: sampleRate = 5000000; break;
+            case 0: sampleRate = 250; break;
+            case 1: sampleRate = 500; break;
+            case 2: sampleRate = 1000; break;
+            case 3: sampleRate = 2500; break;
+            case 4: sampleRate = 5000; break;
+            case 5: sampleRate = 10000; break;
+            case 6: sampleRate = 25000; break;
+            case 7: sampleRate = 50000; break; // 0.001
+            case 8: sampleRate = 100000; break;
+            case 9: sampleRate = 250000; break;
+            case 10: sampleRate = 500000; break;
+            case 11: sampleRate = 1000000; break;
+            case 12: sampleRate = 2500000; break; // 0.0001f
+            case 13: sampleRate = 5000000; break;
          }
          oscillo.SetSamplingRate(sampleRate);
 
-         float secondsPerDiv = float.Parse(time.SelectedItem.ToString());
+         float secondsPerDiv = float.Parse(time.Items[time.SelectedIndex].ToString());
          graphControl.SetSecondsPerDivision(secondsPerDiv);
-
+         
+         //oscillo.SetSamplingRate(250000);
+         //graphControl.SetSecondsPerDivision(0.0001f);
       }
 
       private void triggerMode_SelectedIndexChanged(object sender, EventArgs e)

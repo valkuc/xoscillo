@@ -16,7 +16,7 @@ namespace XOscillo
 
       private DateTime oldTime = DateTime.Now;
 
-      public DataBlock ScopeData = new DataBlock();
+      public DataBlock ScopeData = null;
 
       private bool m_drawFFT = false;
 
@@ -188,9 +188,12 @@ namespace XOscillo
          DrawVerticalLines(g, r);
 
          //draw channels
-         for (int ch = 0; ch < ScopeData.m_channels; ch++)
+         lock (ScopeData)
          {
-            DrawGraph(g,r, m_pens[ch], ch);
+            for (int ch = 0; ch < ScopeData.m_channels; ch++)
+            {
+               DrawGraph(g,r, m_pens[ch], ch);
+            }
          }
       }
 

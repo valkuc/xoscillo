@@ -43,80 +43,23 @@ namespace XOscillo
 
       override public bool SetSamplingRate(int smp)
       {
-         if (smp == 100)
+         switch (smp)
          {
-            m_sampleRateOpCode = 0xe;
-            fastMode = false;
-         }
-         else if (smp == 250)
-         {
-            m_sampleRateOpCode = 0xd;
-            fastMode = false;
-         }
-         else if (smp == 500)
-         {
-            m_sampleRateOpCode = 0xc;
-            fastMode = false;
-         }
-         else if (smp == 1000)
-         {
-            m_sampleRateOpCode = 0xb;
-            fastMode = false;
-         }
-         else if (smp == 2500)
-         {
-            m_sampleRateOpCode = 0xa;
-            fastMode = false;
-         }
-         else if (smp == 5000)
-         {
-            m_sampleRateOpCode = 0x9;
-            fastMode = false;
-         }
-         else if (smp == 10000)
-         {
-            m_sampleRateOpCode = 0x8;
-            fastMode = false;
-         }
-         else if (smp == 25000)
-         {
-            m_sampleRateOpCode = 0x7;
-            fastMode = false;
-         }
-         else if (smp == 50000)
-         {
-            m_sampleRateOpCode = 0x6;
-            fastMode = false;
-         }
-         else if (smp == 100000)
-         {
-            m_sampleRateOpCode = 0x5;
-            fastMode = false;
-         }
-         if (smp == 250000)
-         {
-            m_sampleRateOpCode = 0x4;
-            fastMode = false;
-         }
-         else if (smp == 500000)
-         {
-            m_sampleRateOpCode = 0x3;
-            fastMode = false;
-         }
-         else if (smp == 1000000)
-         {
-            m_sampleRateOpCode = 0x2;
-            fastMode = false;
-         }
-         else if (smp == 2500000)
-         {
-            m_sampleRateOpCode = 0x1;
-            fastMode = false;
-         }
-         else if (smp == 5000000)
-         {
-            m_sampleRateOpCode = 0x1;
-            fastMode = true;
+            case 250: m_sampleRateOpCode = 0xd; fastMode = false; break;
+            case 500: m_sampleRateOpCode = 0xc; fastMode = false; break;
+            case 1000: m_sampleRateOpCode = 0xb; fastMode = false; break;
+            case 2500: m_sampleRateOpCode = 0xa; fastMode = false; break;
+            case 5000: m_sampleRateOpCode = 0x9; fastMode = false; break;
+            case 10000: m_sampleRateOpCode = 0x8; fastMode = false; break;
+            case 25000: m_sampleRateOpCode = 0x7; fastMode = false; break;
+            case 50000: m_sampleRateOpCode = 0x6; fastMode = false; break;
+            case 100000: m_sampleRateOpCode = 0x5; fastMode = false; break;
+            case 250000: m_sampleRateOpCode = 0x4; fastMode = false; break;
+            case 500000: m_sampleRateOpCode = 0x3; fastMode = false; break;
+            case 1000000: m_sampleRateOpCode = 0x2; fastMode = false; break;
+            case 2500000: m_sampleRateOpCode = 0x2; fastMode = false; break;
+            case 5000000: m_sampleRateOpCode = 0x1; fastMode = true; break;
+            default: return false;
          }
 
          m_sampleRate = smp;
@@ -337,7 +280,7 @@ namespace XOscillo
                db.m_start = time;
                db.m_stop = DateTime.Now;
                db.m_channels = fastMode ? 1 : 2;
-               db.m_trigger = (3000 / 2) / (fastMode ? 1 : 2);
+               db.m_trigger = triggerVoltage;
                db.m_sampleRate = m_sampleRate;
                db.m_stride = 1;
                db.m_channelOffset = 1500;

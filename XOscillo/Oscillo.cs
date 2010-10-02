@@ -169,6 +169,8 @@ namespace XOscillo
 
    public class Oscillo
    {
+      public delegate void GotFrame(ref DataBlock db);
+
       protected int m_sampleRate;
 
       protected int[] m_sampleRates = new int[1] { 0 };
@@ -218,16 +220,6 @@ namespace XOscillo
       virtual public bool SetNumberOfChannels( int n )
       {
          return false;
-      }
-
-      virtual public bool Lock(out DataBlock data)
-      {
-         data = null;
-         return true;
-      }
-
-      virtual public void Unlock()
-      {
       }
 
       virtual public int GetSamples()
