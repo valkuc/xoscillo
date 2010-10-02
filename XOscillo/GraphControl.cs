@@ -20,7 +20,7 @@ namespace XOscillo
 
       private bool m_drawFFT = false;
 
-      Pen[] m_pens = { Pens.Red, Pens.Blue, Pens.Green };
+      Pen[] m_pens = { Pens.Red, Pens.Blue, Pens.Green, Pens.Yellow };
 
       public List<int> Lines = new List<int>();
 
