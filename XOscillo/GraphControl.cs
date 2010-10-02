@@ -327,10 +327,13 @@ namespace XOscillo
             e.Graphics.DrawLine(m_pens[0], 0, y, Bounds.Width, y);
          }
 
-         Point pp = new Point();
-         pp.X = 0;
-         pp.Y += 16;
-         e.Graphics.DrawString(string.Format("{0} fps", 1000 / duration.Milliseconds), this.Font, Brushes.White, pp);
+         if (duration.Milliseconds > 0)
+         {
+            Point pp = new Point();
+            pp.X = 0;
+            pp.Y += 16;
+            e.Graphics.DrawString(string.Format("{0} fps", 1000 / duration.Milliseconds), this.Font, Brushes.White, pp);
+         }
          
          /*
          pp.Y += 16;
