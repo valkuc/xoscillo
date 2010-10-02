@@ -29,7 +29,7 @@ namespace XOscillo
 
       override public DataBlock GetDataBlock()
       {
-         return graphControl.ScopeData;
+         return graphControl.GetScopeData();
       }
 
       public void Provider()
@@ -49,7 +49,7 @@ namespace XOscillo
       {
          while (m_running)
          {
-            graphControl.ScopeData = m_ring.GetFirstElementButDoNotRemoveIfLastOne();            
+            graphControl.SetScopeData( m_ring.GetFirstElementButDoNotRemoveIfLastOne() ); 
             graphControl.Invalidate();
          }
       }
@@ -62,7 +62,7 @@ namespace XOscillo
             DialogResult res = MessageBox.Show("Parallax USB oscilloscope not fount, scanned ports:\n" + string.Join("\n", SerialPort.GetPortNames()) + "\nclick ok to try again", "Can't connect", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
             if (res == DialogResult.Cancel)
             {
-               return;
+               this.Close();
             }
          }
          oscillo.Ping();

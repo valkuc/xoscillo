@@ -26,7 +26,7 @@ namespace XOscillo
 
       override public DataBlock GetDataBlock()
       {
-         return graphControl.ScopeData;
+         return graphControl.GetScopeData();
       }
 
       public void Provider()
@@ -45,7 +45,7 @@ namespace XOscillo
       {
          while (m_running)
          {
-            graphControl.ScopeData = m_ring.GetFirstElementButDoNotRemoveIfLastOne();
+            graphControl.SetScopeData( m_ring.GetFirstElementButDoNotRemoveIfLastOne() );
             graphControl.Invalidate();
          }
       }

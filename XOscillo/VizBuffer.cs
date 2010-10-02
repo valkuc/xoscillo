@@ -17,19 +17,22 @@ namespace XOscillo
 
       override public DataBlock GetDataBlock()
       {
-         return graphControl.ScopeData;
+         return graphControl.GetScopeData();
       }
 
       override public void CopyFrom(VizForm vf)
       {
-         DataBlock db = vf.GetDataBlock();
+         DataBlock db = new DataBlock( vf.GetDataBlock() );
 
-         graphControl.ScopeData.Copy(db);
+         graphControl.SetScopeData(db);
       }
 
       public void LoadDataFromFile(string filename)
       {
-         graphControl.ScopeData.LoadXML(filename);
+         DataBlock db = new DataBlock();
+         db.LoadXML(filename);
+         graphControl.SetScopeData(db);
+         Invalidate();
       }
 
       private void fft_Click(object sender, EventArgs e)

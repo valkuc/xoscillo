@@ -16,9 +16,12 @@ namespace XOscillo
 
       private DateTime oldTime = DateTime.Now;
 
-      public DataBlock ScopeData = null;
+      private DataBlock ScopeData = null;
 
       private bool m_drawFFT = false;
+
+      private int MaxV = 255;
+      private int MinV = 0;
 
       Pen[] m_pens = { Pens.Red, Pens.Blue, Pens.Green, Pens.Yellow };
 
@@ -28,7 +31,7 @@ namespace XOscillo
 		{
 			InitializeComponent();
 
-			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+			SetStyle(/*ControlStyles.AllPaintingInWmPaint |*/ ControlStyles.OptimizedDoubleBuffer, true);
 
 		}
 
@@ -38,11 +41,34 @@ namespace XOscillo
          Invalidate();
       }
 
+      public void SetMinMAxVoltages(int min, int max)
+      {
+         MinV = min;
+         MaxV = max;
+      }
+
       public void DrawFFT(bool value)
       {
          m_drawFFT = value;
          Invalidate();
       }
+
+      public void SetScopeData( DataBlock db )
+      {
+         lock(this)
+         {
+            ScopeData = db;
+         }
+      }
+
+      public DataBlock GetScopeData()
+      {
+         lock (this)
+         {
+            return new DataBlock(ScopeData);
+         }
+      }
+
 
       private int lerp(int y0, int y1, int x0, int x1, int x)
       {
@@ -140,27 +166,35 @@ namespace XOscillo
 
          int yy = 0;
          int xx = 0;
+         int i=0;
          int length = ScopeData.GetChannelLength();
-
-         for (int i = 0; i < length; i++)
+         try
          {
-            int rawvolt = ScopeData.GetVoltage( channel, i );
-
-            float time = ScopeData.GetTime(i);
-
-            int x = (int)lerp(0, r.Height / 8.0, 0, m_secondsPerDiv , (time - timeoffset) );
-            int y = lerp(0, r.Height, 255, 0, rawvolt);
-
-            if (i > 0)
+            for (i = 0; i < length; i++)
             {
-               g.DrawLine(p, xx, yy, x, y);
+
+               int rawvolt = ScopeData.GetVoltage(channel, i);
+
+               float time = ScopeData.GetTime(i);
+
+               int x = (int)lerp(0, r.Height / 8.0, 0, m_secondsPerDiv, (time - timeoffset));
+               int y = lerp(0, r.Height, MaxV, MinV, rawvolt);
+
+               if (i > 0)
+               {
+                  g.DrawLine(p, xx, yy, x, y);
+               }
+
+               yy = y;
+               xx = x;
+
+               if (xx > r.Width)
+                  break;
             }
-
-            yy = y;
-            xx = x;
-
-            if (xx > r.Width)
-               break;
+         }
+         catch
+         {
+            Console.WriteLine("{0} {1} {2}", ScopeData, r, i);
          }
       }
 
@@ -188,11 +222,11 @@ namespace XOscillo
          DrawVerticalLines(g, r);
 
          //draw channels
-         lock (ScopeData)
+         lock (this)
          {
             for (int ch = 0; ch < ScopeData.m_channels; ch++)
             {
-               DrawGraph(g,r, m_pens[ch], ch);
+               DrawGraph(g, r, m_pens[ch], ch);
             }
          }
       }
