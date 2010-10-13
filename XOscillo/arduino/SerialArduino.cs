@@ -23,12 +23,11 @@ namespace XOscillo
             m_sampleRate = 59250; // this is actual number of samples per second I am able to archieve on the arduino
          }
          //needs tunning
-         /*
          {
-            baudrate = 153600;
-            m_sampleRate = 15400;
+            baudrate = 115200;
+            m_sampleRate = 24000;
          }
-         */
+         
 
          m_sampleRates = new int[1] { m_sampleRate };
 
@@ -43,20 +42,20 @@ namespace XOscillo
       private bool AutoDetect()
       {
          string[] ports = SerialPort.GetPortNames();
-         
+
+         string os = Environment.OSVersion.Platform.ToString();
+
          foreach (string portName in ports)
          {
             try
             {
                serialPort = new SerialPort(portName, baudrate, Parity.None, 8,StopBits.One);
                serialPort.Handshake = Handshake.None;
-               
+
                serialPort.Open();
                System.Console.Write(portName + ", rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString() + "   trying...");
 
-               //serialPort.RtsEnable = true;
-               /*
-               //if (serialPort.RtsEnable == true)
+               if ( os == "Unix" )
                {
                   System.Console.Write("lowering RTS");
                   serialPort.RtsEnable = false;
@@ -66,7 +65,6 @@ namespace XOscillo
                      System.Console.Write(".");
                   }
                }
-               */
 
             }
             catch
@@ -77,8 +75,8 @@ namespace XOscillo
 
             try
             {
-               serialPort.WriteTimeout = 4000;
-               serialPort.ReadTimeout = 4000;
+               serialPort.WriteTimeout = 8000;
+               serialPort.ReadTimeout = 8000;
 
                System.Console.Write("pinging....");
                if (Ping() == true)
