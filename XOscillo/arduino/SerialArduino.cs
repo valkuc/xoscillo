@@ -12,18 +12,16 @@ namespace XOscillo
       byte m_triggerValue = 127;
       int m_numSamples = 1024;
       int baudrate;
-      /*
-            153600 / 8 = 19200 bytes/s
-            1024 samples -> 0.053 seconds
-      */
 
       public SerialArduino()
       {
          // Create a new SerialPort object with default settings.
          serialPort = new SerialPort();
 
-         m_sampleRates = new int[1] { baudrate / 8 };
-
+         {
+            baudrate = 1000000;
+            m_sampleRate = 59250; // this is actual number of samples per second I am able to archieve on the arduino
+         }
          //needs tunning
          /*
          {
@@ -31,11 +29,15 @@ namespace XOscillo
             m_sampleRate = 15400;
          }
          */
-         {
-            baudrate = 115200;
-            m_sampleRate = 11800;
-         }
+
+         m_sampleRates = new int[1] { m_sampleRate };
+
          
+      }
+
+      override public string GetName()
+      {
+         return "Arduino";
       }
 
       private bool AutoDetect()
@@ -179,6 +181,7 @@ namespace XOscillo
          configBuffer[2] = (byte)( ( m_numSamples * m_numberOfChannels ) >> 8);
          configBuffer[3] = (byte)( ( m_numSamples * m_numberOfChannels ) & 0xff);
          configBuffer[4] = (byte)m_numberOfChannels;
+         configBuffer[5] = (byte)127; //pwm
 
          serialPort.DiscardInBuffer();
          serialPort.Write(configBuffer, 0, 9);

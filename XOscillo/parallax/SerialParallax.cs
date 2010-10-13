@@ -127,6 +127,11 @@ namespace XOscillo
       {
       }
 
+      override public string GetName()
+      {
+         return "Parallax USB oscilloscope";
+      }
+
       override public bool Open()
       {
          // Allow the user to set the appropriate properties.
@@ -267,35 +272,28 @@ namespace XOscillo
 
       override public bool GetDataBlock(ref DataBlock db)
       {
-         try
+         Config();
+
+         time = DateTime.Now;
+
+         Read(res, 1);
+         if (res[0] == 85)
          {
-            Config();
-
-            time = DateTime.Now;
-
-            Read(res, 1);
-            if (res[0] == 85)
+            db.m_sample = 0;
+            db.m_start = time;
+            db.m_stop = DateTime.Now;
+            db.m_channels = fastMode ? 1 : 2;
+            db.m_trigger = triggerVoltage;
+            db.m_sampleRate = m_sampleRate;
+            db.m_stride = 1;
+            db.m_channelOffset = 1500;
+            if (db.m_Buffer == null || db.m_Buffer.Length != 3000)
             {
-               db.m_sample = 0;
-               db.m_start = time;
-               db.m_stop = DateTime.Now;
-               db.m_channels = fastMode ? 1 : 2;
-               db.m_trigger = triggerVoltage;
-               db.m_sampleRate = m_sampleRate;
-               db.m_stride = 1;
-               db.m_channelOffset = 1500;
-               if (db.m_Buffer == null || db.m_Buffer.Length != 3000)
-               {
-                  db.Alloc(3000);
-               }
-
-               Read(db.m_Buffer, 3000);
-               return true;
+               db.Alloc(3000);
             }
-         }
-         catch
-         {
-            Reset();
+
+            Read(db.m_Buffer, 3000);
+            return true;
          }
          return false;
       }

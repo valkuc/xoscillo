@@ -34,8 +34,9 @@ namespace XOscillo
          childForm = new VizParallax();
          childForm.MdiParent = this;
          childForm.Text = "Parallax";
-         childForm.Show();
          childForm.WindowState = FormWindowState.Maximized;
+         childForm.Show();
+         
       }
 
 

@@ -24,5 +24,14 @@ namespace XOscillo
          return false;
       }
 
+      public void Clone()
+      {
+         VizBuffer childForm = new VizBuffer();
+         childForm.MdiParent = MdiParent;
+         childForm.Text = Text;// +Parent.childFormNumber++;
+         childForm.Show();
+         childForm.WindowState = FormWindowState.Maximized;
+         childForm.CopyFrom(this);
+      }
    }
 }

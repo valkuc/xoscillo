@@ -14,16 +14,10 @@ namespace XOscillo
    {
       SerialParallax oscillo;
 
-      Ring<DataBlock> m_ring = new Ring<DataBlock>(16);
-
-      Thread m_threadProvider;
-      Thread m_threadConsumer;
-      bool m_running = false;
+      Acquirer m_Acq = new Acquirer();
 
       public VizParallax( )
       {
-         oscillo = new SerialParallax();
-
          InitializeComponent();
       }
 
@@ -32,40 +26,15 @@ namespace XOscillo
          return graphControl.GetScopeData();
       }
 
-      public void Provider()
-      {
-         DataBlock db;
-
-         while (m_running)
-         {
-            m_ring.putLock(out db);
-
-            oscillo.GetDataBlock(ref db);
-            m_ring.putUnlock();
-         }
-      }
-
-      public void Consumer()
-      {
-         while (m_running)
-         {
-            graphControl.SetScopeData( m_ring.GetFirstElementButDoNotRemoveIfLastOne() ); 
-            graphControl.Invalidate();
-         }
-      }
-
       private void VizParallax_Load(object sender, EventArgs e)
       {
          oscillo = new SerialParallax();
-         while (oscillo.Open() == false)
+
+         if ( m_Acq.Open(oscillo, graphControl) == false )
          {
-            DialogResult res = MessageBox.Show("Parallax USB oscilloscope not fount, scanned ports:\n" + string.Join("\n", SerialPort.GetPortNames()) + "\nclick ok to try again", "Can't connect", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-            if (res == DialogResult.Cancel)
-            {
-               this.Close();
-            }
+            this.Close();
+            return;
          }
-         oscillo.Ping();
 
          time.Items.Add(0.1);
          time.Items.Add(0.05);
@@ -87,35 +56,25 @@ namespace XOscillo
          play.Checked = true;
       }
 
+      private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+      {
+         m_Acq.Close();
+      }
+
       private void play_CheckedChanged(object sender, EventArgs e)
       {
-         m_running = play.Checked;
-
          if (play.Checked)
          {
-            m_threadProvider = new Thread(new ThreadStart(Provider));
-            m_threadProvider.Start();
-
-            m_threadConsumer = new Thread(new ThreadStart(Consumer));
-            m_threadConsumer.Start();
+            m_Acq.Play();
 
             play.Image = global::XOscillo.Properties.Resources.pause;
          }
          else
          {
             play.Image = global::XOscillo.Properties.Resources.play;
-            m_threadConsumer.Join();
-            m_threadProvider.Join();
-            oscillo.Reset();
-         }
-      }
 
-      private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-      {
-         m_running = false;
-         m_threadConsumer.Join();
-         m_threadProvider.Join();
-         oscillo.Close();
+            m_Acq.Stop();
+         }
       }
 
       private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
@@ -147,10 +106,7 @@ namespace XOscillo
          oscillo.SetSamplingRate(sampleRate);
 
          float secondsPerDiv = float.Parse(time.Items[time.SelectedIndex].ToString());
-         graphControl.SetSecondsPerDivision(secondsPerDiv);
-         
-         //oscillo.SetSamplingRate(250000);
-         //graphControl.SetSecondsPerDivision(0.0001f);
+         graphControl.SetSecondsPerDivision(secondsPerDiv);        
       }
 
       private void triggerMode_SelectedIndexChanged(object sender, EventArgs e)
@@ -214,12 +170,7 @@ namespace XOscillo
 
       private void clone_Click(object sender, EventArgs e)
       {
-         VizBuffer childForm = new VizBuffer();
-         childForm.MdiParent = MdiParent;
-         childForm.Text = Text;// +Parent.childFormNumber++;
-         childForm.Show();
-         childForm.WindowState = FormWindowState.Maximized;
-         childForm.CopyFrom(this);
+         Clone();
       }
    }
 }

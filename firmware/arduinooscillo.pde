@@ -1,5 +1,3 @@
-#define FASTADC 1
-
 // defines for setting and clearing register bits
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
@@ -8,29 +6,31 @@
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
-
+//
+// pins assignment
+//
 #define BUILTINLED 13
+#define PWM_GENERATOR 3
+#define ledPin 13    // LED connected to digital pin 13
 
-unsigned char t, f = 0;
-unsigned int i;
-unsigned int v,vv;
-
-unsigned mmax = 0, mmin = 1024, mmid;
-
+//
+// globals
+//
 unsigned char triggerVoltage = 0;
-
-boolean  triggerRaising = 0;
-
+unsigned char lastADC = 0;
 unsigned char triggered = 0;
-unsigned int vals[8];
-char c = 0;
-unsigned int DataRemaining = 10000;
-int ledPin =  13;    // LED connected to digital pin 13
-
+unsigned int DataRemaining = 1500;
 unsigned char channel=0;
 unsigned char numChannels=1;
-unsigned char lastADC = 0;
 
+//
+// Commands
+//
+#define CMD_IDLE 0
+#define CMD_RESET 175
+#define CMD_PING '?'
+#define CMD_READ_ADC_TRACE 170
+#define CMD_READ_BIN_TRACE 171
 
 void StartAnalogRead(uint8_t pin)
 {
@@ -72,110 +72,116 @@ unsigned int EndAnalogRead()
 
 void setup() 
 {
-#if FASTADC
   // set prescale to 16
-  sbi(ADCSRA,ADPS2) ;
+  cbi(ADCSRA,ADPS2) ;
   cbi(ADCSRA,ADPS1) ;
   cbi(ADCSRA,ADPS0) ;
-#endif
 
-  Serial.begin(115200);
+  pinMode( PWM_GENERATOR, OUTPUT );
+  analogWrite(PWM_GENERATOR, 128);
+  
+//  Serial.begin(115200);
+  Serial.begin(1000000);
 //  Serial.begin(153600);
 //  Serial.begin(9600);  
 }
 
 unsigned char command = 0;
 
+void ProcessSerialCommand( byte in )
+{
+  if ( in == CMD_PING )
+  {
+    Serial.print( 79, BYTE ) ;
+    Serial.print( 67, BYTE ) ;
+    Serial.print( triggerVoltage, BYTE ) ;
+    Serial.print( DataRemaining>>8, BYTE ) ;
+    Serial.print( DataRemaining&0xff, BYTE ) ;
+    for (int i=0;i<2;i++)
+    {
+      Serial.print( triggerVoltage, BYTE ) ;
+    }
+  } 
+  else if ( in == CMD_RESET ) 
+  {
+    command = CMD_IDLE;
+  } 
+  else if ( in == CMD_READ_ADC_TRACE )
+  {
+    while( Serial.available() < 8);
+
+    triggerVoltage = Serial.read();
+    DataRemaining = Serial.read()<<8;
+    DataRemaining |= Serial.read();
+ 
+    numChannels = Serial.read();
+    channel = 0;
+  
+    analogWrite(PWM_GENERATOR, Serial.read());
+  
+    for (int i=0;i<4;i++)
+    {
+      Serial.read();
+    }
+    
+    Serial.write( 85 );
+  
+    //get a fresher value for lastADC
+    StartAnalogRead(0);
+    lastADC = (unsigned char)(EndAnalogRead()>>2);    
+
+    triggered = 0;     
+    StartAnalogRead(0);    
+    
+    digitalWrite(ledPin, HIGH);
+    
+    command = CMD_READ_ADC_TRACE;
+  }
+}
+
 void loop() 
 {
   if (Serial.available() > 0) 
   {
-    // read the incoming byte:
-    unsigned char in = Serial.read();
+    ProcessSerialCommand( Serial.read() );
+  }
+  
+  if ( command == CMD_READ_ADC_TRACE )
+  {
+    unsigned char v = (unsigned char)(EndAnalogRead()>>2);
     
-    if ( in == '?' )
+    if ( triggered == 0  )
     {
-      Serial.print( 79, BYTE ) ;
-      Serial.print( 67, BYTE ) ;
-      Serial.print( triggerVoltage, BYTE ) ;
-      Serial.print( DataRemaining>>8, BYTE ) ;
-      Serial.print( DataRemaining&0xff, BYTE ) ;
-      for (int i=0;i<2;i++)
-      {
-        Serial.print( triggerVoltage, BYTE ) ;
-      }
-    } 
-    else if ( in == 175 ) //reset
-    {
-      command = 0;
-    } 
-    else if ( in == 170 )
-    {
-      while( Serial.available() == 0);
-      triggerVoltage = Serial.read();
-
-      while( Serial.available() == 0);
-      DataRemaining = Serial.read()<<8;
-
-      while( Serial.available() == 0);
-      DataRemaining |= Serial.read();
-
-      while( Serial.available() == 0);
-      numChannels = Serial.read();
-      channel = 0;
-
-      for (int i=0;i<4;i++)
-      {
-        while( Serial.available() == 0);
-        Serial.read();
-      }
-      
-      Serial.print( 85, BYTE );
-
-      
-      triggered = 0;     
-      command = 170;
       StartAnalogRead(0);
-      digitalWrite(ledPin, HIGH);
+
+      if ( (v >= triggerVoltage) && ( lastADC < triggerVoltage ) )
+      {
+        triggered = 1;
+        digitalWrite(ledPin, LOW);
+        channel = 0;
+      }
     }
-  }
-  else
-  {  
-    if ( command == 170 )
+    else
     {
-      unsigned char v = (unsigned char)(EndAnalogRead()>>2);
-     
-      if ( triggered == 0  )
+      StartAnalogRead(channel++);
+      if ( channel == numChannels )
+        channel=0;
+      
+      Serial.write(v);
+      
+      DataRemaining--;
+      if ( DataRemaining == 0 )
       {
-        StartAnalogRead(0);
-
-        if ( (v >= triggerVoltage) && ( lastADC < triggerVoltage ) )
-        {
-          triggered = 1;
-          digitalWrite(ledPin, LOW);
-          channel = 0;
-        }
+        command = CMD_IDLE;
       }
-      else
-      {
-        StartAnalogRead(channel++);
-        if ( channel == numChannels )
-          channel=0;
-        
-        Serial.print(v, BYTE);
-        
-        DataRemaining--;
-        if ( DataRemaining == 0 )
-        {
-          command = 0;
-        }
-      }
-
-      lastADC = v;
-
     }
+
+    lastADC = v;
+  }
+  else if ( command == CMD_READ_BIN_TRACE )
+  {
     
   }
-}
 
+}
 

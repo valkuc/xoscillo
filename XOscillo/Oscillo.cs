@@ -177,6 +177,11 @@ namespace XOscillo
 
       protected int m_numberOfChannels;
 
+      virtual public string GetName()
+      {
+         return "";
+      }
+
       virtual public bool Open()
       {
          return true;
