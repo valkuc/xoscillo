@@ -29,20 +29,15 @@ namespace XOscillo
          byte lastValue=0;
          int run = 0;
 
-         int average = 0;
-         for (int i = 0; i < db.m_Buffer.Length; i++)
-         {
-            average += db.m_Buffer[i];
-         }
-         average /= db.m_Buffer.Length;
+         int average = m_db.GetAverate( 0 );
 
          textBox1.Text += string.Format("Average {0}\r\n", average);
 
          textBox1.Text += string.Format("Sample Rate {0}\r\n", db.m_sampleRate);
 
-         for (int i = 0; i < db.m_Buffer.Length; i++)
+         for (int i = 0; i < db.GetChannelLength(); i++)
          {
-            byte value = db.m_Buffer[i];
+            byte value = db.GetVoltage(0, i);;
 
             if (value > average && lastValue < average)
             {

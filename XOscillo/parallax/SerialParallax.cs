@@ -241,13 +241,13 @@ namespace XOscillo
          // 90%
          configBuffer[5] = 180; //2740
          configBuffer[6] = 10;
-         configBuffer[7] = 140;  //396
+         configBuffer[7] = 140; // 396
          configBuffer[8] = 1;
 
          // 50%
          configBuffer[5] = 240; //1520
          configBuffer[6] = 5;
-         configBuffer[7] = 239;  //1007
+         configBuffer[7] = 239; //1007
          configBuffer[8] = 3;
 
          /*

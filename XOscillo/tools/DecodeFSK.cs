@@ -24,17 +24,13 @@ namespace XOscillo
 
       public int Error(int a, int b)
       {
-         int e = 0;
-         if (a > b)
+         if (a < b)
          {
-            e = a - b;
-            return (e * 100 / a);
+            int c = a;
+            a = b;
+            b = c;
          }
-         else
-         {
-            e = b - a;
-            return (e * 100 / b);
-         }
+         return ((b - a) * 100 ) / b;
       }
 
       public string ReverseString(string s)
@@ -46,7 +42,253 @@ namespace XOscillo
 
       public bool IsNoise(byte b)
       {
-         return (b < 140) && (b > 120);
+         int average = m_db.GetAverate(0);
+
+         return ( b < ( average + 5 ) ) && ( b > (average - 5) );
+      }
+
+
+      public List<int> GetMinMax()
+      {
+         int average = m_db.GetAverate(0);
+
+         List<int> MinMax = new List<int>();
+
+         byte lastValue = m_db.GetVoltage(0, 0);
+
+         int Tip = average;
+         int Run = 0;
+
+         for (int i = 1; i < m_db.GetChannelLength(); i++)
+         {
+            byte value = m_db.GetVoltage(0, i);
+
+            // up
+            if (value > average  && lastValue <= average)
+            {
+               if ( value - Tip > 10 )
+                  MinMax.Add(Run);
+               Tip = value;
+            }
+
+            //down
+            if (value < average && lastValue >= average)
+            {
+               if ( Tip - value  > 10)
+                  MinMax.Add(Run);
+               Tip = value;
+            }
+
+            if ( value > average )
+            {
+               //find max
+               if ( value > Tip )
+               {
+                  Tip = value;
+                  Run = i;
+               }
+            }
+
+            if ( value < average )
+            {
+               if ( value < Tip )
+               {
+                  Tip = value;
+                  Run = i;
+               }
+            }            
+
+            lastValue = value;
+         }
+
+         return MinMax;
+      }
+
+      public int FindClockedSignal(List<int> deltas, int offset)
+      {
+         int run = 0;
+         int v = deltas[offset];
+         for (int j = offset + 1; j < deltas.Count; j++)
+         {
+            int val = deltas[j];
+            if (Error(v, val*2) < 30)
+            {
+               run++;
+               v = val*2;
+            }
+            else if (Error(v, val) < 30)
+            {
+               run++;
+               v = val;
+            }
+            else
+            {
+               break;
+            }
+         }
+
+         return run;
+      }
+
+      public int ScanForClockedSignal(List<int> Zeroes, int ConsecutiveOnes )
+      {
+         for( int i=0;i<Zeroes.Count;i++)
+         {
+            int offset = FindClockedSignal(Zeroes, i);
+            if ( offset > ConsecutiveOnes )
+            {
+               return i;
+            }
+         }
+         return -1;
+      }
+
+      public List<int> ComputeDeltas(List<int> Peaks)
+      {
+         List<int> deltas = new List<int>();
+         for (int i = 1; i < Peaks.Count; i++)
+         {
+            deltas.Add(Peaks[i] - Peaks[i - 1]);
+         }
+
+         return deltas;
+      }
+
+
+      public string ExtractBits(List<int> delta, int offset, int longDuration)
+      {   
+         int zeroDuration = longDuration;
+         int oneDuration = zeroDuration / 2;
+
+         string bits = "";
+
+         for (int i = offset; i < delta.Count; i++)
+         {
+            int average = (zeroDuration + oneDuration) /2;
+
+            int duration = delta[i];
+
+            if (duration > average * 4)
+            {
+               bits += "p";
+               continue;
+            }
+
+            if (duration > average)
+            {
+               if (Error(duration, zeroDuration) < 40)
+               {
+                  bits += "0";
+                  zeroDuration = (zeroDuration + duration)/2;
+               }
+               else
+               {
+                  bits += "*";
+               }
+            }
+            else
+            {
+               if (Error(duration, oneDuration) < 40)
+               {
+                  bits += "1";
+                  oneDuration = (oneDuration + duration) / 2;
+               }
+               else
+               {
+                  bits += "*";
+               }
+            }
+
+          
+         }
+
+         return bits;
+      }
+
+      public int DetectFSK(string bitstream)
+      {
+         int err = 0;
+
+         bool wasOne = false;
+
+         for(int i=0;i<bitstream.Length;i++)
+         {
+            if ( wasOne )
+            {   
+               if ( bitstream[i] != '1' )
+               {                  
+                  err++;
+               }
+               wasOne = false;
+            }
+            else
+            {
+               wasOne = (bitstream[i] == '1' );
+            }
+         }
+
+         return err;
+      }
+
+      string GetBitStreamFromFSK(string bitstream)
+      {
+         string outdata = "";
+
+         bool wasOne = false;
+
+         for (int i = 0; i < bitstream.Length; i++)
+         {
+            if (wasOne)
+            {
+               if (bitstream[i] == '1')
+               {
+                  outdata += "1";
+               }
+               else
+               {
+                  outdata += "*";
+               }
+               wasOne = false;
+            }
+            else
+            {               
+               if (bitstream[i] == '1')
+               {
+                  wasOne = true;
+               }
+               else
+               {
+                  outdata += "0";
+               }
+            }
+         }
+         return outdata;
+      }
+
+      public string GetBitStreamFromAlternating(string bitstream)
+      {
+         string outdata = "";
+
+         for (int i = 1; i < bitstream.Length; i+=2)
+         {
+            char last = bitstream[i-1];
+            char cur = bitstream[i];
+
+            if (last=='0' && cur == '1')
+            {
+               outdata += "1";
+            }
+            else if (last == '1' && cur == '0')
+            {
+               outdata += "0";
+            }
+            else
+            {
+               outdata += "*";
+            }
+         }
+
+         return outdata;
       }
 
       override public void SetDataBlock(DataBlock db)
@@ -54,162 +296,38 @@ namespace XOscillo
          m_db = new DataBlock();
          m_db.Copy(db);
 
-         byte max, min;
+         List<int> PeakOffsets = GetMinMax();
 
-         int length = m_db.m_Buffer.Length / m_db.m_channels;
-         int head = (m_db.m_channels-1)*length;
+         List<int> deltas = ComputeDeltas(PeakOffsets);
 
-         // trim head
-         int i = 0;
-         for (;i<length; i++)
+         int offset = ScanForClockedSignal(deltas, 5);
+         if (offset >= 0)
          {
-            if ( IsNoise(m_db.m_Buffer[head + i]) == false )
-            {
-               head += i;
-               length -= i;
-               break;
-            }
+            output.Text += string.Format("Clocked signal found: {0}\r\n", offset);
+
+            string bitstream = ExtractBits(deltas, offset, deltas[offset]);
+
+            output.Text += bitstream + "\r\n";
+
+            output.Text += string.Format("Errors as FSK: {0}\r\n", DetectFSK(bitstream));
+            output.Text += GetBitStreamFromFSK(bitstream) + "\r\n";
+
+            //output.Text += string.Format("Alternating: \r\n");
+            //output.Text += GetBitStreamFromAlternating(bitstream) + "\r\n";
+            
          }
-         
-         //trim tail
-         for (; head < length; length--)
+         else
          {
-            if ( IsNoise(m_db.m_Buffer[head + length-1]) == false )
+            output.Text += string.Format("Clocked signal not found, dumping timing values\r\n");
+
+            int last = 0;
+            foreach (int i in PeakOffsets)
             {
-               break;
+               output.Text += string.Format("{0:0000}: {1}", i, i-last) + "\r\n";
+               last = i;
             }
-         }
-          
-
-         ComputeMaxMin(m_db.m_Buffer, head, length, out max, out min);
-
-         output.Text += string.Format("Range ({0}, {1})\r\n",  max, min);
-
-         List<int> peaks;
-         ComputeMaxMin(m_db.m_Buffer, head, length, out peaks);
-
-         // compute deltas
-         List<int> deltas = new List<int>();
-         for (int p = 1; p < peaks.Count; p++)
-         {
-            deltas.Add(peaks[p] - peaks[p - 1]);
-         }
-
-         int delta_old = 0;
-
-         int v = -1;
-         int l = 0;
-         int ee = 0;
-         int zero = -1;
-
-         string s = "";
-
-         for (int p=1; p < peaks.Count;p++ )
-         {
-            int delta = peaks[p] - peaks[p - 1];
-
-            int err = Error(delta, delta_old);
-
-            if (v == -1)
-            {
-               if (err < 20)
-               {
-                  l++;
-               }
-               else
-               {
-                  l = 0;
-               }
-               if (l > 10)
-               {
-                  v = 0;
-                  zero = delta;
-               }
-            }
-            else
-            {
-               /*
-               if (err > 40)
-               {
-                  if (v == 0) v = 1; else v = 0;
-               }
-                */
-
-               //ee = Error(delta, zero) - Error(delta * 2, zero);
-
-               if ( delta >= 10 )
-               {
-                  v = 0;
-               }
-               else
-               {
-                  v = 1;
-               }
-
-               s += v.ToString();
-            }
-
-            output.Text += string.Format("{0:0000}: {1:00}  {3:0} {4}%\r\n", peaks[p], delta, err, v, ee);
-
-            delta_old = delta;
-         }
-
-         output.Text += "String\r\n";
-         output.Text += s + "\r\n";
-         output.Text += "Reversed string\r\n";
-         output.Text += ReverseString(s) + "\r\n";
-
-         
-      }
-
-      public void ComputeMaxMin(byte [] data, int offset, int size, out byte max, out byte min)
-      {
-         max = 0;
-         min = 255;
-         for (int i = 0; i < size; i++)
-         {
-            byte value = data[i + offset];
-
-            if (value > max)
-               max = value;
-
-            if (value < min)
-               min = value;
          }
       }
-
-      public void ComputeMaxMin(byte [] data, int offset, int size, out List<int> maxmin)
-      {
-         maxmin = new List<int>();
-
-         byte old = data[ offset ];
-
-         for (int i = 0; i < size; i++)
-         {
-
-            while( data[i + offset]<=old )
-            {
-               old = data[i + offset];
-               i++;
-               if (i >= size)
-                  return;
-            }
-            maxmin.Add(i);
-
-            while( data[i + offset]>=old )
-            {
-               old = data[i + offset];
-               i++;
-               if (i >= size)
-                  return;
-            }
-            maxmin.Add(i);
-         }
-         
-      }
-
-      //public void ComputeMaxMin(byte [] data, int offset, int size, out byte max, out byte min)
-
 
 
       private void listBox1_SelectedIndexChanged(object sender, EventArgs e)

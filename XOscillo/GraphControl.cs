@@ -26,6 +26,7 @@ namespace XOscillo
       Pen[] m_pens = { Pens.Red, Pens.Blue, Pens.Green, Pens.Yellow };
 
       public List<int> Lines = new List<int>();
+      public List<int> VerticalLines = new List<int>();
 
 		public GraphControl()
 		{
@@ -117,25 +118,31 @@ namespace XOscillo
 
       private void DrawHorizontalLines(Graphics g, Rectangle r)
       {
-         float yDelta = (float)Height / 8.0f;
-
          Pen p = new Pen(Color.Gray );
          p.DashStyle= System.Drawing.Drawing2D.DashStyle.Custom;
-         p.DashPattern = new float[] {1,5 };
+         p.DashPattern = new float[] { 1,5 };
 
          for (int y = 0; y < 8; y++)
          {
-            g.DrawLine(p, 0, (int)(yDelta * y), r.Width, (int)(yDelta * y));
+            int yy = (Height * y) / 8;
+            g.DrawLine(p, 0, yy, r.Width, yy);
          }
       }
 
-      private void DrawVerticalLines(Graphics g, Rectangle r)
+      private double GetTimeOffset()
       {
          double timeoffset = 0;
          if (hScrollBar1.Visible)
          {
-            timeoffset = lerp( 0.0, ScopeData.GetTotalTime(), 0.0, hScrollBar1.Maximum, hScrollBar1.Value);
+            timeoffset = lerp(0.0, ScopeData.GetTotalTime(), 0.0, hScrollBar1.Maximum, hScrollBar1.Value);
          }
+
+         return timeoffset;
+      }
+
+      private void DrawVerticalLines(Graphics g, Rectangle r)
+      {
+         double timeoffset = GetTimeOffset();
 
          Point pp = new Point();
          for (int i=0; ; i++)
@@ -155,14 +162,26 @@ namespace XOscillo
          }
       }
 
+      private void DrawVerticalMarkers(Graphics g, Rectangle r)
+      {
+         double timeoffset = GetTimeOffset();
+
+         for (int i = 0; i < VerticalLines.Count; i++)
+         {
+            float time = ScopeData.GetTime(VerticalLines[i]);
+
+            int x = (int)lerp(0, r.Height / 8.0, 0, m_secondsPerDiv, (time - timeoffset));
+
+            g.DrawLine(Pens.Red, x, r.Top, x, r.Bottom);
+
+            if (x > r.Width)
+               break;
+         }
+      }
+
       private void DrawGraph(Graphics g, Rectangle r, Pen p, int channel)
       {
-         float timeoffset = 0;
-
-         if (hScrollBar1.Visible)
-         {
-            timeoffset = (float)lerp((double)0, ScopeData.GetTotalTime(), (double)0, (double)hScrollBar1.Maximum, (double)hScrollBar1.Value);
-         }
+         double timeoffset = GetTimeOffset();
 
          int yy = 0;
          int xx = 0;
@@ -172,7 +191,6 @@ namespace XOscillo
          {
             for (i = 0; i < length; i++)
             {
-
                int rawvolt = ScopeData.GetVoltage(channel, i);
 
                float time = ScopeData.GetTime(i);
@@ -229,6 +247,8 @@ namespace XOscillo
                DrawGraph(g, r, m_pens[ch], ch);
             }
          }
+
+         DrawVerticalMarkers(g, r);
       }
 
       fft f;
@@ -334,23 +354,7 @@ namespace XOscillo
             pp.Y += 16;
             e.Graphics.DrawString(string.Format("{0} fps", 1000 / duration.Milliseconds), this.Font, Brushes.White, pp);
          }
-         
-         /*
-         pp.Y += 16;
-         ts = (ScopeData.m_stop - ScopeData.m_start).TotalMilliseconds; 
-         drawingArea.DrawString(string.Format("{0}", ts), this.Font, m_brushWhite, pp);
-         */
-         /*
-         if (hScrollBar1 != null)
-         {
-            pp.Y += 16;
-            drawingArea.DrawString(string.Format("{0}x{1} {2}-{3}", Width, Height, hScrollBar1.Value, hScrollBar1.LargeChange), this.Font, m_brushWhite, pp);
-         }
-         */
-
-         //e.Graphics.DrawImageUnscaled(backBuffer, 0, 0);
       }
-
 
 		private void UserControl1_Resize(object sender, EventArgs e)
 		{

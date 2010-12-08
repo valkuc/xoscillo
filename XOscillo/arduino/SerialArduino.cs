@@ -10,28 +10,28 @@ namespace XOscillo
    {
       SerialPort serialPort;
       byte m_triggerValue = 127;
-      int m_numSamples = 1024;
+      int m_numSamples = 1024*10;
       int baudrate;
 
       public SerialArduino()
       {
          // Create a new SerialPort object with default settings.
          serialPort = new SerialPort();
-
+         /*
          {
             baudrate = 1000000;
             m_sampleRate = 59250; // this is actual number of samples per second I am able to archieve on the arduino
          }
+          */
          //needs tunning
+         
          {
             baudrate = 115200;
-            m_sampleRate = 24000;
+            m_sampleRate = 12000;
          }
          
 
-         m_sampleRates = new int[1] { m_sampleRate };
-
-         
+         m_sampleRates = new int[1] { m_sampleRate };        
       }
 
       override public string GetName()

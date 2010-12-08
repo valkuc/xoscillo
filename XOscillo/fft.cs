@@ -6,7 +6,6 @@ namespace XOscillo
 {
    class fft
    {
-
       public double[] x;
       public double[] y;
 
@@ -50,8 +49,6 @@ namespace XOscillo
          n = 1;
          for (i=0;i<m;i++) 
             n *= 2;
-
-         
 
          /* Do the bit reversal */
          i2 = n >> 1;
