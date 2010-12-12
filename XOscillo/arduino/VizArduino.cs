@@ -117,5 +117,24 @@ namespace XOscillo
          Clone();
       }
 
+      private void cof_Validated(object sender, EventArgs e)
+      {
+         graphControl.SetLowPassCutOffFrequency(double.Parse(cof.Text));
+      }
+
+      private void cof_Validating(object sender, CancelEventArgs e)
+      {
+         int value;
+         if (int.TryParse(cof.Text, out value))
+         {
+            trigger.BackColor = Color.White;
+         }
+         else
+         {
+            trigger.BackColor = Color.Red;
+            e.Cancel = true;
+         }
+      }
+
    }
 }

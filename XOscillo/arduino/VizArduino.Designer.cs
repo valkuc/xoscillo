@@ -45,10 +45,14 @@
          this.fft = new System.Windows.Forms.ToolStripButton();
          this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
          this.graphControl = new XOscillo.GraphControl();
+         this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+         this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
+         this.cof = new System.Windows.Forms.ToolStripTextBox();
          this.toolStrip2.SuspendLayout();
          this.toolStripContainer1.ContentPanel.SuspendLayout();
          this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
          this.toolStripContainer1.SuspendLayout();
+         this.toolStrip1.SuspendLayout();
          this.SuspendLayout();
          // 
          // toolStrip2
@@ -176,7 +180,7 @@
          // toolStripContainer1.ContentPanel
          // 
          this.toolStripContainer1.ContentPanel.Controls.Add(this.graphControl);
-         this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(787, 418);
+         this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(787, 393);
          this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
          this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
          this.toolStripContainer1.Name = "toolStripContainer1";
@@ -186,6 +190,7 @@
          // 
          // toolStripContainer1.TopToolStripPanel
          // 
+         this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
          this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip2);
          // 
          // graphControl
@@ -193,8 +198,33 @@
          this.graphControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.graphControl.Location = new System.Drawing.Point(0, 0);
          this.graphControl.Name = "graphControl";
-         this.graphControl.Size = new System.Drawing.Size(787, 418);
+         this.graphControl.Size = new System.Drawing.Size(787, 393);
          this.graphControl.TabIndex = 0;
+         // 
+         // toolStrip1
+         // 
+         this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+         this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel4,
+            this.cof});
+         this.toolStrip1.Location = new System.Drawing.Point(3, 25);
+         this.toolStrip1.Name = "toolStrip1";
+         this.toolStrip1.Size = new System.Drawing.Size(197, 25);
+         this.toolStrip1.TabIndex = 2;
+         // 
+         // toolStripLabel4
+         // 
+         this.toolStripLabel4.Name = "toolStripLabel4";
+         this.toolStripLabel4.Size = new System.Drawing.Size(52, 22);
+         this.toolStripLabel4.Text = "LowPass";
+         // 
+         // cof
+         // 
+         this.cof.Name = "cof";
+         this.cof.Size = new System.Drawing.Size(100, 25);
+         this.cof.Text = "0";
+         this.cof.Validating += new System.ComponentModel.CancelEventHandler(this.cof_Validating);
+         this.cof.Validated += new System.EventHandler(this.cof_Validated);
          // 
          // VizArduino
          // 
@@ -211,6 +241,8 @@
          this.toolStripContainer1.TopToolStripPanel.PerformLayout();
          this.toolStripContainer1.ResumeLayout(false);
          this.toolStripContainer1.PerformLayout();
+         this.toolStrip1.ResumeLayout(false);
+         this.toolStrip1.PerformLayout();
          this.ResumeLayout(false);
 
       }
@@ -233,5 +265,8 @@
       private System.Windows.Forms.ToolStripContainer toolStripContainer1;
       private GraphControl graphControl;
       private System.Windows.Forms.ToolStripButton fft;
+      private System.Windows.Forms.ToolStrip toolStrip1;
+      private System.Windows.Forms.ToolStripLabel toolStripLabel4;
+      private System.Windows.Forms.ToolStripTextBox cof;
    }
 }

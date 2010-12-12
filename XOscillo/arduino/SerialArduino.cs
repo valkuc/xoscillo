@@ -10,8 +10,9 @@ namespace XOscillo
    {
       SerialPort serialPort;
       byte m_triggerValue = 127;
-      int m_numSamples = 1024*10;
+      int m_numSamples = 1024;
       int baudrate;
+      int SampleID = 0;
 
       public SerialArduino()
       {
@@ -197,7 +198,7 @@ namespace XOscillo
          Read(res, 1);
          if (res[0] == 85)
          {
-            db.m_sample = 0;
+            db.m_sample = SampleID++;
             db.m_start = DateTime.Now;
             
             db.m_channels = m_numberOfChannels;

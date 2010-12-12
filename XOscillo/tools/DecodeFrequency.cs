@@ -26,7 +26,7 @@ namespace XOscillo
       {
          m_db = db;
 
-         byte lastValue=0;
+         int lastValue=0;
          int run = 0;
 
          int average = m_db.GetAverate( 0 );
@@ -37,7 +37,7 @@ namespace XOscillo
 
          for (int i = 0; i < db.GetChannelLength(); i++)
          {
-            byte value = db.GetVoltage(0, i);;
+            int value = db.GetVoltage(0, i);;
 
             if (value > average && lastValue < average)
             {

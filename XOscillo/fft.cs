@@ -17,12 +17,21 @@ namespace XOscillo
 
       public void SetData( byte [] data, int offset, int length )
       {
-         for(int i=0;i<length;i++)
+         for(int i=0;i<x.Length;i++)
          {
             x[i] = (double)data[offset + i];
             y[i] = 0;
          }
       }
+
+      public void GetPower(byte[] data)
+      {
+         for (int i = 0; i < x.Length; i++)
+         {
+            data[i] = (byte)Power(i);
+         }
+      }
+
 
       public double Power(int i)
       {

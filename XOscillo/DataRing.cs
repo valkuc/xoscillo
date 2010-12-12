@@ -30,8 +30,6 @@ namespace XOscillo
 
       public void SamplingLoop()
 		{
-
-
 			while (m_running == true)
 			{
             try

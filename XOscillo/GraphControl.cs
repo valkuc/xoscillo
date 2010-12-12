@@ -28,6 +28,8 @@ namespace XOscillo
       public List<int> Lines = new List<int>();
       public List<int> VerticalLines = new List<int>();
 
+      double m_lpcf;
+
 		public GraphControl()
 		{
 			InitializeComponent();
@@ -54,11 +56,26 @@ namespace XOscillo
          Invalidate();
       }
 
+      public void SetLowPassCutOffFrequency(double lpcf)
+      {
+         m_lpcf = lpcf;
+         Invalidate();
+      }
+
+
       public void SetScopeData( DataBlock db )
       {
          lock(this)
          {
-            ScopeData = db;
+            if (m_lpcf > 0)
+            {
+               ScopeData.Copy(db);
+               ScopeData.HighPass(m_lpcf);
+            }
+            else
+            {
+               ScopeData = db;
+            }
          }
       }
 
@@ -218,6 +235,8 @@ namespace XOscillo
 
       public void DrawOscillo(Graphics g, Rectangle r)
       {
+         g.Clear(Color.Black);
+
          if (oldBounds.Width != Width || oldBounds.Height != Height)
          {
             if (hScrollBar1 != null)
@@ -254,14 +273,14 @@ namespace XOscillo
       fft f;
       private void DrawFFT(Graphics g, Rectangle r)
       {
-         int samplesPerChannel = ScopeData.m_Buffer.Length / ScopeData.m_channels;
+         g.Clear(Color.Black);
 
          if ( f == null)
          {
-            f = new fft(samplesPerChannel);
+            f = new fft(ScopeData.GetChannelLength());
          }
 
-         f.SetData(ScopeData.m_Buffer, 0, samplesPerChannel);
+         f.SetData(ScopeData.m_Buffer, 0, ScopeData.GetChannelLength());
          f.FFT(0);
 
          hScrollBar1.Maximum = 1024;
@@ -271,10 +290,9 @@ namespace XOscillo
          int maxFreq = ScopeData.m_sampleRate / 2;
          int minFreq = 0;
 
-         double power = 10000.0/f.Power(0);
-
          //margin at the bottom
          r.Height -= 20;
+         r.Width = 1024;
 
          int timeoffset = 0;
          if (hScrollBar1.Visible)
@@ -283,11 +301,19 @@ namespace XOscillo
             r.Height -= hScrollBar1.Height;
          }
 
-         //draw bars
-         for (int i = 0 ; i < 512; i++)         
+         r.X -= timeoffset;
+
+         if (false)
          {
-            int x = 2 * (i - timeoffset);
-            g.DrawLine(Pens.Red, x, r.Bottom, x, r.Bottom - (int)(f.Power(i) * power));
+            DrawFFTBars(g, r);
+         }
+         else
+         {
+            DrawSlidingFFT(g, r);
+
+            r.Y -= 256;
+            DrawFFTBars(g, r);
+            r.Y += 256;
          }
 
          int freqStep;
@@ -305,7 +331,7 @@ namespace XOscillo
          {
             int x = lerp(0, 512, minFreq, maxFreq, i );
 
-            pp.X = 2 * (x - timeoffset);
+            pp.X = r.X + 2 * x;
             pp.Y = r.Bottom;
 
             g.DrawLine(Pens.Gray, pp.X, 0, pp.X, pp.Y);
@@ -313,8 +339,55 @@ namespace XOscillo
          }
       }
 
+      private void DrawFFTBars(Graphics g, Rectangle r)
+      {
+         //draw bars
+         for (int i = 0; i < 512; i++)
+         {
+            int x = r.X + 2 * i ;
+            //g.DrawLine(Pens.Red, x, r.Bottom, x, r.Bottom - (int)(f.Power(i) * power)/10);
+            g.DrawLine(Pens.Red, x, r.Bottom, x, r.Bottom - (int)(f.Power(i) / 128));
+         }
+      }
 
-		private void UserControl1_Paint(object sender, PaintEventArgs e)
+      Bitmap bmp;
+
+      Color[] shade;
+
+      private void DrawSlidingFFT(Graphics g, Rectangle r)
+      {
+         if (bmp == null)
+         {
+            bmp = new Bitmap(512,256);
+            shade = new Color[256];
+            for (int i = 0; i < 256; i++)
+            {
+               shade[i] = System.Drawing.Color.FromArgb(i, 0, 255-i);
+            }
+         }
+
+         for (int i = 0; i < 512; i++)
+         {
+            double power = f.Power(i)/64;
+
+            if (power > 255)
+               power = 255;
+            byte p = (byte)power;
+
+            bmp.SetPixel(i, ScopeData.m_sample & 0xff, shade[p] );
+         }
+
+         int yy = r.Y+r.Height-256;
+         g.DrawImage(bmp,r.X, yy,1024,256 );
+
+         int y = yy + (ScopeData.m_sample + 1 & 0xff);
+         g.DrawLine(Pens.Red, r.X, y, 1024, y);
+
+         
+      }
+
+
+      private void UserControl1_Paint(object sender, PaintEventArgs e)
       {
          DateTime currentTime = DateTime.Now;
          TimeSpan duration = currentTime - oldTime;
@@ -329,10 +402,9 @@ namespace XOscillo
          {
             return;
          }
-
-         e.Graphics.Clear(Color.Black);
+        
          if (m_drawFFT)
-         {
+         {            
             DrawFFT(e.Graphics, this.Bounds);
          }
          else
