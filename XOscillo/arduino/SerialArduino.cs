@@ -40,78 +40,67 @@ namespace XOscillo
          return "Arduino";
       }
 
-      private bool AutoDetect()
+      override public bool Open(string portName)
       {
-         string[] ports = SerialPort.GetPortNames();
-
          string os = Environment.OSVersion.Platform.ToString();
 
-         foreach (string portName in ports)
+         try
          {
-            try
+            serialPort = new SerialPort(portName, baudrate, Parity.None, 8,StopBits.One);
+            serialPort.Handshake = Handshake.None;
+
+            DebugConsole.Instance.Add(portName + ", rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString() + "   trying...");
+            serialPort.Open();
+            //DebugConsole.Instance.Add(" rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString());
+
+            if ( os == "Unix" )
             {
-               serialPort = new SerialPort(portName, baudrate, Parity.None, 8,StopBits.One);
-               serialPort.Handshake = Handshake.None;
-
-               serialPort.Open();
-               System.Console.Write(portName + ", rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString() + "   trying...");
-
-               if ( os == "Unix" )
+               DebugConsole.Instance.Add("lowering RTS");
+               serialPort.RtsEnable = false;
+               for (int i = 0; i < 8; i++)
                {
-                  System.Console.Write("lowering RTS");
-                  serialPort.RtsEnable = false;
-                  for (int i = 0; i < 8; i++)
-                  {
-                     Thread.Sleep(250);
-                     System.Console.Write(".");
-                  }
-               }
-
-            }
-            catch
-            {
-               System.Console.WriteLine("Can't open!");
-               continue;
-            }
-
-            try
-            {
-               serialPort.WriteTimeout = 8000;
-               serialPort.ReadTimeout = 8000;
-
-               System.Console.Write("pinging....");
-               if (Ping() == true)
-               {
-                  System.Console.WriteLine("Found!");
-                  return true;
-               }
-               else
-               {
-                  System.Console.WriteLine("Bad reply");
+                  Thread.Sleep(250);
+                  DebugConsole.Instance.Add(".");
                }
             }
-            catch
-            {
-               System.Console.WriteLine("Timeout");
-            }
-
-            serialPort.Close();
          }
+         catch
+         {
+            DebugConsole.Instance.AddLn("Can't open!");
+            return false;
+         }
+
+         try
+         {
+            serialPort.WriteTimeout = 8000;
+            serialPort.ReadTimeout = 8000;
+
+            DebugConsole.Instance.Add("pinging....");
+            if (Ping() == true)
+            {
+               DebugConsole.Instance.AddLn("Found!");
+               serialPort.ReadTimeout = 10000;
+               serialPort.WriteTimeout = 10000;
+               return true;
+            }
+            else
+            {
+               DebugConsole.Instance.AddLn("Bad reply");
+            }
+         }
+         catch
+         {
+            DebugConsole.Instance.AddLn("Timeout");
+         }
+
+         serialPort.Close();
 
          return false;
       }
 
-      override public bool Open()
+      override public bool IsOpened()
       {
-         // Allow the user to set the appropriate properties.
-         if ( AutoDetect() )
-         {
-            serialPort.ReadTimeout = 10000;
-            serialPort.WriteTimeout = 10000;
-            return true;
-         }
-
-         return false;
+         return serialPort.IsOpen;
       }
 
       override public bool Close()

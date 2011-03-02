@@ -8,13 +8,13 @@ namespace XOscillo
 {
    class Acquirer
    {
-      Oscillo m_Oscillo;
-      GraphControl m_GraphControl;
+      Oscillo m_Oscillo = null;
+      GraphControl m_GraphControl = null;
 
       Ring<DataBlock> m_ring = new Ring<DataBlock>(16);
 
-      Thread m_threadProvider;
-      Thread m_threadConsumer;
+      Thread m_threadProvider = null;
+      Thread m_threadConsumer = null;
       bool m_running = false;
 
       public bool Open( Oscillo os, GraphControl gc)
@@ -22,14 +22,13 @@ namespace XOscillo
          m_Oscillo = os;
          m_GraphControl = gc;
 
-         while (m_Oscillo.Open() == false)
+         ManualSerialPortSelection msps = new ManualSerialPortSelection(os);
+
+         if (msps.ShowDialog() == DialogResult.Cancel)
          {
-            DialogResult res = MessageBox.Show(m_Oscillo.GetName() + " not found", "Can't connect", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-            if (res == DialogResult.Cancel)
-            {
-               return false;
-            }
+            return false;
          }
+
          return m_Oscillo.Ping();
       }
 

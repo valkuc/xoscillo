@@ -165,5 +165,10 @@ namespace XOscillo
          MessageBox.Show( "Written by Raul Aguaviva\nThis is work in progress", "Xoscillo");
       }
 
+      private void debugConsoleToolStripMenuItem_Click(object sender, EventArgs e)
+      {
+         DebugConsole.Instance.Show();
+      }
+
 	}
 }

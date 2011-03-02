@@ -32,7 +32,7 @@ namespace XOscillo
 
          if ( m_Acq.Open(oscillo, graphControl) == false )
          {
-            this.Close();
+            this.BeginInvoke(new MethodInvoker(this.Close));
             return;
          }
 

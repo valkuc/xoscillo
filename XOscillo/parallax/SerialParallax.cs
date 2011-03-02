@@ -132,60 +132,48 @@ namespace XOscillo
          return "Parallax USB oscilloscope";
       }
 
-      override public bool Open()
+      override public bool Open(string portName)
       {
-         // Allow the user to set the appropriate properties.
-         if (AutoDetect())
+         try
          {
-            serialPort.ReadTimeout = 10000;
-            serialPort.WriteTimeout = 10000;
-            return true;
+            DebugConsole.Instance.Add("trying: " + portName + "...");
+            serialPort = new SerialPort(portName);
+            serialPort.Open();
          }
+         catch
+         {
+            DebugConsole.Instance.AddLn("Can't open");
+            return false;
+         }
+
+         try
+         {
+            DebugConsole.Instance.Add("is parallax...");
+            serialPort.WriteTimeout = 4000;
+            serialPort.ReadTimeout = 4000;
+
+            if (Ping() == true)
+            {
+               DebugConsole.Instance.AddLn("Yes!");
+               serialPort.ReadTimeout = 10000;
+               serialPort.WriteTimeout = 10000;
+               return true;
+            }
+         }
+         catch
+         {
+            DebugConsole.Instance.AddLn("nope.");
+         }
+
+         serialPort.Close();
 
          return false;
       }
 
-      virtual public bool AutoDetect()
+      override public bool IsOpened()
       {
-         string[] ports = SerialPort.GetPortNames();
-
-         foreach (string portName in ports)
-         {
-            try
-            {
-               Console.Write("trying: " + portName + "...");
-               serialPort = new SerialPort(portName);
-               serialPort.Open();
-            }
-            catch
-            {
-               Console.WriteLine("Can't open");
-               continue;
-            }
-
-            try
-            {
-               Console.Write("is parallax...");
-               serialPort.WriteTimeout = 4000;
-               serialPort.ReadTimeout = 4000;
-
-               if (Ping() == true)
-               {
-                  Console.WriteLine("Yes!");
-                  return true;
-               }
-            }
-            catch
-            {
-               Console.WriteLine("nope.");
-            }
-
-            serialPort.Close();
-         }
-
-         return false;
+         return serialPort.IsOpen;
       }
-
 
       override public bool Close()
       {

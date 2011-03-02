@@ -15,14 +15,20 @@ namespace XOscillo
 
       protected int m_numberOfChannels;
 
+      virtual public bool Open(string portName)
+      {
+         return false;
+      }
+
+      virtual public bool IsOpened()
+      {
+         return false;
+      }
+
+
       virtual public string GetName()
       {
          return "";
-      }
-
-      virtual public bool Open()
-      {
-         return true;
       }
 
       virtual public bool Close()
