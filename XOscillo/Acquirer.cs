@@ -24,7 +24,9 @@ namespace XOscillo
 
          ManualSerialPortSelection msps = new ManualSerialPortSelection(os);
 
-         if (msps.ShowDialog() == DialogResult.Cancel)
+         msps.ShowDialog();
+
+         if ( os.IsOpened() == false )
          {
             return false;
          }

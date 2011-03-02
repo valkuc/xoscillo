@@ -29,8 +29,8 @@ namespace XOscillo
             comboBox1.Items.Add(portName);
             
             if ( m_os.Open(portName) == true )
-            {
-               this.BeginInvoke(new MethodInvoker(this.Close));
+            {               
+               this.Close();
             }            
          }
 
