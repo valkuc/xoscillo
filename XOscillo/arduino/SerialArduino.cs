@@ -72,15 +72,13 @@ namespace XOscillo
 
          try
          {
-            serialPort.WriteTimeout = 8000;
-            serialPort.ReadTimeout = 8000;
+            serialPort.WriteTimeout = 1000;
+            serialPort.ReadTimeout = 1000;
 
             DebugConsole.Instance.Add("pinging....");
             if (Ping() == true)
             {
                DebugConsole.Instance.AddLn("Found!");
-               serialPort.ReadTimeout = 10000;
-               serialPort.WriteTimeout = 10000;
                return true;
             }
             else

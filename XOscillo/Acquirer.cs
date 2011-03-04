@@ -63,7 +63,7 @@ namespace XOscillo
                {
                   m_Oscillo.Reset();
                }
-            } while (gotdata == false);
+            } while ( (gotdata == false) & (m_running == true) );
 
             m_ring.putUnlock();
          }

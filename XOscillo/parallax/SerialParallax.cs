@@ -149,14 +149,12 @@ namespace XOscillo
          try
          {
             DebugConsole.Instance.Add("is parallax...");
-            serialPort.WriteTimeout = 4000;
-            serialPort.ReadTimeout = 4000;
+            serialPort.WriteTimeout = 1000;
+            serialPort.ReadTimeout = 1000;
 
             if (Ping() == true)
             {
                DebugConsole.Instance.AddLn("Yes!");
-               serialPort.ReadTimeout = 10000;
-               serialPort.WriteTimeout = 10000;
                return true;
             }
          }
