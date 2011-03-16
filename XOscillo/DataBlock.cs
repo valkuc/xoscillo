@@ -9,6 +9,13 @@ namespace XOscillo
    [Serializable]
    public class DataBlock
    {
+      public enum RESULT
+      {
+         OK,
+         ERROR,
+         TIMEOUT,
+      };
+
       public int m_sample;
       public DateTime m_start = new DateTime();
       public DateTime m_stop = new DateTime();
@@ -18,6 +25,7 @@ namespace XOscillo
       public int m_sampleRate;
       public int m_trigger;
       public byte[] m_Buffer = null;
+      public RESULT m_result;
 
       public DataBlock()
       {
@@ -35,6 +43,7 @@ namespace XOscillo
          this.m_channelOffset = db.m_channelOffset;
          this.m_sampleRate = db.m_sampleRate;
          this.m_trigger = db.m_trigger;
+         this.m_result = db.m_result;
       }
 
       public void Copy(DataBlock db)
@@ -53,6 +62,7 @@ namespace XOscillo
          this.m_channelOffset = db.m_channelOffset;
          this.m_sampleRate = db.m_sampleRate;
          this.m_trigger = db.m_trigger;
+         this.m_result = db.m_result;
       }
       public void Alloc(int size)
       {

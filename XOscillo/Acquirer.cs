@@ -52,18 +52,16 @@ namespace XOscillo
          {
             m_ring.putLock(out db);
 
-            bool gotdata = false;
-            do
+            try
             {
-               try
-               {
-                  gotdata = m_Oscillo.GetDataBlock(ref db);
-               }
-               catch
-               {
-                  m_Oscillo.Reset();
-               }
-            } while ( (gotdata == false) & (m_running == true) );
+               db.m_result = DataBlock.RESULT.OK;
+               bool gotdata = m_Oscillo.GetDataBlock(ref db);
+            }
+            catch
+            {
+               db.m_result = DataBlock.RESULT.TIMEOUT;
+               m_Oscillo.Reset();
+            }
 
             m_ring.putUnlock();
          }

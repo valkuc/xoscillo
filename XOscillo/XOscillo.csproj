@@ -58,6 +58,10 @@
     <Compile Include="DebugConsoleForm.Designer.cs">
       <DependentUpon>DebugConsoleForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Graph\Graph.cs" />
+    <Compile Include="Graph\GraphFFT.cs" />
+    <Compile Include="Graph\GraphLines.cs" />
+    <Compile Include="Graph\GraphLines2.cs" />
     <Compile Include="ManualSerialPortSelection.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -71,7 +75,7 @@
     <Compile Include="tools\DecodeFSK.Designer.cs">
       <DependentUpon>DecodeFSK.cs</DependentUpon>
     </Compile>
-    <Compile Include="fft.cs" />
+    <Compile Include="Graph\fft.cs" />
     <Compile Include="tools\DecodeBeeper.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -164,7 +168,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GraphControl.resx">
+    <EmbeddedResource Include="Graph\GraphControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GraphControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -182,10 +186,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="GraphControl.cs">
+    <Compile Include="Graph\GraphControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="GraphControl.Designer.cs">
+    <Compile Include="Graph\GraphControl.Designer.cs">
       <DependentUpon>GraphControl.cs</DependentUpon>
     </Compile>
   </ItemGroup>

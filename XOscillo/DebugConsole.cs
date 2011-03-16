@@ -6,8 +6,6 @@ namespace XOscillo
 {
    sealed class DebugConsole
    {
-      string text;
-
       public static readonly DebugConsole Instance = new DebugConsole();
 
       private DebugConsoleForm f = new DebugConsoleForm();
