@@ -1,6 +1,6 @@
 ﻿namespace XOscillo
 {
-   partial class VizArduino
+   partial class AnalogVizArduino
    {
       /// <summary>
       /// Required designer variable.
@@ -28,7 +28,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VizArduino));
+         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnalogVizArduino));
          this.toolStrip2 = new System.Windows.Forms.ToolStrip();
          this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
          this.time = new System.Windows.Forms.ToolStripComboBox();

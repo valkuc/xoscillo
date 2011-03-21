@@ -16,9 +16,18 @@ namespace XOscillo
          TIMEOUT,
       };
 
+      public enum DATA_TYPE
+      {
+         UNDEFINED,
+         ANALOG,
+         DIGITAL,
+      };
+
+
       public int m_sample;
       public DateTime m_start = new DateTime();
       public DateTime m_stop = new DateTime();
+      public DATA_TYPE m_dataType;
       public int m_channels;
       public int m_stride;
       public int m_channelOffset;
@@ -44,6 +53,7 @@ namespace XOscillo
          this.m_sampleRate = db.m_sampleRate;
          this.m_trigger = db.m_trigger;
          this.m_result = db.m_result;
+         this.m_dataType = db.m_dataType;
       }
 
       public void Copy(DataBlock db)
@@ -63,6 +73,7 @@ namespace XOscillo
          this.m_sampleRate = db.m_sampleRate;
          this.m_trigger = db.m_trigger;
          this.m_result = db.m_result;
+         this.m_dataType = db.m_dataType;
       }
       public void Alloc(int size)
       {

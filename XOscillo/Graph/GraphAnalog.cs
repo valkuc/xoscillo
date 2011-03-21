@@ -6,14 +6,13 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   class GraphLines : Graph
+   class GraphAnalog : Graph
    {
       Pen[] m_pens = { Pens.Red, Pens.Blue, Pens.Green, Pens.Yellow };
 
-      public GraphLines(Control cntrl, HScrollBar h)
+      public GraphAnalog(Control cntrl, HScrollBar h)
          : base(cntrl, h)
-      {
-         
+      {         
       }
 
       private void DrawGraph(Graphics g, Rectangle r, Pen p, DataBlock db, int channel)

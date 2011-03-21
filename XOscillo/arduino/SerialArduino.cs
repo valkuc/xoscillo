@@ -6,31 +6,28 @@ using System.Threading;
 
 namespace XOscillo
 {
+   enum COMMANDS
+   {
+      IDLE = 0,
+      RESET = 175,
+      PING = 63,
+      READ_ADC_TRACE = 170,
+      READ_BIN_TRACE = 171      
+   }
+
    class SerialArduino : Oscillo
    {
-      SerialPort serialPort;
-      byte m_triggerValue = 127;
-      int m_numSamples = 1024;
-      int baudrate;
-      int SampleID = 0;
+      protected SerialPort serialPort;
+      protected byte m_triggerValue = 127;
+      int m_baudrate;
 
-      public SerialArduino()
+      public SerialArduino(int baudrate, int samplerate)
       {
          // Create a new SerialPort object with default settings.
          serialPort = new SerialPort();
-         /*
-         {
-            baudrate = 1000000;
-            m_sampleRate = 59250; // this is actual number of samples per second I am able to archieve on the arduino
-         }
-          */
-         //needs tunning
          
-         {
-            baudrate = 115200;
-            m_sampleRate = 12000;
-         }
-         
+         m_baudrate = baudrate;
+         m_sampleRate = samplerate;
 
          m_sampleRates = new int[1] { m_sampleRate };        
       }
@@ -46,7 +43,7 @@ namespace XOscillo
 
          try
          {
-            serialPort = new SerialPort(portName, baudrate, Parity.None, 8,StopBits.One);
+            serialPort = new SerialPort(portName, m_baudrate, Parity.None, 8,StopBits.One);
             serialPort.Handshake = Handshake.None;
 
             DebugConsole.Instance.Add(portName + ", rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString() + "   trying...");
@@ -112,10 +109,6 @@ namespace XOscillo
          return true;
       }
 
-      public void SetTriggerVoltage( byte v )
-      {
-         this.m_triggerValue = v;
-      }
 
       override public bool SetNumberOfChannels(int n)
       {
@@ -123,7 +116,7 @@ namespace XOscillo
          return true;
       }
 
-       public bool Read(byte[] readBuffer, int length)
+      public bool Read(byte[] readBuffer, int length)
       {
          int dataread = 0;
          while (dataread < length)
@@ -135,18 +128,26 @@ namespace XOscillo
 
       override public void Reset()
       {
-         byte[] data = { 175 };
+         byte[] data = { (byte)COMMANDS.RESET };
          if (serialPort.IsOpen)
          {
             serialPort.Write(data, 0, 1);
          }
+
+         byte[] readBuffer = new byte[2];
+         Read(readBuffer, 2);
+
+
+         serialPort.DiscardInBuffer();
+
       }
 
       override public bool Ping()
       {
          Reset();
 
-         serialPort.Write("?");
+         byte[] cmd = {(byte)COMMANDS.PING};
+         serialPort.Write(cmd,0,1);
 
 
          byte[] readBuffer = new byte[7];
@@ -154,59 +155,5 @@ namespace XOscillo
 
          return (readBuffer[0] == 79) && (readBuffer[1]==67);
       }
-
-
-      DateTime time = new DateTime();
-      byte[] res = new byte[1];
-
-      public void Config()
-      {
-         byte[] configBuffer = new byte[9];
-         configBuffer[0] = 170;
-         configBuffer[1] = m_triggerValue;
-         configBuffer[2] = (byte)( ( m_numSamples * m_numberOfChannels ) >> 8);
-         configBuffer[3] = (byte)( ( m_numSamples * m_numberOfChannels ) & 0xff);
-         configBuffer[4] = (byte)m_numberOfChannels;
-         configBuffer[5] = (byte)127; //pwm
-
-         serialPort.DiscardInBuffer();
-         serialPort.Write(configBuffer, 0, 9);
-      }
-
-
-      override public bool GetDataBlock(ref DataBlock db)
-      {
-         bool result;
-
-         Config();
-
-         time = DateTime.Now;
-
-         Read(res, 1);
-         if (res[0] == 85)
-         {
-            db.m_sample = SampleID++;
-            db.m_start = DateTime.Now;
-            
-            db.m_channels = m_numberOfChannels;
-            db.m_trigger = 0;
-            db.m_sampleRate = m_sampleRate / m_numberOfChannels;
-            db.m_stride = m_numberOfChannels;
-            db.m_channelOffset = m_numberOfChannels;
-
-            if (db.m_Buffer == null || db.m_Buffer.Length != m_numSamples)
-            {
-               db.Alloc(m_numSamples);
-            }
-
-            result = Read(db.m_Buffer, m_numSamples);
-            db.m_stop = DateTime.Now;
-            return result;
-         }
-
-         return false;
-      }
-
-
    }
 }

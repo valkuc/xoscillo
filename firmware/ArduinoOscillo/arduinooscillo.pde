@@ -10,7 +10,7 @@
 // pins assignment
 //
 #define BUILTINLED 13
-#define PWM_GENERATOR 3
+#define PWM_GENERATOR 11
 #define ledPin 13    // LED connected to digital pin 13
 
 //
@@ -73,9 +73,9 @@ unsigned int EndAnalogRead()
 void setup() 
 {
   // set prescale to 16
-  cbi(ADCSRA,ADPS2) ;
+  sbi(ADCSRA,ADPS2) ;
   cbi(ADCSRA,ADPS1) ;
-  cbi(ADCSRA,ADPS0) ; 
+  cbi(ADCSRA,ADPS0) ;
 
   pinMode( PWM_GENERATOR, OUTPUT );
   analogWrite(PWM_GENERATOR, 128);
@@ -105,6 +105,7 @@ void ProcessSerialCommand( byte in )
   else if ( in == CMD_RESET ) 
   {
     command = CMD_IDLE;
+    Serial.print( "OK" ) ;    
   } 
   else if ( in == CMD_READ_ADC_TRACE )
   {
@@ -134,8 +135,22 @@ void ProcessSerialCommand( byte in )
     StartAnalogRead(0);    
     
     digitalWrite(ledPin, HIGH);
-    
     command = CMD_READ_ADC_TRACE;
+  }
+  else if ( in == CMD_READ_BIN_TRACE )
+  {
+    DDRD = B0000000;
+
+    while( Serial.available() < 3);
+    triggerVoltage = Serial.read();
+    DataRemaining = Serial.read()<<8;
+    DataRemaining |= Serial.read();
+
+    
+    triggered = 0;     
+    digitalWrite(ledPin, HIGH);
+    command = CMD_READ_BIN_TRACE;
+    Serial.write( 85 );
   }
 }
 
@@ -154,7 +169,7 @@ void loop()
     {
       StartAnalogRead(0);
 
-      if ( (v >= triggerVoltage) && ( lastADC < triggerVoltage ) )
+      if ( ((v >= triggerVoltage) && ( lastADC < triggerVoltage )) || (triggerVoltage == 0) )
       {
         triggered = 1;
         digitalWrite(ledPin, LOW);
@@ -180,7 +195,32 @@ void loop()
   }
   else if ( command == CMD_READ_BIN_TRACE )
   {
-    
+    unsigned char v = PIND>>2;  // remove tx/rx lines
+
+    if ( triggered == 0  )
+    {
+      if ((lastADC & triggerVoltage) ==0)
+      {
+        if ((v & triggerVoltage) == triggerVoltage)
+        {
+          Serial.write(v);        
+          triggered = 1;
+          digitalWrite(ledPin, LOW);
+        }
+      }
+    }
+    else
+    {
+      Serial.write(v);
+
+      DataRemaining--;
+      if ( DataRemaining == 0 )
+      {
+        command = CMD_IDLE;
+      }
+    }
+
+    lastADC = v;
   }
 
 }

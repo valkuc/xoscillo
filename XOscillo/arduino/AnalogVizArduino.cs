@@ -10,13 +10,13 @@ using System.IO.Ports;
 
 namespace XOscillo
 {
-   public partial class VizArduino : XOscillo.VizForm
+   public partial class AnalogVizArduino : XOscillo.VizForm
    {
-      SerialArduino oscillo;
+      AnalogArduino oscillo;
 
       Acquirer m_Acq = new Acquirer();
 
-      public VizArduino()
+      public AnalogVizArduino()
       {
          InitializeComponent();
       }
@@ -28,7 +28,7 @@ namespace XOscillo
 
       private void Form1_Load(object sender, EventArgs e)
       {
-         oscillo = new SerialArduino();
+         oscillo = new AnalogArduino();
 
          if (m_Acq.Open(oscillo, graphControl) == false)
          {

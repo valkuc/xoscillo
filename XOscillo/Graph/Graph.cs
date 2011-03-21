@@ -24,6 +24,10 @@ namespace XOscillo
       protected Control m_cntrl;
       protected HScrollBar m_h;
 
+      float m_centre;
+      float m_window;
+      float m_s = 100000000.0f;
+
       public Graph(Control cntrl, HScrollBar h)
       {
          m_h = h;
@@ -147,6 +151,32 @@ namespace XOscillo
       protected double lerp(double y0, double y1, double x0, double x1, double x)
       {
          return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+      }
+
+      public void ResizeToRectangle(Rectangle r)
+      {
+         m_window = (float)(r.Width * 8.0f * DivX) / (float)r.Height;
+
+         m_centre = ((float)m_h.Value + (float)m_h.LargeChange / 2.0f) / m_s;
+
+         float t0 = m_centre - m_window / 2.0f;
+         float t1 = m_centre + m_window / 2.0f;
+
+         if (t0 < 0)
+         {
+            t1 += -t0;
+            t0 = 0;
+
+            m_centre = t1 / 2.0f;
+
+            m_window = t1;
+         }
+
+         SetDisplayWindow(t0, t1);
+
+         m_h.Maximum = (int)(MaxX * m_s);
+         m_h.LargeChange = (int)(m_window * m_s);
+         m_h.Value = (int)(t0 * m_s);
       }
 
       private void DrawHorizontalLines(Graphics g, Rectangle r)

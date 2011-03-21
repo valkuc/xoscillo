@@ -21,8 +21,9 @@ namespace XOscillo
       public List<int> Lines = new List<int>();
       public List<int> VerticalLines = new List<int>();
 
-      private GraphLines2 gr;
+      private GraphAnalog ga;
       private GraphFFT gf;
+      private GraphDigital gd;
 
       float m_secondsPerDiv = 1.0f;
       double m_lpcf;
@@ -31,8 +32,9 @@ namespace XOscillo
 		{
 			InitializeComponent();
 
-         gr = new GraphLines2(this, hScrollBar1);
+         ga = new GraphAnalog(this, hScrollBar1);
          gf = new GraphFFT(this, hScrollBar1);
+         gd = new GraphDigital(this, hScrollBar1);
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 		}
@@ -45,7 +47,7 @@ namespace XOscillo
 
       public void SetMinMaxVoltages(int min, int max)
       {
-         gr.SetVerticalRange(min, max, 32, "Volts");
+         ga.SetVerticalRange(min, max, 32, "Volts");
       }
 
       public void DrawFFT(bool value)
@@ -100,22 +102,35 @@ namespace XOscillo
             return;
          }
 
+         Rectangle r = this.Bounds;
+         r.Height -= hScrollBar1.Height;
+
          lock (this)
          {
-            if (m_drawFFT)
+            if ( ScopeData.m_dataType == DataBlock.DATA_TYPE.ANALOG)
             {
-               gf.SetVerticalRange(0, 1024, 32, "power");
-               gf.SetHorizontalRange(0, (float)(ScopeData.GetTotalTime()/2.0), 1000, "Freq");
+               if (m_drawFFT)
+               {
+                  gf.SetVerticalRange(0, 1024, 32, "power");
+                  gf.SetHorizontalRange(0, (float)(ScopeData.GetTotalTime() / 2.0), 1000, "Freq");
 
-               gf.DrawFFT(e.Graphics, this.Bounds, ScopeData);
+                  gf.DrawFFT(e.Graphics, r, ScopeData);
+               }
+               else
+               {
+                  //draw channels
+                  ga.SetVerticalRange(0, 255, 32, "Volts");
+                  ga.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
+                  ga.ResizeToRectangle(this.Bounds);
+                  ga.DrawGraph(e.Graphics, r, ScopeData);
+               }
             }
-            else
+            else if (ScopeData.m_dataType == DataBlock.DATA_TYPE.DIGITAL)
             {
-               //draw channels
-               gr.SetVerticalRange(0, 255, 32, "Volts");
-               gr.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
-
-               gr.DrawGraph(e.Graphics, this.Bounds, ScopeData);
+               gd.SetVerticalRange(0, 255, 32, "Volts");
+               gd.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
+               gd.ResizeToRectangle(this.Bounds);
+               gd.DrawGraph(e.Graphics, r, ScopeData);
             }
          }
 

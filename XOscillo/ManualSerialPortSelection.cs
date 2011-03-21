@@ -31,6 +31,7 @@ namespace XOscillo
             if ( m_os.Open(portName) == true )
             {               
                this.Close();
+               return;
             }            
          }
 

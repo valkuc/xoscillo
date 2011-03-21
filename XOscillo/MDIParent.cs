@@ -17,13 +17,24 @@ namespace XOscillo
 			InitializeComponent();
 		}
 
-      private void toolStripMenuItem1_Click(object sender, EventArgs e)
+      private void newAnalogArduino_Click(object sender, EventArgs e)
+      {
+         // Create a new instance of the child form.
+         Form childForm;
+         childForm = new AnalogVizArduino();
+         childForm.MdiParent = this;
+         childForm.Text = "Analog Arduino";
+         childForm.Show();
+         childForm.WindowState = FormWindowState.Maximized;
+      }
+
+      private void newDigitalArduino_Click(object sender, EventArgs e)
       {
 			// Create a new instance of the child form.
          Form childForm;
-         childForm = new VizArduino();
+         childForm = new DigitalVizArduino();
          childForm.MdiParent = this;
-         childForm.Text = "Arduino";
+         childForm.Text = "Digital Arduino";
          childForm.Show();
          childForm.WindowState = FormWindowState.Maximized;
       }
