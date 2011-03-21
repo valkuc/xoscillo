@@ -81,6 +81,13 @@ void setup()
   analogWrite(PWM_GENERATOR, 128);
   
   Serial.begin(115200);
+  
+  for(int i=2;i<8;i++)
+  {
+    pinMode(i, INPUT);      // sets the digital pin 7 as input
+  }
+
+  
 //  Serial.begin(1000000);
 //  Serial.begin(153600);
 //  Serial.begin(9600);  
@@ -139,13 +146,14 @@ void ProcessSerialCommand( byte in )
   }
   else if ( in == CMD_READ_BIN_TRACE )
   {
-    DDRD = B0000000;
-
-    while( Serial.available() < 3);
+    while( Serial.available() < 4);
     triggerVoltage = Serial.read();
     DataRemaining = Serial.read()<<8;
     DataRemaining |= Serial.read();
 
+    analogWrite(9, 64);
+    analogWrite(10, 128);
+    analogWrite(11, 192);
     
     triggered = 0;     
     digitalWrite(ledPin, HIGH);
