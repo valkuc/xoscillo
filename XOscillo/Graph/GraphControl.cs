@@ -121,7 +121,7 @@ namespace XOscillo
                   //draw channels
                   ga.SetVerticalRange(0, 255, 32, "Volts");
                   ga.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
-                  ga.ResizeToRectangle(this.Bounds);
+                  ga.ResizeToRectangle(r);
                   ga.DrawGraph(e.Graphics, r, ScopeData);
                }
             }
@@ -129,7 +129,7 @@ namespace XOscillo
             {
                gd.SetVerticalRange(0, 255, 32, "Volts");
                gd.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
-               gd.ResizeToRectangle(this.Bounds);
+               gd.ResizeToRectangle(r);
                gd.DrawGraph(e.Graphics, r, ScopeData);
             }
          }

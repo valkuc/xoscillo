@@ -40,9 +40,6 @@ namespace XOscillo
 
                yy = y;
                xx = x;
-
-               if (xx > r.Width)
-                  break;
             }
          }
          catch

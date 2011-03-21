@@ -22,7 +22,7 @@ namespace XOscillo
       protected float MaxXD;
 
       protected Control m_cntrl;
-      protected HScrollBar m_h;
+      protected HScrollBar m_hBar;
 
       float m_centre;
       float m_window;
@@ -30,7 +30,7 @@ namespace XOscillo
 
       public Graph(Control cntrl, HScrollBar h)
       {
-         m_h = h;
+         m_hBar = h;
          m_cntrl = cntrl;
       }
 
@@ -157,7 +157,7 @@ namespace XOscillo
       {
          m_window = (float)(r.Width * 8.0f * DivX) / (float)r.Height;
 
-         m_centre = ((float)m_h.Value + (float)m_h.LargeChange / 2.0f) / m_s;
+         m_centre = ((float)m_hBar.Value + (float)m_hBar.LargeChange / 2.0f) / m_s;
 
          float t0 = m_centre - m_window / 2.0f;
          float t1 = m_centre + m_window / 2.0f;
@@ -174,9 +174,9 @@ namespace XOscillo
 
          SetDisplayWindow(t0, t1);
 
-         m_h.Maximum = (int)(MaxX * m_s);
-         m_h.LargeChange = (int)(m_window * m_s);
-         m_h.Value = (int)(t0 * m_s);
+         m_hBar.Maximum = (int)(MaxX * m_s);
+         m_hBar.LargeChange = (int)(m_window * m_s);
+         m_hBar.Value = (int)(t0 * m_s);
       }
 
       private void DrawHorizontalLines(Graphics g, Rectangle r)

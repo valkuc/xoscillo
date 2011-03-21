@@ -72,8 +72,8 @@ namespace XOscillo
          f.SetData(db.m_Buffer, 0, db.GetChannelLength());
          f.FFT(0);
 
-         m_h.LargeChange = r.Width;
-         m_h.Maximum = 1024;
+         m_hBar.LargeChange = r.Width;
+         m_hBar.Maximum = 1024;
 
          int maxFreq = db.m_sampleRate / 2;
          int minFreq = 0;
@@ -82,12 +82,12 @@ namespace XOscillo
          r.Height -= 20;
          r.Width = 1024;
 
-         if (m_h.Visible)
+         if (m_hBar.Visible)
          {
-            r.Height -= m_h.Height;
+            r.Height -= m_hBar.Height;
          }
 
-         r.X -= m_h.Value;
+         r.X -= m_hBar.Value;
 
          if (false)
          {

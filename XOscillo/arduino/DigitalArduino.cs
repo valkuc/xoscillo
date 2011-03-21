@@ -7,7 +7,7 @@ namespace XOscillo
    
    class DigitalArduino : SerialArduino
    {
-      int m_numSamples = 1024;
+      int m_numSamples = 1200*2;
       int SampleID = 0;
 
       public DigitalArduino()
@@ -31,8 +31,7 @@ namespace XOscillo
          configBuffer[2] = (byte)(m_numSamples >> 8);
          configBuffer[3] = (byte)(m_numSamples & 0xff);
 
-         serialPort.DiscardInBuffer();
-         serialPort.Write(configBuffer, 0, configBuffer.Length);
+         Write(configBuffer, configBuffer.Length);
       }
 
       override public bool GetDataBlock(ref DataBlock db)

@@ -203,7 +203,18 @@ namespace XOscillo
 
       public int GetChannelLength()
       {
-         return m_Buffer.Length / m_channels;
+         if (m_dataType == DATA_TYPE.ANALOG)
+         {
+            //every byte is a value
+            return m_Buffer.Length / m_channels;
+         }
+         else if (m_dataType == DATA_TYPE.DIGITAL)
+         {
+            // every byte are 8 channels
+            return m_Buffer.Length;
+         }
+
+         return m_Buffer.Length;
       }
 
       public virtual byte GetVoltage(int channel, int index)

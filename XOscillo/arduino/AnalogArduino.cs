@@ -34,8 +34,7 @@ namespace XOscillo
          configBuffer[4] = (byte)m_numberOfChannels;
          configBuffer[5] = (byte)127; //pwm
 
-         serialPort.DiscardInBuffer();
-         serialPort.Write(configBuffer, 0, configBuffer.Length);
+         Write(configBuffer, configBuffer.Length);
       }
 
 

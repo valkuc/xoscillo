@@ -17,7 +17,7 @@ namespace XOscillo
 
    class SerialArduino : Oscillo
    {
-      protected SerialPort serialPort;
+      private SerialPort serialPort;
       protected byte m_triggerValue = 127;
       int m_baudrate;
 
@@ -124,6 +124,11 @@ namespace XOscillo
             dataread += serialPort.Read(readBuffer, dataread, length - dataread);
          }
          return true;
+      }
+
+      public void Write(byte[] writeBuffer, int length)
+      {
+         serialPort.Write(writeBuffer, 0, length);
       }
 
       override public void Reset()
