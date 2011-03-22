@@ -185,11 +185,11 @@ namespace XOscillo
          p.DashStyle = System.Drawing.Drawing2D.DashStyle.Custom;
          p.DashPattern = new float[] { 1, 5 };
 
-         float yy = (float)(r.Height *DivY)/ MaxY;
-
-         for (int y = 0; y < 8; y++)
+         for (int i = (int)(MinY / DivY); i <= (int)(MaxY / DivY); i++)
          {
-            g.DrawLine(p, 0, y*yy, r.Width, y*yy);
+            float y = (float)lerp(r.Y, r.Y + r.Height, MinY, MaxY, DivY * i);
+
+            g.DrawLine(p, 0, y, r.Width, y);
          }
       }
 

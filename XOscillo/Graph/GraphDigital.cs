@@ -40,7 +40,9 @@ namespace XOscillo
 
                for (int ch = 0; ch < db.m_channels; ch++)
                {
-                  float y = r.Y + r.Height * (ch + 1) / 8;
+                  //float y = r.Y + r.Height * (ch + 1) / db.m_channels;
+
+                  float y = (float)lerp(r.Y, r.Y + r.Height, MinY, MaxY, (ch +1) * DivY);
                   
                   if ( ((last_rv >>ch)&1) != ((rawvolt>>ch)&1))
                   {

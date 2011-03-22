@@ -127,7 +127,7 @@ namespace XOscillo
             }
             else if (ScopeData.m_dataType == DataBlock.DATA_TYPE.DIGITAL)
             {
-               gd.SetVerticalRange(0, 255, 32, "Volts");
+               gd.SetVerticalRange(0, 255, (float)(255.0/6.5), "Volts");
                gd.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
                gd.ResizeToRectangle(r);
                gd.DrawGraph(e.Graphics, r, ScopeData);

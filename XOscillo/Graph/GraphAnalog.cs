@@ -31,7 +31,7 @@ namespace XOscillo
                float time = db.GetTime(i);
 
                float x = (float)lerp(r.X, r.X + r.Width, MinXD, MaxXD, time);
-               float y = (float)lerp(r.Y, r.Height, MaxY, MinY, rawvolt);
+               float y = (float)lerp(r.Y, r.Y + r.Height, MaxY, MinY, rawvolt);
 
                if (i > 0)
                {

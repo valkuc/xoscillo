@@ -179,7 +179,7 @@ namespace XOscillo
          return true;
       }
 
-      override public void Reset()
+      override public bool Reset()
       {
          byte[] data = { 175 };
          if (serialPort.IsOpen)
@@ -188,6 +188,8 @@ namespace XOscillo
          }
          serialPort.DiscardInBuffer();
          serialPort.DiscardOutBuffer();
+
+         return true;
       }
 
       override public bool Ping()

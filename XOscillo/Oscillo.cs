@@ -36,8 +36,9 @@ namespace XOscillo
          return true;
       }
 
-      virtual public void Reset()
+      virtual public bool Reset()
       {
+         return false;
       }
 
       virtual public bool Ping()

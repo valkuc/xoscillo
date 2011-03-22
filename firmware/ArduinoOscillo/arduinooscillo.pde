@@ -85,6 +85,7 @@ void setup()
   for(int i=2;i<8;i++)
   {
     pinMode(i, INPUT);      // sets the digital pin 7 as input
+    digitalWrite(i, LOW);    
   }
 
   
@@ -146,7 +147,7 @@ void ProcessSerialCommand( byte in )
   }
   else if ( in == CMD_READ_BIN_TRACE )
   {
-    while( Serial.available() < 4);
+    while( Serial.available() < 3);
     triggerVoltage = Serial.read();
     DataRemaining = Serial.read()<<8;
     DataRemaining |= Serial.read();
@@ -211,7 +212,6 @@ void loop()
       {
         if ((v & triggerVoltage) == triggerVoltage)
         {
-          Serial.write(v);        
           triggered = 1;
           digitalWrite(ledPin, LOW);
         }

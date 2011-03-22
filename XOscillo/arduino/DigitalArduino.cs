@@ -7,7 +7,7 @@ namespace XOscillo
    
    class DigitalArduino : SerialArduino
    {
-      int m_numSamples = 1200*2;
+      int m_numSamples = 1200;
       int SampleID = 0;
 
       public DigitalArduino()
@@ -25,12 +25,11 @@ namespace XOscillo
 
       public void Config()
       {
-         byte[] configBuffer = new byte[5];
+         byte[] configBuffer = new byte[4];
          configBuffer[0] = (byte)COMMANDS.READ_BIN_TRACE; ;
          configBuffer[1] = m_triggerValue;
          configBuffer[2] = (byte)(m_numSamples >> 8);
          configBuffer[3] = (byte)(m_numSamples & 0xff);
-         //configBuffer[4] = 0xff;
 
          Write(configBuffer, configBuffer.Length);
       }

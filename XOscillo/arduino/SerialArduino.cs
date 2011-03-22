@@ -100,6 +100,11 @@ namespace XOscillo
 
       override public bool Close()
       {
+         if (IsOpened() == false)
+         {
+            return false;
+         }
+
          serialPort.Close();
          return true;
       }
@@ -109,7 +114,6 @@ namespace XOscillo
          return true;
       }
 
-
       override public bool SetNumberOfChannels(int n)
       {
          this.m_numberOfChannels = n;
@@ -118,6 +122,11 @@ namespace XOscillo
 
       public bool Read(byte[] readBuffer, int length)
       {
+         if (IsOpened() == false)
+         {
+            return false;
+         }
+
          int dataread = 0;
          while (dataread < length)
          {
@@ -131,32 +140,38 @@ namespace XOscillo
          serialPort.Write(writeBuffer, 0, length);
       }
 
-      override public void Reset()
+      override public bool Reset()
       {
-         byte[] data = { (byte)COMMANDS.RESET };
-         if (serialPort.IsOpen)
+         if (IsOpened() == false)
          {
-            serialPort.Write(data, 0, 1);
+            return false;
          }
 
-         byte[] readBuffer = new byte[2];
-         Read(readBuffer, 2);
+         byte[] data = { (byte)COMMANDS.RESET };
+         serialPort.Write(data, 0, 1);
 
+         byte[] readBuffer = new byte[2];
+         Read(readBuffer, readBuffer.Length);
 
          serialPort.DiscardInBuffer();
 
+         return readBuffer.ToString() == "OK";
       }
 
       override public bool Ping()
       {
+         if (IsOpened() == false)
+         {
+            return false;
+         }
+
          Reset();
 
          byte[] cmd = {(byte)COMMANDS.PING};
          serialPort.Write(cmd,0,1);
 
-
          byte[] readBuffer = new byte[7];
-         Read(readBuffer, 7);
+         Read(readBuffer, readBuffer.Length);
 
          return (readBuffer[0] == 79) && (readBuffer[1]==67);
       }
