@@ -40,15 +40,15 @@ namespace XOscillo
          this.hScrollBar1.TabIndex = 0;
          this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
          // 
-         // displayControl
+         // GraphControl
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.hScrollBar1);
          this.DoubleBuffered = true;
-         this.Name = "displayControl";
+         this.Name = "GraphControl";
          this.Size = new System.Drawing.Size(195, 167);
-         this.Paint += new System.Windows.Forms.PaintEventHandler(this.UserControl1_Paint);
+         this.Paint += new System.Windows.Forms.PaintEventHandler(this.UserControl1_Paint);         
          this.Resize += new System.EventHandler(this.UserControl1_Resize);
          this.ResumeLayout(false);
 

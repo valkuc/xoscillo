@@ -77,7 +77,7 @@ namespace XOscillo
             }
          }
       }
-
+      
       public DataBlock GetScopeData()
       {
          lock (this)
@@ -85,6 +85,7 @@ namespace XOscillo
             return new DataBlock(ScopeData);
          }
       }
+      
 
       private void UserControl1_Paint(object sender, PaintEventArgs e)
       {
@@ -113,35 +114,40 @@ namespace XOscillo
                {
                   gf.SetVerticalRange(0, 1024, 32, "power");
                   gf.SetHorizontalRange(0, (float)(ScopeData.GetTotalTime() / 2.0), 1000, "Freq");
-
-                  gf.DrawFFT(e.Graphics, r, ScopeData);
+                  gf.SetRectangle(r);
+                  gf.DrawFFT(e.Graphics, ScopeData);
                }
                else
                {
                   //draw channels
-                  ga.SetVerticalRange(0, 255, 32, "Volts");
+                  ga.SetVerticalRange(255, 0, 32, "Volts");
                   ga.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
-                  ga.ResizeToRectangle(r);
-                  ga.DrawGraph(e.Graphics, r, ScopeData);
+                  ga.SetRectangle(r);
+                  ga.ResizeToRectangle();
+                  
+                  ga.DrawGraph(e.Graphics, ScopeData);
                }
             }
             else if (ScopeData.m_dataType == DataBlock.DATA_TYPE.DIGITAL)
             {
                gd.SetVerticalRange(0, 255, (float)(255.0/6.5), "Volts");
                gd.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
-               gd.ResizeToRectangle(r);
-               gd.DrawGraph(e.Graphics, r, ScopeData);
+               gd.SetRectangle(r);
+               gd.ResizeToRectangle();
+               gd.DrawGraph(e.Graphics, ScopeData);
             }
          }
 
-         if (duration.Milliseconds > 0)
          {
             Point pp = new Point();
             pp.X = 0;
             pp.Y += 16;
             if (ScopeData.m_result == DataBlock.RESULT.OK)
             {
-               e.Graphics.DrawString(string.Format("{0} fps", 1000 / duration.Milliseconds), this.Font, Brushes.White, pp);
+               if (duration.Milliseconds > 0)
+               {
+                  e.Graphics.DrawString(string.Format("{0} fps", 1000 / duration.Milliseconds), this.Font, Brushes.White, pp);
+               }
             }
             else
             {

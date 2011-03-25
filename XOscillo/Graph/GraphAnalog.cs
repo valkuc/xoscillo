@@ -10,12 +10,14 @@ namespace XOscillo
    {
       Pen[] m_pens = { Pens.Red, Pens.Blue, Pens.Green, Pens.Yellow };
 
+      MouseEventArgs m_mouse = null;
+
       public GraphAnalog(Control cntrl, HScrollBar h)
          : base(cntrl, h)
       {         
       }
 
-      private void DrawGraph(Graphics g, Rectangle r, Pen p, DataBlock db, int channel)
+      private void DrawGraph(Graphics g, Pen p, DataBlock db, int channel)
       {
          float yy = 0;
          float xx = 0;
@@ -30,8 +32,8 @@ namespace XOscillo
 
                float time = db.GetTime(i);
 
-               float x = (float)lerp(r.X, r.X + r.Width, MinXD, MaxXD, time);
-               float y = (float)lerp(r.Y, r.Y + r.Height, MaxY, MinY, rawvolt);
+               float x = ValueXToRect(time);
+               float y = ValueYToRect(rawvolt);
 
                if (i > 0)
                {
@@ -44,22 +46,44 @@ namespace XOscillo
          }
          catch
          {
-            Console.WriteLine("{0} {1} {2}", db, r, i);
+            Console.WriteLine("{0} {1} {2}", db, m_Bounds, i);
          }
+
+         //Cursor.Hide();
+         if (m_mouse != null)
+         {
+            DrawCross(g, Pens.Blue, m_mouse.X, m_mouse.Y);
+         }
+
+         if (Selected())
+         {
+            Point pp = new Point();
+            pp.X = 0;
+            pp.Y = 32;
+
+            g.DrawString(string.Format("({0}, {1}) - ({2}, {3})", ToEngineeringNotation(m_selectT0),db.GetVoltage(0, m_selectT0),ToEngineeringNotation(m_selectT1),db.GetVoltage(0, m_selectT1)), m_cntrl.Font, Brushes.White, pp);
+         }
+
       }
 
-      public void DrawGraph(Graphics g, Rectangle r, DataBlock db)
+      public void DrawGraph(Graphics g, DataBlock db)
       {
          g.Clear(Color.Black);
 
-         Draw( g, r);
+         Draw( g);
 
          for (int ch = 0; ch < db.m_channels; ch++)
          {
-            DrawGraph(g, r, m_pens[ch], db, ch);
+            DrawGraph(g, m_pens[ch], db, ch);
          }
       }
 
+      public override void GraphControl_MouseMove(object sender, MouseEventArgs e)
+      {
+         base.GraphControl_MouseMove(sender, e);
+         m_mouse = e;
+         m_cntrl.Invalidate();
+      }
 
    }
 }

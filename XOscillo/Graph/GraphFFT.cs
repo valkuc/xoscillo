@@ -60,8 +60,12 @@ namespace XOscillo
          g.DrawLine(Pens.Red, r.X, y, 1024, y);
       }
 
-      public void DrawFFT(Graphics g, Rectangle r, DataBlock db)
+      public void DrawFFT(Graphics g, DataBlock db)
       {
+         Rectangle r = new Rectangle();
+
+         r = m_Bounds;
+
          g.Clear(Color.Black);
 
          if (f == null)

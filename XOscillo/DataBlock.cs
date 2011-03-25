@@ -222,6 +222,13 @@ namespace XOscillo
          return m_Buffer[index * m_stride + m_channelOffset * channel];
       }
 
+      public virtual byte GetVoltage(int channel, float time)
+      {
+         int i = (int)(GetChannelLength() * time / GetTotalTime());
+
+         return m_Buffer[i * m_stride + m_channelOffset * channel];
+      }
+
       public float GetTime(int index)
       {
          return (float)index / (float)m_sampleRate;

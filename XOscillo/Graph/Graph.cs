@@ -28,10 +28,26 @@ namespace XOscillo
       float m_window;
       float m_s = 100000000.0f;
 
+      // selection
+      bool m_selecting = false;
+      protected float m_selectT0 = 0;
+      protected float m_selectT1 = 0;
+
+      protected Rectangle m_Bounds;
+
       public Graph(Control cntrl, HScrollBar h)
       {
          m_hBar = h;
          m_cntrl = cntrl;
+
+         m_cntrl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GraphControl_MouseMove);
+
+         SetRectangle(m_cntrl.Bounds);         
+      }
+
+      public void SetRectangle(Rectangle Bounds)
+      {
+         m_Bounds = Bounds;
       }
 
       public void SetHorizontalRange( float min, float max, float div, string units)
@@ -153,9 +169,30 @@ namespace XOscillo
          return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
       }
 
-      public void ResizeToRectangle(Rectangle r)
+      protected float ValueXToRect( float x )
       {
-         m_window = (float)(r.Width * 8.0f * DivX) / (float)r.Height;
+         return (float)lerp(m_Bounds.X, m_Bounds.X + m_Bounds.Width, MinXD, MaxXD, x);
+      }
+
+      protected float ValueYToRect( float y)
+      {
+         return (float)lerp(m_Bounds.Y, m_Bounds.Y + m_Bounds.Height, MinY, MaxY, y);
+      }
+
+      protected float RectToValueX( int x )
+      {
+         return (float)lerp(MinXD, MaxXD, m_Bounds.X, m_Bounds.X + m_Bounds.Width, x);
+      }
+
+      protected float RectToValueY( int y)
+      {
+         return (float)lerp(MinY, MaxY, m_Bounds.Y, m_Bounds.Y + m_Bounds.Height, y);
+      }
+
+
+      public void ResizeToRectangle()
+      {
+         m_window = (float)(m_Bounds.Width * 8.0f * DivX) / (float)m_Bounds.Height;
 
          m_centre = ((float)m_hBar.Value + (float)m_hBar.LargeChange / 2.0f) / m_s;
 
@@ -179,29 +216,39 @@ namespace XOscillo
          m_hBar.Value = (int)(t0 * m_s);
       }
 
-      private void DrawHorizontalLines(Graphics g, Rectangle r)
+      private void DrawHorizontalLines(Graphics g)
       {
          Pen p = new Pen(Color.Gray);
          p.DashStyle = System.Drawing.Drawing2D.DashStyle.Custom;
          p.DashPattern = new float[] { 1, 5 };
 
-         for (int i = (int)(MinY / DivY); i <= (int)(MaxY / DivY); i++)
-         {
-            float y = (float)lerp(r.Y, r.Y + r.Height, MinY, MaxY, DivY * i);
+         int min = (int)(MinY / DivY);
+         int max = (int)(MaxY / DivY);
 
-            g.DrawLine(p, 0, y, r.Width, y);
+         if ( min > max )
+         {
+            int tmp = min;
+            min = max;
+            max = tmp;
+         }
+
+         for (int i = min; i <= max; i++)
+         {
+            float y = ValueYToRect( DivY * i);
+
+            g.DrawLine(p, 0, y, m_Bounds.Width, y);
          }
       }
 
-      public void DrawVerticalLines(Graphics g, Rectangle r)
+      public void DrawVerticalLines(Graphics g)
       {
-         float dist = (float)lerp(r.X, r.X + r.Width, 0, MaxXD - MinXD, DivX);
+         float dist = ValueXToRect( MinXD + DivX);
 
          for (int i = (int)(MinXD / DivX); i <= (int)(MaxXD / DivX); i++)
          {
-            float x = (float)lerp(r.X, r.X + r.Width, MinXD, MaxXD , DivX *i);
+            float x = ValueXToRect( DivX * i);
 
-            g.DrawLine(Pens.Gray, x, r.Y, x, r.Y + r.Height);
+            g.DrawLine(Pens.Gray, x, m_Bounds.Y, x, m_Bounds.Y + m_Bounds.Height);
 
             if (dist > 40)
             {
@@ -211,11 +258,75 @@ namespace XOscillo
          }
         
       }
-
-      public void Draw( Graphics g, Rectangle r)
+      
+      public void DrawCross(Graphics g, Pen p, int x, int y)
       {
-         DrawHorizontalLines( g, r);
-         DrawVerticalLines( g, r);
+         Pen pe = Pens.DarkGray;
+         g.DrawLine(pe, m_Bounds.X, y, m_Bounds.X + m_Bounds.Width, y);
+         g.DrawLine(pe, x, m_Bounds.Y, x, m_Bounds.Y + m_Bounds.Height);
+      }
+
+      public void DrawValues(Graphics g, int x, int y)
+      {
+         Point pp = new Point();
+         pp.X = x + 16;
+         pp.Y = y + 16;
+         g.DrawString(string.Format("({0}, {1})", ToEngineeringNotation(RectToValueX(x)), RectToValueY(y) ), m_cntrl.Font, Brushes.White, pp);
+      }
+
+      public void DrawSelection(Graphics g)
+      {
+         float s0, s1;
+
+         if (m_selectT0 < m_selectT1)
+         {
+            s0 = m_selectT0;
+            s1 = m_selectT1;
+         }
+         else
+         {
+            s1 = m_selectT0;
+            s0 = m_selectT1;
+         }
+
+         g.FillRectangle(Brushes.DarkBlue, ValueXToRect(s0), m_Bounds.Y, ValueXToRect(s1) - ValueXToRect(s0), m_Bounds.Height);
+      }
+
+      public void Draw( Graphics g)
+      {
+         DrawSelection(g);
+         DrawHorizontalLines(g);
+         DrawVerticalLines( g);
+      }
+
+      public bool Selected()
+      {
+         return m_selectT0 != m_selectT1;
+      }
+
+      public virtual void GraphControl_MouseMove(object sender, MouseEventArgs e)
+      {
+         if ( m_selecting )
+         {
+            if (e.Button == MouseButtons.Left)
+            {
+               m_selectT1 = RectToValueX(e.X);
+            }
+            else
+            {
+               m_selecting = false;
+            }
+         }
+         else
+         {
+            if (e.Button == MouseButtons.Left)
+            {
+               m_selectT0 = RectToValueX(e.X);
+               m_selectT1 = m_selectT0;
+               m_selecting = true;
+            }
+         }
+
       }
 
 

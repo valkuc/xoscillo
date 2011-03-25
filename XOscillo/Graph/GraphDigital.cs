@@ -14,11 +14,11 @@ namespace XOscillo
       {
       }
 
-      public void DrawGraph(Graphics g, Rectangle r, DataBlock db)
+      public void DrawGraph(Graphics g, DataBlock db)
       {
          g.Clear(Color.Black);
 
-         Draw(g, r);
+         Draw(g);
 
          float xx = 0;
          int i = 0;
@@ -26,7 +26,7 @@ namespace XOscillo
          int i1 = (int)(db.GetChannelLength() * MaxXD / db.GetTotalTime());
          try
          {
-            float waveheight = r.Height / 16;
+            float waveheight = m_Bounds.Height / 16;
 
             int last_rv = 0;
 
@@ -36,13 +36,11 @@ namespace XOscillo
 
                float time = db.GetTime(i);
 
-               float x = (float)lerp(r.X, r.X + r.Width, MinXD, MaxXD, time);
+               float x = ValueXToRect( time);
 
                for (int ch = 0; ch < db.m_channels; ch++)
                {
-                  //float y = r.Y + r.Height * (ch + 1) / db.m_channels;
-
-                  float y = (float)lerp(r.Y, r.Y + r.Height, MinY, MaxY, (ch +1) * DivY);
+                  float y = ValueYToRect( (ch +1) * DivY);
                   
                   if ( ((last_rv >>ch)&1) != ((rawvolt>>ch)&1))
                   {
@@ -63,7 +61,7 @@ namespace XOscillo
          }
          catch
          {
-            Console.WriteLine("{0} {1} {2}", db, r, i);
+            Console.WriteLine("{0} {1} {2}", db, m_Bounds, i);
          }
 
       }
