@@ -42,6 +42,9 @@ namespace XOscillo
       {
          bool result;
 
+         //assume it timed out
+         db.m_result = DataBlock.RESULT.TIMEOUT;
+
          Config();
 
          time = DateTime.Now;
@@ -58,6 +61,7 @@ namespace XOscillo
             db.m_stride = m_numberOfChannels;
             db.m_channelOffset = m_numberOfChannels;
             db.m_dataType = DataBlock.DATA_TYPE.ANALOG;
+            
 
             if (db.m_Buffer == null || db.m_Buffer.Length != m_numSamples)
             {
@@ -66,6 +70,9 @@ namespace XOscillo
 
             result = Read(db.m_Buffer, m_numSamples);
             db.m_stop = DateTime.Now;
+
+            db.m_result = DataBlock.RESULT.OK;
+
             return result;
          }
 

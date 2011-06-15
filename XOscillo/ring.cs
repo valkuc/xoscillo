@@ -54,9 +54,14 @@ namespace XOscillo
       {
          lock (this)
          {
-            while (GetLength() <= 1)
-            {
+            while (GetLength() == 0)
+            {               
                Monitor.Wait(this);
+            }
+
+            if (GetLength() == 1)
+            {
+               return m_ring[m_read];
             }
 
             T data = m_ring[m_read];

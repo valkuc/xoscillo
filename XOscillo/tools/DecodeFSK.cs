@@ -291,6 +291,82 @@ namespace XOscillo
          return outdata;
       }
 
+      public string Decode5BitsToString(string data)
+      {
+         string lut = "0123456789:;<=>?";
+
+         string str="";
+
+         int i=0;
+
+         //look for sentinel
+         {
+            int val = 0;
+            for(i=0;i<data.Length; i++)
+            {
+               val = (val<<1) & 0x1f;
+
+               char c = data[i];
+
+               if (c=='1')
+                  val |= 1;
+
+               if (val== 26)
+               {
+                  str += ";";
+                  i++;
+                  break;
+               }
+            }
+            
+         }
+
+         {
+            for(;i<data.Length; )
+            {
+
+               //get value & parity bit
+               uint val = 0;
+               uint par = 1;
+               for(int j=0;j<4;j++,i++)
+               {
+                  val>>=1;
+
+                  char c = data[i];
+
+                  if (c == '1')
+                  {
+                     val |= (1 << 3);
+                     par = (par+1)&1;
+                  }
+               }
+
+               //translate value into character
+               char cc = (char)lut[(int)(val & 0xf)];               
+
+               str += cc;
+
+               //check parity
+               char b = data[i];
+               if (b == '0')
+                  if (par == '1')
+                     str += '*';
+
+               if (b == '1')
+                  if (par == '0')
+                     str += '*';
+               i++;
+
+               //end?
+               if (cc == '?')
+                  break;
+
+            }
+         }
+
+         return str;
+      }
+
       override public void SetDataBlock(DataBlock db)
       {
          m_db = new DataBlock();
@@ -311,7 +387,8 @@ namespace XOscillo
 
             output.Text += string.Format("Errors as FSK: {0}\r\n", DetectFSK(bitstream));
             output.Text += GetBitStreamFromFSK(bitstream) + "\r\n";
-
+            output.Text += "\r\nText:\r\n";
+            output.Text += Decode5BitsToString(GetBitStreamFromFSK(bitstream)) + "\r\n";
             //output.Text += string.Format("Alternating: \r\n");
             //output.Text += GetBitStreamFromAlternating(bitstream) + "\r\n";
             

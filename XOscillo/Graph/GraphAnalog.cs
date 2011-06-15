@@ -23,7 +23,13 @@ namespace XOscillo
          float xx = 0;
          int i = 0;
          int i0 = (int)(db.GetChannelLength() * MinXD / db.GetTotalTime());
+
          int i1 = (int)(db.GetChannelLength() * MaxXD / db.GetTotalTime());
+         if (i1 > db.GetChannelLength())
+         {
+            i1 = db.GetChannelLength();
+         }
+
          try
          {
             for (i = i0; i <= i1; i++)
@@ -39,7 +45,7 @@ namespace XOscillo
                {
                   g.DrawLine(p, xx, yy, x, y);
                }
-
+                 
                yy = y;
                xx = x;
             }
@@ -48,11 +54,24 @@ namespace XOscillo
          {
             Console.WriteLine("{0} {1} {2}", db, m_Bounds, i);
          }
+         /*
+         {
+            int rawvolt = db.GetAverate(0);
+            float y = ValueYToRect(rawvolt);
+            g.DrawLine(p, 0, y, 1000, y);
+         }
+          */
 
          //Cursor.Hide();
          if (m_mouse != null)
          {
             DrawCross(g, Pens.Blue, m_mouse.X, m_mouse.Y);
+         }
+
+         {
+            float t = (512 * db.GetTotalTime()) / (float)db.GetChannelLength();
+            float x = ValueXToRect(t);
+            g.DrawLine(Pens.LightGreen, x, m_Bounds.Y, x, m_Bounds.Y + m_Bounds.Height);
          }
 
          if (Selected())
@@ -61,7 +80,7 @@ namespace XOscillo
             pp.X = 0;
             pp.Y = 32;
 
-            g.DrawString(string.Format("({0}, {1}) - ({2}, {3})", ToEngineeringNotation(m_selectT0),db.GetVoltage(0, m_selectT0),ToEngineeringNotation(m_selectT1),db.GetVoltage(0, m_selectT1)), m_cntrl.Font, Brushes.White, pp);
+            g.DrawString(string.Format("({0}, {1}) - ({2}, {3})", ToEngineeringNotation(m_selectT0), db.GetVoltage(0, m_selectT0), ToEngineeringNotation(m_selectT1), db.GetVoltage(0, m_selectT1)), m_cntrl.Font, Brushes.White, pp);
          }
 
       }

@@ -52,15 +52,21 @@ namespace XOscillo
          {
             m_ring.putLock(out db);
 
-            try
+            while (m_running)
             {
-               db.m_result = DataBlock.RESULT.OK;
-               bool gotdata = m_Oscillo.GetDataBlock(ref db);
-            }
-            catch
-            {
-               db.m_result = DataBlock.RESULT.TIMEOUT;
-               m_Oscillo.Reset();
+               try
+               {
+                  m_Oscillo.GetDataBlock(ref db);
+                  if (db.m_result == DataBlock.RESULT.OK)
+                  {
+                     break;
+                  }
+               }
+               catch
+               {                  
+                  m_Oscillo.Reset();
+               }
+
             }
 
             m_ring.putUnlock();
@@ -69,9 +75,12 @@ namespace XOscillo
 
       private void Consumer()
       {
+         int lastSample = -1;
          while (m_running)
          {
-            m_GraphControl.SetScopeData( m_ring.GetFirstElementButDoNotRemoveIfLastOne() ); 
+            DataBlock db = m_ring.GetFirstElementButDoNotRemoveIfLastOne();
+
+            m_GraphControl.SetScopeData( db ); 
             m_GraphControl.Invalidate();
          }
       }

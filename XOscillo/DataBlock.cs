@@ -180,16 +180,22 @@ namespace XOscillo
          double dt = 1.0 / (float)m_sampleRate;
          double alfa = RC / (RC + dt);
 
-         double lastY = m_Buffer[0];
-         double lastX = m_Buffer[0];
+         double lastY = (double)m_Buffer[0] - 127;
+         double lastX = (double)m_Buffer[0] - 127;
          for (int i = 1; i < m_Buffer.Length; i++)
          {
-            double x = m_Buffer[i];
+            double x = (double)m_Buffer[i] - 127;
             double y = (alfa * (lastY + x - lastX));
             lastY = y;
             lastX = x;
 
-            m_Buffer[i] = (byte)(y+127);
+            y += 127;
+            if (y < 0 || y > 255)
+            {
+               y = 0;
+            }
+
+            m_Buffer[i] = (byte)(y);
          }
 
       }

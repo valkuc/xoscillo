@@ -227,15 +227,15 @@ namespace XOscillo
             configBuffer[4] = 8 + 16;
 
          // 90%
-         configBuffer[5] = 180; //2740
+         configBuffer[5] = 180; //2740      2890
          configBuffer[6] = 10;
-         configBuffer[7] = 140; // 396
+         configBuffer[7] = 140; // 396       2241
          configBuffer[8] = 1;
 
          // 50%
-         configBuffer[5] = 240; //1520
+         configBuffer[5] = 240; //1520   
          configBuffer[6] = 5;
-         configBuffer[7] = 239; //1007
+         configBuffer[7] = 239; //1007   
          configBuffer[8] = 3;
 
          /*
@@ -269,6 +269,7 @@ namespace XOscillo
          {
             db.m_sample = 0;
             db.m_start = time;
+            db.m_dataType = DataBlock.DATA_TYPE.ANALOG;
             db.m_stop = DateTime.Now;
             db.m_channels = fastMode ? 1 : 2;
             db.m_trigger = triggerVoltage;

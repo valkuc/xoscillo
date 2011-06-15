@@ -190,8 +190,8 @@
          // 
          // toolStripContainer1.TopToolStripPanel
          // 
-         this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
          this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip2);
+         this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
          // 
          // graphControl
          // 
@@ -226,12 +226,12 @@
          this.cof.Validating += new System.ComponentModel.CancelEventHandler(this.cof_Validating);
          this.cof.Validated += new System.EventHandler(this.cof_Validated);
          // 
-         // VizArduino
+         // AnalogVizArduino
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.ClientSize = new System.Drawing.Size(787, 443);
          this.Controls.Add(this.toolStripContainer1);
-         this.Name = "VizArduino";
+         this.Name = "AnalogVizArduino";
          this.Load += new System.EventHandler(this.Form1_Load);
          this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
          this.toolStrip2.ResumeLayout(false);
