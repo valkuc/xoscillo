@@ -28,7 +28,9 @@ namespace XOscillo
 		/// </summary>
 		private void InitializeComponent()
 		{
+         this.components = new System.ComponentModel.Container();
          this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
+         this.timer = new System.Windows.Forms.Timer(this.components);
          this.SuspendLayout();
          // 
          // hScrollBar1
@@ -40,6 +42,12 @@ namespace XOscillo
          this.hScrollBar1.TabIndex = 0;
          this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
          // 
+         // timer
+         // 
+         this.timer.Enabled = true;
+         this.timer.Interval = 500;
+         this.timer.Tick += new System.EventHandler(this.timer_Tick);
+         // 
          // GraphControl
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -48,7 +56,7 @@ namespace XOscillo
          this.DoubleBuffered = true;
          this.Name = "GraphControl";
          this.Size = new System.Drawing.Size(195, 167);
-         this.Paint += new System.Windows.Forms.PaintEventHandler(this.UserControl1_Paint);         
+         this.Paint += new System.Windows.Forms.PaintEventHandler(this.UserControl1_Paint);
          this.Resize += new System.EventHandler(this.UserControl1_Resize);
          this.ResumeLayout(false);
 
@@ -57,6 +65,7 @@ namespace XOscillo
 		#endregion
 
       private System.Windows.Forms.HScrollBar hScrollBar1;
+      private System.Windows.Forms.Timer timer;
 
    }
 }

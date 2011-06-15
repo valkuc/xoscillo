@@ -102,7 +102,7 @@
     <Compile Include="arduino\AnalogVizArduino.Designer.cs">
       <DependentUpon>AnalogVizArduino.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataRing.cs" />
+    <Compile Include="DataBlockRing.cs" />
     <Compile Include="VizBuffer.cs">
       <SubType>Form</SubType>
     </Compile>

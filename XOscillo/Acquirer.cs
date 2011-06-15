@@ -11,7 +11,7 @@ namespace XOscillo
       Oscillo m_Oscillo = null;
       GraphControl m_GraphControl = null;
 
-      Ring<DataBlock> m_ring = new Ring<DataBlock>(16);
+      DataBlockRing m_ring = new DataBlockRing(16);
 
       Thread m_threadProvider = null;
       Thread m_threadConsumer = null;
@@ -75,13 +75,11 @@ namespace XOscillo
 
       private void Consumer()
       {
-         int lastSample = -1;
          while (m_running)
          {
             DataBlock db = m_ring.GetFirstElementButDoNotRemoveIfLastOne();
 
             m_GraphControl.SetScopeData( db ); 
-            m_GraphControl.Invalidate();
          }
       }
 
@@ -89,9 +87,11 @@ namespace XOscillo
       {
          m_running = true;
          m_threadProvider = new Thread(new ThreadStart(Provider));
+         m_threadProvider.Name = "Provider";
          m_threadProvider.Start();
 
          m_threadConsumer = new Thread(new ThreadStart(Consumer));
+         m_threadConsumer.Name = "Consumer";
          m_threadConsumer.Start();
       }
 

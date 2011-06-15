@@ -7,9 +7,9 @@ namespace XOscillo
 {
    public class Ring <T> where T : new ()
    {
-      int m_read = 0;
+      protected int m_read = 0;
       int m_write = 0;
-      int m_len = 0;
+      protected int m_len = 0;
       protected T[] m_ring;
 
       public Ring(int size)
@@ -48,30 +48,6 @@ namespace XOscillo
             m_len--;
             Monitor.Pulse(this);
          }
-      }
-
-      public virtual T GetFirstElementButDoNotRemoveIfLastOne()
-      {
-         lock (this)
-         {
-            while (GetLength() == 0)
-            {               
-               Monitor.Wait(this);
-            }
-
-            if (GetLength() == 1)
-            {
-               return m_ring[m_read];
-            }
-
-            T data = m_ring[m_read];
-
-            m_read = (m_read + 1) % m_ring.Length;
-            m_len--;
-            Monitor.Pulse(this);
-
-            return data;
-         }         
       }
 
       public virtual void putLock( out T data)

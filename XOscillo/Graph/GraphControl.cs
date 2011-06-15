@@ -25,6 +25,8 @@ namespace XOscillo
       private GraphFFT gf;
       private GraphDigital gd;
 
+      bool waitingForTrigger = true;
+
       float m_secondsPerDiv = 1.0f;
       double m_lpcf;
 
@@ -37,6 +39,8 @@ namespace XOscillo
          gd = new GraphDigital(this, hScrollBar1);
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
+         timer.Start();
 		}
 
       public void SetSecondsPerDivision(float secondsPerDiv)
@@ -75,6 +79,11 @@ namespace XOscillo
             {
                ScopeData = db;
             }
+
+            //reset timeout
+            waitingForTrigger = false;
+
+            Invalidate();
          }
       }
       
@@ -92,6 +101,10 @@ namespace XOscillo
          DateTime currentTime = DateTime.Now;
          TimeSpan duration = currentTime - oldTime;
          oldTime = currentTime;
+
+         //reset waiting for trigger timer
+         timer.Stop();
+         timer.Start();
 
          if ( Width == 0 || Height == 0 )
          {
@@ -142,17 +155,21 @@ namespace XOscillo
             Point pp = new Point();
             pp.X = 0;
             pp.Y += 16;
-            if (ScopeData.m_result == DataBlock.RESULT.OK)
+
+
+            //display message if .5 seconds elapsed without data
+            if (waitingForTrigger)
+            {
+               e.Graphics.DrawString("Waiting for trigger... ", this.Font, Brushes.White, pp);
+            }
+            else
             {
                if (duration.Milliseconds > 0)
                {
                   e.Graphics.DrawString(string.Format("{0} fps", 1000 / duration.Milliseconds), this.Font, Brushes.White, pp);
                }
             }
-            else
-            {
-               e.Graphics.DrawString("Timeout!", this.Font, Brushes.White, pp);
-            }
+
          }
       }
 
@@ -164,6 +181,13 @@ namespace XOscillo
       private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
       {
          Invalidate();
+      }
+
+      private void timer_Tick(object sender, EventArgs e)
+      {
+         waitingForTrigger = true;
+         Invalidate();
+         //timer.Start();
       }
 
 	}
