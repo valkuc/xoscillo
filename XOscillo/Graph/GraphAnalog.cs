@@ -54,13 +54,13 @@ namespace XOscillo
          {
             Console.WriteLine("{0} {1} {2}", db, m_Bounds, i);
          }
-         /*
+         
          {
             int rawvolt = db.GetAverate(0);
             float y = ValueYToRect(rawvolt);
             g.DrawLine(p, 0, y, 1000, y);
          }
-          */
+         
 
          //Cursor.Hide();
          if (m_mouse != null)

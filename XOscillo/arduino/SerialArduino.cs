@@ -149,12 +149,14 @@ namespace XOscillo
 
          byte[] data = { (byte)COMMANDS.RESET };
          serialPort.Write(data, 0, 1);
+         serialPort.BaseStream.Flush();
+
+         serialPort.DiscardInBuffer();
 
          byte[] readBuffer = new byte[2];
          Read(readBuffer, readBuffer.Length);
 
-         serialPort.DiscardInBuffer();
-
+         
          return readBuffer.ToString() == "OK";
       }
 

@@ -291,9 +291,10 @@ namespace XOscillo
          return outdata;
       }
 
-      public string Decode5BitsToString(string data)
+      public string Decode4BitsToString(string data, bool parityCheck)
       {
          string lut = "0123456789:;<=>?";
+         string parlut = "01";
 
          string str="";
 
@@ -327,9 +328,12 @@ namespace XOscillo
 
                //get value & parity bit
                uint val = 0;
-               uint par = 1;
+               int par = 1;
                for(int j=0;j<4;j++,i++)
                {
+                  if (i >= data.Length)
+                     return str;
+
                   val>>=1;
 
                   char c = data[i];
@@ -345,21 +349,19 @@ namespace XOscillo
                char cc = (char)lut[(int)(val & 0xf)];               
 
                str += cc;
-
+               
                //check parity
-               char b = data[i];
-               if (b == '0')
-                  if (par == '1')
-                     str += '*';
-
-               if (b == '1')
-                  if (par == '0')
-                     str += '*';
-               i++;
-
+               if (parityCheck)
+               {
+                  char b = data[i];
+                  if (data[i] != parlut[par])
+                        str += '*';
+                  i++;
+               }
+               
                //end?
-               if (cc == '?')
-                  break;
+               //if (cc == '?')
+               //   break;
 
             }
          }
@@ -388,7 +390,7 @@ namespace XOscillo
             output.Text += string.Format("Errors as FSK: {0}\r\n", DetectFSK(bitstream));
             output.Text += GetBitStreamFromFSK(bitstream) + "\r\n";
             output.Text += "\r\nText:\r\n";
-            output.Text += Decode5BitsToString(GetBitStreamFromFSK(bitstream)) + "\r\n";
+            output.Text += Decode4BitsToString(GetBitStreamFromFSK(bitstream), true) + "\r\n";
             //output.Text += string.Format("Alternating: \r\n");
             //output.Text += GetBitStreamFromAlternating(bitstream) + "\r\n";
             

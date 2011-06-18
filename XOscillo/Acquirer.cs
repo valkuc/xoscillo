@@ -6,10 +6,10 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   class Acquirer
+   public class Acquirer
    {
-      Oscillo m_Oscillo = null;
-      GraphControl m_GraphControl = null;
+      public Oscillo m_Oscillo = null;
+      public GraphControl m_GraphControl = null;
 
       DataBlockRing m_ring = new DataBlockRing(16);
 
@@ -63,9 +63,10 @@ namespace XOscillo
                   }
                }
                catch
-               {                  
-                  m_Oscillo.Reset();
+               {
                }
+
+               m_Oscillo.Reset();
 
             }
 
@@ -77,8 +78,8 @@ namespace XOscillo
       {
          while (m_running)
          {
-            DataBlock db = m_ring.GetFirstElementButDoNotRemoveIfLastOne();
-
+            DataBlock db;
+            m_ring.GetFirstElementButDoNotRemoveIfLastOne(out db);
             m_GraphControl.SetScopeData( db ); 
          }
       }

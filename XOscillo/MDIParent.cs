@@ -20,10 +20,15 @@ namespace XOscillo
       private void newAnalogArduino_Click(object sender, EventArgs e)
       {
          // Create a new instance of the child form.
-         Form childForm;
+         AnalogVizArduino childForm;
          childForm = new AnalogVizArduino();
          childForm.MdiParent = this;
          childForm.Text = "Analog Arduino";
+         if (childForm.Init() == false)
+         {
+            return;
+         }
+
          childForm.Show();
          childForm.WindowState = FormWindowState.Maximized;
       }
@@ -31,22 +36,30 @@ namespace XOscillo
       private void newDigitalArduino_Click(object sender, EventArgs e)
       {
 			// Create a new instance of the child form.
-         Form childForm;
+         DigitalVizArduino childForm;
          childForm = new DigitalVizArduino();
          childForm.MdiParent = this;
          childForm.Text = "Digital Arduino";
+         if (childForm.Init() == false)
+         {
+            return;
+         }
          childForm.Show();
          childForm.WindowState = FormWindowState.Maximized;
       }
 
       private void newParallax_Click(object sender, EventArgs e)
       {
-         Form childForm;
+         VizParallax childForm;
          childForm = new VizParallax();
          childForm.MdiParent = this;
          childForm.Text = "Parallax";
-         childForm.WindowState = FormWindowState.Maximized;
+         if (childForm.Init() == false)
+         {
+            return;
+         }
          childForm.Show();
+         childForm.WindowState = FormWindowState.Maximized;
          
       }
 

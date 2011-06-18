@@ -10,9 +10,16 @@ namespace XOscillo
 {
    public partial class VizForm : BaseForm
    {
+      protected CommonToolStrip commonToolStrip = null;
+
       public VizForm()
       {
          InitializeComponent();
+      }
+
+      virtual public bool Init()
+      {
+         return true;
       }
 
       virtual public void CopyFrom(VizForm vf)

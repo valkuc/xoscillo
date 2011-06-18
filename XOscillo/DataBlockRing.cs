@@ -15,29 +15,32 @@ namespace XOscillo
          
       }
 
-      public DataBlock GetFirstElementButDoNotRemoveIfLastOne()
+      public void GetFirstElementButDoNotRemoveIfLastOne(out DataBlock data)
       {
          lock (this)
          {
-            if (GetLength() == 0)
+            DataBlock db;
+            Peek(out db);
+
+
+            if ( this.GetLength()>1)
             {
-               Monitor.Wait(this);
+               getLock(out data);
+               getUnlock();
+            }
+            else
+            {
+               //already drawn? Then wait for a new one
+               if (lastSample == db.m_sample)
+               {
+                  Monitor.Wait(this);
+               }
+
+               data = db;
             }
 
-            if (lastSample == m_ring[this.m_read].m_sample)
-            {
-               Monitor.Wait(this);
-            }
+            lastSample = data.m_sample;
 
-            lastSample = m_ring[m_read].m_sample;
-
-            DataBlock data = m_ring[m_read];
-
-            m_read = (m_read + 1) % m_ring.Length;
-            m_len--;
-            Monitor.Pulse(this);
-
-            return data;
          }
       }
  

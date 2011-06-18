@@ -54,7 +54,7 @@ namespace XOscillo
       {
          lock (this)
          {
-            if (GetLength() == m_ring.Length)
+            while (GetLength() == m_ring.Length)
             {
                Monitor.Wait(this);
             }
@@ -69,9 +69,22 @@ namespace XOscillo
       {
          lock (this)
          {
-            
             m_len++;
             Monitor.Pulse(this);
+         }
+      }
+
+
+      public virtual void Peek(out T data)
+      {
+         lock (this)
+         {
+            if (GetLength() == 0)
+            {
+               Monitor.Wait(this);
+            }
+
+            data = m_ring[m_read];
          }
       }
    }
