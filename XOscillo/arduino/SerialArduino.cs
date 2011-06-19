@@ -147,17 +147,24 @@ namespace XOscillo
             return false;
          }
 
-         byte[] data = { (byte)COMMANDS.RESET };
-         serialPort.Write(data, 0, 1);
-         serialPort.BaseStream.Flush();
+         try
+         {
+            byte[] data = { (byte)COMMANDS.RESET };
+            serialPort.Write(data, 0, 1);
+            serialPort.BaseStream.Flush();
 
-         serialPort.DiscardInBuffer();
+            serialPort.DiscardInBuffer();
 
-         byte[] readBuffer = new byte[2];
-         Read(readBuffer, readBuffer.Length);
+            byte[] readBuffer = new byte[2];
+            Read(readBuffer, readBuffer.Length);
 
-         
-         return readBuffer.ToString() == "OK";
+
+            return readBuffer.ToString() == "OK";
+         }
+         catch
+         {
+            return false;
+         }
       }
 
       override public bool Ping()

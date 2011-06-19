@@ -16,8 +16,6 @@ namespace XOscillo
 
       public void DrawGraph(Graphics g, DataBlock db)
       {
-         g.Clear(Color.Black);
-
          Draw(g);
 
          float xx = 0;

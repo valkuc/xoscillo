@@ -20,10 +20,15 @@ namespace XOscillo
          f.Add(str + "\r\n");
       }
 
-
       public void Show()
       {
          f.Show();
       }
+
+      public void Hide()
+      {
+         f.Hide();
+      }
+
    }
 }

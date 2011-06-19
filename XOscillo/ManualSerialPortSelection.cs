@@ -19,23 +19,35 @@ namespace XOscillo
          InitializeComponent();
       }
 
-      private void ManualSerialPortSelection_Load(object sender, EventArgs e)
+      public bool TryDetection()
       {
+         DebugConsole.Instance.Show();
+
          string[] ports = SerialPort.GetPortNames();
 
          DebugConsole.Instance.AddLn("Autodetecting " + m_os.GetName() + " port");
          foreach (string portName in ports)
          {
-            comboBox1.Items.Add(portName);
-            
-            if ( m_os.Open(portName) == true )
-            {               
-               this.Close();
-               return;
-            }            
+            if (m_os.Open(portName) == true)
+            {
+               DebugConsole.Instance.Hide();
+               return true;
+            }
          }
 
+         DebugConsole.Instance.Hide();
          DebugConsole.Instance.AddLn("Autodetection failed, trying manual mode");
+
+         return false;
+      }
+
+      private void ManualSerialPortSelection_Load(object sender, EventArgs e)
+      {
+         string[] ports = SerialPort.GetPortNames();
+         foreach (string portName in ports)
+         {
+            comboBox1.Items.Add(portName);
+         }
 
          comboBox1.SelectedIndex = 0;
 

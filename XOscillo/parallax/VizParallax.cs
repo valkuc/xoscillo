@@ -14,79 +14,47 @@ namespace XOscillo
    {
       SerialParallax oscillo;
 
-      Acquirer m_Acq = new Acquirer();
-
       public VizParallax( )
       {
-         InitializeComponent();
+         m_Acq = new Acquirer();
       }
 
-      override public DataBlock GetDataBlock()
-      {
-         return graphControl.GetScopeData();
-      }
-
-      private void VizParallax_Load(object sender, EventArgs e)
+      override public bool Init()
       {
          oscillo = new SerialParallax();
 
-         if ( m_Acq.Open(oscillo, graphControl) == false )
-         {
-            this.BeginInvoke(new MethodInvoker(this.Close));
-            return;
-         }
-
-         time.Items.Add(0.1);
-         time.Items.Add(0.05);
-         time.Items.Add(0.02);
-         time.Items.Add(0.01);
-         time.Items.Add(0.005);
-         time.Items.Add(0.002);
-         time.Items.Add(0.001);
-         time.Items.Add(0.0005);
-         time.Items.Add(0.0002);
-         time.Items.Add(0.0001);
-         time.Items.Add(0.00005);
-         time.Items.Add(0.00002);
-         time.Items.Add(0.00001);
-         time.Items.Add(0.000005);
-         time.SelectedIndex = 10;
-
-         triggerMode.SelectedIndex = 1;
-         play.Checked = true;
+         return m_Acq.Open(oscillo, graphControl);
       }
 
-      private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+      override public void Form1_Load(object sender, EventArgs e)
       {
-         m_Acq.Close();
-      }
+         commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl);
 
-      private void play_CheckedChanged(object sender, EventArgs e)
-      {
-         if (play.Checked)
+         float[] divs = { 1.0f, 0.5f, 0.2f, 0.1f, 0.05f, 0.02f, 0.01f, 0.005f, 0.002f, 0.001f, 0.0005f, 0.0002f, 0.00001f, 0.000005f };
+
+         foreach (float t in divs)
          {
-            m_Acq.Play();
-
-            play.Image = global::XOscillo.Properties.Resources.pause;
+            commonToolStrip.time.Items.Add(t);
          }
-         else
-         {
-            play.Image = global::XOscillo.Properties.Resources.play;
+         commonToolStrip.selectedIndexChanged += this.time_SelectedIndexChanged;
 
-            m_Acq.Stop();
-         }
-      }
+         commonToolStrip.time.SelectedIndex = 10;
 
-      private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
-      {
-         Invalidate();
+         ParallaxToolStrip pts = new ParallaxToolStrip(oscillo, graphControl);
+
+         //FilteringToolStrip ft = new FilteringToolStrip(oscillo, graphControl);
+
+         //this.toolStripContainer1.TopToolStripPanel.Controls.Add(ft.GetToolStrip());
+         this.toolStripContainer1.TopToolStripPanel.Controls.Add(pts.GetToolStrip());
+         this.toolStripContainer1.TopToolStripPanel.Controls.Add(commonToolStrip.GetToolStrip());
+
       }
 
       private void time_SelectedIndexChanged(object sender, EventArgs e)
       {
-         
+
          int sampleRate = 0;
-         switch (time.SelectedIndex)
+         switch (commonToolStrip.time.SelectedIndex)
          {
             case 0: sampleRate = 250; break;
             case 1: sampleRate = 500; break;
@@ -104,73 +72,7 @@ namespace XOscillo
             case 13: sampleRate = 5000000; break;
          }
          oscillo.SetSamplingRate(sampleRate);
-
-         float secondsPerDiv = float.Parse(time.Items[time.SelectedIndex].ToString());
-         graphControl.SetSecondsPerDivision(secondsPerDiv);        
       }
 
-      private void triggerMode_SelectedIndexChanged(object sender, EventArgs e)
-      {
-         switch (triggerMode.SelectedIndex)
-         {
-            case 0:
-               oscillo.triggerChannel = TriggerChannel.TC_CH1;
-               oscillo.edge = Edge.EDGE_RAISING;
-               oscillo.externalTrigger = false;
-               break;
-            case 1:
-               oscillo.triggerChannel = TriggerChannel.TC_CH1;
-               oscillo.edge = Edge.EDGE_FALLING;
-               oscillo.externalTrigger = false;
-               break;
-            case 2:
-               oscillo.triggerChannel = TriggerChannel.TC_CH2;
-               oscillo.edge = Edge.EDGE_RAISING;
-               oscillo.externalTrigger = false;
-               break;
-            case 3:
-               oscillo.triggerChannel = TriggerChannel.TC_CH2;
-               oscillo.edge = Edge.EDGE_FALLING;
-               oscillo.externalTrigger = false;
-               break;
-            case 4:
-               oscillo.externalTrigger = true;
-               break;
-
-         }
-         
-         Invalidate();
-      }
-
-      private void trigger_Validated(object sender, EventArgs e)
-      {
-         oscillo.TriggerVoltage = byte.Parse(trigger.Text);
-      }
-
-      private void trigger_Validating(object sender, CancelEventArgs e)
-      {
-         int value;
-         if (int.TryParse(trigger.Text, out value))
-         {
-            if (value >= 0 && value <= 255)
-            {
-               trigger.BackColor = Color.White;
-               return;
-            }
-         }
-
-         trigger.BackColor = Color.Red;
-         e.Cancel = true;
-      }
-
-      private void fft_CheckedChanged(object sender, EventArgs e)
-      {
-         graphControl.DrawFFT( fft.Checked );
-      }
-
-      private void clone_Click(object sender, EventArgs e)
-      {
-         Clone();
-      }
    }
 }

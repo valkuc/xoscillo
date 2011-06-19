@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace XOscillo
 {
-   class FilteringToolbar
+   class FilteringToolStrip
    {
       AnalogArduino oscillo;
       GraphControl graphControl;
@@ -16,7 +16,7 @@ namespace XOscillo
       private System.Windows.Forms.ToolStripLabel toolStripLabel4;
       private System.Windows.Forms.ToolStripTextBox cof;
 
-      public FilteringToolbar(AnalogArduino osc, GraphControl gc)
+      public FilteringToolStrip(AnalogArduino osc, GraphControl gc)
       {
          oscillo = osc;
          graphControl = gc;
@@ -48,6 +48,8 @@ namespace XOscillo
          this.cof.Name = "cof";
          this.cof.Size = new System.Drawing.Size(100, 25);
          this.cof.Text = "0";
+         this.cof.Validating += new System.ComponentModel.CancelEventHandler(this.cof_Validating);
+         this.cof.Validated += new System.EventHandler(this.cof_Validated);
       }
 
       public ToolStrip GetToolStrip()

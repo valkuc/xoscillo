@@ -66,8 +66,6 @@ namespace XOscillo
 
          r = m_Bounds;
 
-         g.Clear(Color.Black);
-
          if (f == null)
          {
             f = new fft(db.GetChannelLength());

@@ -54,14 +54,7 @@ namespace XOscillo
          {
             Console.WriteLine("{0} {1} {2}", db, m_Bounds, i);
          }
-         
-         {
-            int rawvolt = db.GetAverate(0);
-            float y = ValueYToRect(rawvolt);
-            g.DrawLine(p, 0, y, 1000, y);
-         }
-         
-
+                
          //Cursor.Hide();
          if (m_mouse != null)
          {
@@ -87,8 +80,6 @@ namespace XOscillo
 
       public void DrawGraph(Graphics g, DataBlock db)
       {
-         g.Clear(Color.Black);
-
          Draw( g);
 
          for (int ch = 0; ch < db.m_channels; ch++)

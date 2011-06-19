@@ -14,16 +14,9 @@ namespace XOscillo
    {
       DigitalArduino oscillo;
 
-      Acquirer m_Acq = new Acquirer();
-
       public DigitalVizArduino()
       {
-         InitializeComponent();
-      }
-
-      override public DataBlock GetDataBlock()
-      {
-         return graphControl.GetScopeData();
+         m_Acq = new Acquirer();
       }
 
       override public bool Init()
@@ -33,7 +26,7 @@ namespace XOscillo
          return m_Acq.Open(oscillo, graphControl);
       }
 
-      private void Form1_Load(object sender, EventArgs e)
+      override public void Form1_Load(object sender, EventArgs e)
       {
          commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl);
 
@@ -52,11 +45,6 @@ namespace XOscillo
          commonToolStrip.time.SelectedIndex = 10;
 
          this.toolStripContainer1.TopToolStripPanel.Controls.Add(commonToolStrip.GetToolStrip());
-      }
-
-      private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-      {
-         m_Acq.Close();
       }
 
    }

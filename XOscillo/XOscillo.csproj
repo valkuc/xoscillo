@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="Acquirer.cs" />
     <Compile Include="arduino\AnalogArduino.cs" />
-    <Compile Include="arduino\AnalogArduinoToolbar.cs" />
+    <Compile Include="arduino\AnalogArduinoToolStrip.cs" />
     <Compile Include="arduino\DigitalVizArduino.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -53,12 +53,6 @@
       <DependentUpon>DigitalVizArduino.cs</DependentUpon>
     </Compile>
     <Compile Include="arduino\DigitalArduino.cs" />
-    <Compile Include="BaseForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BaseForm.Designer.cs">
-      <DependentUpon>BaseForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="DataBlock.cs" />
     <Compile Include="DebugConsole.cs" />
     <Compile Include="DebugConsoleForm.cs">
@@ -67,7 +61,7 @@
     <Compile Include="DebugConsoleForm.Designer.cs">
       <DependentUpon>DebugConsoleForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="FilteringToolbar.cs" />
+    <Compile Include="ToolStrips\FilteringToolStrip.cs" />
     <Compile Include="Graph\Graph.cs" />
     <Compile Include="Graph\GraphFFT.cs" />
     <Compile Include="Graph\GraphAnalog.cs" />
@@ -105,13 +99,7 @@
       <DependentUpon>AnalogVizArduino.cs</DependentUpon>
     </Compile>
     <Compile Include="DataBlockRing.cs" />
-    <Compile Include="CommonToolStrip.cs">
-    </Compile>
-    <Compile Include="VizBuffer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="VizBuffer.Designer.cs">
-      <DependentUpon>VizBuffer.cs</DependentUpon>
+    <Compile Include="ToolStrips\CommonToolStrip.cs">
     </Compile>
     <Compile Include="VizForm.cs">
       <SubType>Form</SubType>
@@ -163,10 +151,6 @@
       <DependentUpon>AnalogVizArduino.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="VizBuffer.resx">
-      <DependentUpon>VizBuffer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="VizForm.resx">
       <DependentUpon>VizForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -213,6 +197,13 @@
     <None Include="Resources\play.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BaseForm.Designer.cs">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="parallax\ParallaxToolStrip.cs" />
     <None Include="Resources\pause.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

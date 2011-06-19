@@ -15,11 +15,13 @@ namespace XOscillo
 
       private System.Windows.Forms.ToolStrip toolStrip;
       private System.Windows.Forms.ToolStripButton clone;
-      private System.Windows.Forms.ToolStripButton play;
+      private System.Windows.Forms.ToolStripButton play = null;
       private System.Windows.Forms.ToolStripLabel timeLabel;
       public System.Windows.Forms.ToolStripComboBox time;
       private System.Windows.Forms.ToolStripButton fft;
       private GraphControl graphControl;
+
+      public System.EventHandler selectedIndexChanged;
 
       public CommonToolStrip(VizForm vf, Acquirer acq, GraphControl gc)
       {
@@ -54,6 +56,7 @@ namespace XOscillo
          this.time.Name = "time";
          this.time.Size = new System.Drawing.Size(75, 25);
          this.time.SelectedIndexChanged += new System.EventHandler(this.time_SelectedIndexChanged);
+         
          // 
          // clone
          // 
@@ -64,19 +67,23 @@ namespace XOscillo
          this.clone.Size = new System.Drawing.Size(42, 22);
          this.clone.Text = "Clone";
          this.clone.Click += new System.EventHandler(this.clone_Click);
+
          // 
          // play
          // 
-         this.play.CheckOnClick = true;
-         this.play.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-         this.play.Image = global::XOscillo.Properties.Resources.play;
-         this.play.ImageTransparentColor = System.Drawing.Color.Magenta;
-         this.play.Margin = new System.Windows.Forms.Padding(1);
-         this.play.Name = "play";
-         this.play.Size = new System.Drawing.Size(23, 23);
-         this.play.Text = "toolStripButton2";
-         this.play.CheckedChanged += new System.EventHandler(this.play_CheckedChanged);
-         this.play.Checked = true;
+         if (m_acquirer != null)
+         {
+            this.play.CheckOnClick = true;
+            this.play.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.play.Image = global::XOscillo.Properties.Resources.play;
+            this.play.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.play.Margin = new System.Windows.Forms.Padding(1);
+            this.play.Name = "play";
+            this.play.Size = new System.Drawing.Size(23, 23);
+            this.play.Text = "toolStripButton2";
+            this.play.CheckedChanged += new System.EventHandler(this.play_CheckedChanged);
+            this.play.Checked = true;
+         }
          // 
          // fft
          // 
@@ -98,7 +105,12 @@ namespace XOscillo
       }
 
       private void time_SelectedIndexChanged(object sender, EventArgs e)
-      {
+      {         
+         if (selectedIndexChanged != null)
+         {
+            selectedIndexChanged(sender, e);
+         }
+
          graphControl.SetSecondsPerDivision(float.Parse(time.SelectedItem.ToString()));
       }
 

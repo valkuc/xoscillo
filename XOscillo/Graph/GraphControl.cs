@@ -73,7 +73,7 @@ namespace XOscillo
             if (m_lpcf > 0)
             {
                ScopeData.Copy(db);
-               ScopeData.HighPass(m_lpcf);
+               ScopeData.LowPass(m_lpcf);
             }
             else
             {
@@ -111,15 +111,12 @@ namespace XOscillo
             return;
          }
 
-         if (ScopeData == null || ScopeData.m_channels == 0)
-         {
-            return;
-         }
+         e.Graphics.Clear(Color.Black);
 
          Rectangle r = this.Bounds;
          r.Height -= hScrollBar1.Height;
 
-         lock (this)
+         if (ScopeData != null && ScopeData.m_channels != 0)
          {
             if ( ScopeData.m_dataType == DataBlock.DATA_TYPE.ANALOG)
             {
@@ -187,7 +184,7 @@ namespace XOscillo
       {
          waitingForTrigger = true;
          Invalidate();
-         //timer.Start();
+         timer.Stop();
       }
 
 	}

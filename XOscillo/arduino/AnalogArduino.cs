@@ -9,6 +9,7 @@ namespace XOscillo
       int m_numSamples = 1024;
       int SampleID = 0;
 
+
       public AnalogArduino() : base(115200, 12000)
       {
          //needs tunning

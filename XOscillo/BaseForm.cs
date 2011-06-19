@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,7 +21,7 @@ namespace XOscillo
       }
 
       virtual public void SetDataBlock(DataBlock db)
-      {         
+      {
       }
 
    }

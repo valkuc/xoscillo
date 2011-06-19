@@ -71,15 +71,18 @@ namespace XOscillo
          openFileDialog.Filter = "XML Files (*.xml)|*.xml|Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
 			if (openFileDialog.ShowDialog(this) == DialogResult.OK)
 			{
-				string FileName = openFileDialog.FileName;
+				string fileName = openFileDialog.FileName;
 
-            VizBuffer childForm = new VizBuffer();
+            DataBlock db = new DataBlock();
+            db.LoadXML(fileName);
+
+            VizForm childForm = new VizForm();
             // Make it a child of this MDI form before showing it.
             childForm.MdiParent = this;
-            childForm.Text = FileName;
+            childForm.Text = fileName;
             childForm.Show();
             childForm.WindowState = FormWindowState.Maximized;
-            childForm.LoadDataFromFile(FileName);
+            childForm.SetDataBlock(db);
          }
 		}
 
