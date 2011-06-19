@@ -102,10 +102,6 @@ namespace XOscillo
          TimeSpan duration = currentTime - oldTime;
          oldTime = currentTime;
 
-         //reset waiting for trigger timer
-         timer.Stop();
-         timer.Start();
-
          if ( Width == 0 || Height == 0 )
          {
             return;
@@ -165,6 +161,10 @@ namespace XOscillo
                {
                   e.Graphics.DrawString(string.Format("{0} fps", 1000 / duration.Milliseconds), this.Font, Brushes.White, pp);
                }
+
+               //reset waiting for trigger timer
+               timer.Stop();
+               timer.Start();
             }
 
          }

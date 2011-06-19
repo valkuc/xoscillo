@@ -15,7 +15,6 @@ namespace XOscillo
 
       Thread m_threadProvider = null;
       Thread m_threadConsumer = null;
-      bool m_running = false;
 
       public bool Open( Oscillo os, GraphControl gc)
       {
@@ -51,26 +50,33 @@ namespace XOscillo
       {
          DataBlock db;
 
-         while (m_running)
+         for(;;)
          {
+            if (m_ring.IsStopped())
+            {
+               return;
+            }
+
             m_ring.putLock(out db);
 
-            while (m_running)
+            if (m_ring.IsStopped()==false)
             {
-               try
+               for (;;)
                {
-                  m_Oscillo.GetDataBlock(ref db);
-                  if (db.m_result == DataBlock.RESULT.OK)
+                  try
                   {
-                     break;
+                     m_Oscillo.GetDataBlock(ref db);
+                     if (db.m_result == DataBlock.RESULT.OK)
+                     {
+                        break;
+                     }
                   }
-               }
-               catch
-               {
-               }
+                  catch
+                  {
+                  }
 
-               m_Oscillo.Reset();
-
+                  m_Oscillo.Reset();
+               }
             }
 
             m_ring.putUnlock();
@@ -79,17 +85,24 @@ namespace XOscillo
 
       private void Consumer()
       {
-         while (m_running)
+         for(;;)
          {
             DataBlock db;
             m_ring.GetFirstElementButDoNotRemoveIfLastOne(out db);
+
+            if (m_ring.IsStopped())
+            {
+               break;
+            }
+
             m_GraphControl.SetScopeData( db ); 
          }
       }
 
       public void Play()
       {
-         m_running = true;
+         m_ring.Start();
+
          m_threadProvider = new Thread(new ThreadStart(Provider));
          m_threadProvider.Name = "Provider";
          m_threadProvider.Start();
@@ -101,13 +114,15 @@ namespace XOscillo
 
       public void Stop()
       {
-         m_running = false;
+         //so consumer can finish
+         m_ring.Stop();
 
          if (m_threadConsumer != null)
          {
             m_threadConsumer.Join();
             m_threadConsumer = null;
          }
+
          if (m_threadProvider != null)
          {
             m_threadProvider.Join();

@@ -14,10 +14,9 @@ namespace XOscillo
    {
       AnalogArduino oscillo;
 
-      Acquirer m_Acq = new Acquirer();
-
       public AnalogVizArduino()
       {
+         m_Acq = new Acquirer();
       }
 
       override public bool Init()

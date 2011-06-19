@@ -41,7 +41,7 @@ namespace XOscillo
 
             lastSample = data.m_sample;
 
-         }
+         }         
       }
  
    }

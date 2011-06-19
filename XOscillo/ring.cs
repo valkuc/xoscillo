@@ -12,12 +12,36 @@ namespace XOscillo
       protected int m_len = 0;
       protected T[] m_ring;
 
+      protected bool m_stop;
+
       public Ring(int size)
       {
          m_ring = new T[size];
          for (int i = 0; i < size; i++)
          {
             m_ring[i] = new T();
+         }
+      }
+
+      public bool IsStopped()
+      {
+         return m_stop;
+      }
+
+      public void Stop()
+      {
+         lock (this)
+         {
+            m_stop = true;
+            Monitor.PulseAll(this);
+         }
+      }
+
+      public void Start()
+      {
+         lock (this)
+         {
+            m_stop = false;
          }
       }
 
@@ -30,9 +54,17 @@ namespace XOscillo
       {
          lock (this)
          {
-            while (GetLength() == 0)
+            m_stop = false;
+
+            while ( (GetLength()==0) && (m_stop==false) )
             {
                Monitor.Wait(this);
+            }
+
+            if (m_stop)
+            {
+               data = default(T);
+               return;
             }
 
             data = m_ring[m_read];
@@ -79,10 +111,17 @@ namespace XOscillo
       {
          lock (this)
          {
-            if (GetLength() == 0)
+            if ((GetLength() == 0) && (m_stop == false))
             {
                Monitor.Wait(this);
             }
+
+            if (m_stop)
+            {
+               data = default(T);
+               return;
+            }
+
 
             data = m_ring[m_read];
          }
