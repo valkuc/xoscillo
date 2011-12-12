@@ -22,6 +22,11 @@ namespace XOscillo
             DataBlock db;
             Peek(out db);
 
+            if (db == null)
+            {
+               data = null;
+               return;
+            }
 
             if ( this.GetLength()>1)
             {

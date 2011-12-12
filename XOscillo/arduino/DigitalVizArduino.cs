@@ -13,6 +13,7 @@ namespace XOscillo
    public partial class DigitalVizArduino : XOscillo.VizForm
    {
       DigitalArduino oscillo;
+      GraphDigital gd = new GraphDigital();
 
       public DigitalVizArduino()
       {
@@ -23,7 +24,7 @@ namespace XOscillo
       {
          oscillo = new DigitalArduino();
 
-         return m_Acq.Open(oscillo, graphControl);
+         return m_Acq.Open(oscillo, graphControl.GetConsumer());
       }
 
       override public void Form1_Load(object sender, EventArgs e)
@@ -45,6 +46,10 @@ namespace XOscillo
          commonToolStrip.time.SelectedIndex = 10;
 
          this.toolStripContainer1.TopToolStripPanel.Controls.Add(commonToolStrip.GetToolStrip());
+
+         gd.SetVerticalRange(0, 255, (float)(255.0 / 6.5), "Volts");
+
+         graphControl.SetRenderer(gd);
       }
 
    }

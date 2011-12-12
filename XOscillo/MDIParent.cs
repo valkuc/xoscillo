@@ -19,6 +19,19 @@ namespace XOscillo
 
       private void newAnalogArduino_Click(object sender, EventArgs e)
       {
+         /*
+         PID childForm = new PID();
+         childForm.MdiParent = this;
+         childForm.Text = "Analog Arduino";
+         //if (childForm.Init() == false)
+         {
+           // return;
+         }
+         childForm.Show();
+         childForm.WindowState = FormWindowState.Maximized;
+          */
+
+
          // Create a new instance of the child form.
          AnalogVizArduino childForm;
          childForm = new AnalogVizArduino();

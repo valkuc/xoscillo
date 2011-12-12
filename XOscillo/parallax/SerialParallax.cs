@@ -45,6 +45,9 @@ namespace XOscillo
       {
          switch (smp)
          {
+
+            case 50: m_sampleRateOpCode = 0xf; fastMode = false; break;
+            case 100: m_sampleRateOpCode = 0xe; fastMode = false; break;
             case 250: m_sampleRateOpCode = 0xd; fastMode = false; break;
             case 500: m_sampleRateOpCode = 0xc; fastMode = false; break;
             case 1000: m_sampleRateOpCode = 0xb; fastMode = false; break;
@@ -56,9 +59,8 @@ namespace XOscillo
             case 100000: m_sampleRateOpCode = 0x5; fastMode = false; break;
             case 250000: m_sampleRateOpCode = 0x4; fastMode = false; break;
             case 500000: m_sampleRateOpCode = 0x3; fastMode = false; break;
-            case 1000000: m_sampleRateOpCode = 0x2; fastMode = false; break;
-            case 2500000: m_sampleRateOpCode = 0x2; fastMode = false; break;
-            case 5000000: m_sampleRateOpCode = 0x1; fastMode = true; break;
+            case 1000000: m_sampleRateOpCode = 0x2; fastMode = true; break;
+                
             default: return false;
          }
 
@@ -80,10 +82,11 @@ namespace XOscillo
       };
 
       private byte triggerVoltage;
-      public byte TriggerVoltage
+      
+      public float TriggerVoltage
       {
          get { return triggerVoltage; }
-         set { triggerVoltage = value; }
+         set { triggerVoltage = (byte)(128 - ((value * 255) / 20)); }
       }
 
       VoltageRange voltageRange;
@@ -93,6 +96,8 @@ namespace XOscillo
       ChannelOnOFF channleOnOff;
 
       TriggerMode triggerMode;
+
+      int triggerPos;
 
       public TriggerChannel triggerChannel;
 
@@ -110,11 +115,11 @@ namespace XOscillo
       {
          // Create a new SerialPort object with default settings.
          serialPort = new SerialPort();
-         triggerVoltage = 128;
+         triggerVoltage = 1;
          voltageRange = VoltageRange.VR_20VPP_20VPP;
          edge = Edge.EDGE_RAISING;
          channleOnOff = ChannelOnOFF.COF_CH1;
-         triggerMode = TriggerMode.TM_AUTO;
+         triggerMode = TriggerMode.TM_NORMAL;
          triggerChannel = TriggerChannel.TC_CH1;
          externalTrigger = false;
          m_sampleRates = new int[15] { 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000 };
@@ -218,6 +223,7 @@ namespace XOscillo
       {
          byte[] configBuffer = new byte[9];
          configBuffer[0] = 170;
+
          configBuffer[1] = triggerVoltage;
          configBuffer[2] = (byte)(((byte)voltageRange << 6) | ((byte)edge << 4) | (byte)channleOnOff);
          configBuffer[3] = (byte)(((byte)m_sampleRateOpCode << 3) | ((byte)triggerMode << 2) | ((byte)triggerChannel));
@@ -226,12 +232,6 @@ namespace XOscillo
          if (fastMode)
             configBuffer[4] = 8 + 16;
 
-         // 90%
-         configBuffer[5] = 180; //2740      2890
-         configBuffer[6] = 10;
-         configBuffer[7] = 140; // 396       2241
-         configBuffer[8] = 1;
-
          // 50%
          configBuffer[5] = 240; //1520   
          configBuffer[6] = 5;
@@ -239,11 +239,29 @@ namespace XOscillo
          configBuffer[8] = 3;
 
          /*
-         configBuffer[5] = 180; //2740
-         configBuffer[6] = 10;
-         configBuffer[7] = 80;  
-         configBuffer[8] = 6;
+         //  0 :  05df  06de , 1503  1758
+         //  25:  074f  056f,  1871  1391
+         //  50:  08d0  03ed,  2256  1005
+         //  75:  0a4c  0272,  2636   626
+         // 100:  0bc1  01fc,  3009   508
+
+         //   0:  07ff  0569, 2048  1337
+         //  25:  0810  04ae
+         //  50:  08ca  03f3,  
+         //  75:  098b  0333, 2443 819
+         // 100:  0a46  0278
+
+          float t = .5f;
+         int pre = 500;// (int)(1503f * (1 - t) + 3009f * t);
+         int post = 1500;// (int)(1758f * (1 - t) + 508f * t);
+
+         configBuffer[5] = (byte)(pre & 0xff);
+         configBuffer[6] = (byte)((pre>>8) & 0xff);
+         configBuffer[7] = (byte)(post & 0xff);
+         configBuffer[8] = (byte)((post >> 8) & 0xff);
          */
+
+
 
          serialPort.Write(configBuffer, 0, 9);
       }
@@ -271,8 +289,11 @@ namespace XOscillo
             db.m_start = time;
             db.m_dataType = DataBlock.DATA_TYPE.ANALOG;
             db.m_stop = DateTime.Now;
+            db.m_00 = 20;
+            db.m_FF = -20;
             db.m_channels = fastMode ? 1 : 2;
-            db.m_trigger = triggerVoltage;
+            db.m_triggerVoltage = triggerVoltage;
+            db.m_triggerPos = 1500/2;
             db.m_sampleRate = m_sampleRate;
             db.m_stride = 1;
             db.m_channelOffset = 1500;

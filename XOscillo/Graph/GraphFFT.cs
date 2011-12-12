@@ -6,12 +6,12 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   class GraphFFT : Graph
+   public class GraphFFT : Graph
    {
       fft f;
 
-      public GraphFFT(Control cntrl, HScrollBar h)
-         : base(cntrl, h)
+      public GraphFFT()
+         : base()
       {
       }
 
@@ -60,7 +60,15 @@ namespace XOscillo
          g.DrawLine(Pens.Red, r.X, y, 1024, y);
       }
 
-      public void DrawFFT(Graphics g, DataBlock db)
+      virtual public void ResizeToRectangle(HScrollBar hBar)
+      {
+         hBar.LargeChange = m_Bounds.Width;
+         hBar.Maximum = 1024;
+
+         SetDisplayWindow(hBar.Value, 1024);
+      }
+
+      override public void Draw(Graphics g, DataBlock db)
       {
          Rectangle r = new Rectangle();
 
@@ -74,9 +82,6 @@ namespace XOscillo
          f.SetData(db.m_Buffer, 0, db.GetChannelLength());
          f.FFT(0);
 
-         m_hBar.LargeChange = r.Width;
-         m_hBar.Maximum = 1024;
-
          int maxFreq = db.m_sampleRate / 2;
          int minFreq = 0;
 
@@ -84,12 +89,7 @@ namespace XOscillo
          r.Height -= 20;
          r.Width = 1024;
 
-         if (m_hBar.Visible)
-         {
-            r.Height -= m_hBar.Height;
-         }
-
-         r.X -= m_hBar.Value;
+         r.X -= (int)MinXD;
 
          if (false)
          {
@@ -123,7 +123,7 @@ namespace XOscillo
             pp.Y = r.Bottom;
 
             g.DrawLine(Pens.Gray, pp.X, 0, pp.X, pp.Y);
-            g.DrawString(string.Format("{0}", i), m_cntrl.Font, Brushes.White, pp);
+            g.DrawString(string.Format("{0}", i), parent.Font, Brushes.White, pp);
          }
       }
 

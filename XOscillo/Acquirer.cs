@@ -9,14 +9,14 @@ namespace XOscillo
    public class Acquirer
    {
       public Oscillo m_Oscillo = null;
-      public GraphControl m_GraphControl = null;
+      public Consumer m_GraphControl = null;
 
       DataBlockRing m_ring = new DataBlockRing(16);
 
       Thread m_threadProvider = null;
       Thread m_threadConsumer = null;
 
-      public bool Open( Oscillo os, GraphControl gc)
+      public bool Open(Oscillo os, Consumer gc)
       {
          m_Oscillo = os;
          m_GraphControl = gc;
@@ -95,7 +95,7 @@ namespace XOscillo
                break;
             }
 
-            m_GraphControl.SetScopeData( db ); 
+            m_GraphControl.SetDataBlock(db); 
          }
       }
 

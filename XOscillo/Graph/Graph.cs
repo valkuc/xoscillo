@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   class Graph
+   public class Graph
    {
       protected float MinY;
       protected float MaxY;
@@ -21,8 +21,7 @@ namespace XOscillo
       protected float MinXD;
       protected float MaxXD;
 
-      protected Control m_cntrl;
-      protected HScrollBar m_hBar;
+      public Control parent;
 
       float m_centre;
       float m_window;
@@ -35,14 +34,8 @@ namespace XOscillo
 
       protected Rectangle m_Bounds;
 
-      public Graph(Control cntrl, HScrollBar h)
+      public Graph()
       {
-         m_hBar = h;
-         m_cntrl = cntrl;
-
-         m_cntrl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GraphControl_MouseMove);
-
-         SetRectangle(m_cntrl.Bounds);         
       }
 
       public void SetRectangle(Rectangle Bounds)
@@ -190,11 +183,11 @@ namespace XOscillo
       }
 
 
-      public void ResizeToRectangle()
+      virtual public void ResizeToRectangle(HScrollBar hBar)
       {
          m_window = (float)(m_Bounds.Width * 8.0f * DivX) / (float)m_Bounds.Height;
 
-         m_centre = ((float)m_hBar.Value + (float)m_hBar.LargeChange / 2.0f) / m_s;
+         m_centre = ((float)hBar.Value + (float)hBar.LargeChange / 2.0f) / m_s;
 
          float t0 = m_centre - m_window / 2.0f;
          float t1 = m_centre + m_window / 2.0f;
@@ -205,18 +198,29 @@ namespace XOscillo
             t0 = 0;
 
             m_centre = t1 / 2.0f;
-
             m_window = t1;
          }
 
+         if (t0 > MaxX)
+         {
+
+            t0 = MaxX - m_window;
+            t1 = MaxX;
+
+            m_centre = (t1 + t0) / 2.0f;
+         }
+
+
          SetDisplayWindow(t0, t1);
 
-         m_hBar.Maximum = (int)(MaxX * m_s);
-         m_hBar.LargeChange = (int)(m_window * m_s);
-         m_hBar.Value = (int)(t0 * m_s);
+
+         hBar.Maximum = (int)(MaxX * m_s);
+         hBar.LargeChange = (int)(m_window * m_s);
+         int i = hBar.Maximum - hBar.LargeChange;
+         hBar.Value = (int)(t0 * m_s);
       }
 
-      private void DrawHorizontalLines(Graphics g)
+      protected void DrawHorizontalLines(Graphics g)
       {
          Pen p = new Pen(Color.Gray);
          p.DashStyle = System.Drawing.Drawing2D.DashStyle.Custom;
@@ -253,10 +257,9 @@ namespace XOscillo
             if (dist > 40)
             {
                string str = ToEngineeringNotation(DivX * i);
-               g.DrawString(str, m_cntrl.Font, Brushes.White, x, 0);
+               g.DrawString(str, parent.Font, Brushes.White, x, 0);
             }
-         }
-        
+         }        
       }
       
       public void DrawCross(Graphics g, Pen p, int x, int y)
@@ -271,7 +274,7 @@ namespace XOscillo
          Point pp = new Point();
          pp.X = x + 16;
          pp.Y = y + 16;
-         g.DrawString(string.Format("({0}, {1})", ToEngineeringNotation(RectToValueX(x)), RectToValueY(y) ), m_cntrl.Font, Brushes.White, pp);
+         g.DrawString(string.Format("({0}, {1})", ToEngineeringNotation(RectToValueX(x)), RectToValueY(y) ), parent.Font, Brushes.White, pp);
       }
 
       public void DrawSelection(Graphics g)
@@ -292,11 +295,8 @@ namespace XOscillo
          g.FillRectangle(Brushes.DarkBlue, ValueXToRect(s0), m_Bounds.Y, ValueXToRect(s1) - ValueXToRect(s0), m_Bounds.Height);
       }
 
-      public void Draw( Graphics g)
+      virtual public void Draw(Graphics g, DataBlock db)
       {
-         DrawSelection(g);
-         DrawHorizontalLines(g);
-         DrawVerticalLines( g);
       }
 
       public bool Selected()

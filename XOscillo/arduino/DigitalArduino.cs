@@ -49,7 +49,8 @@ namespace XOscillo
             db.m_start = DateTime.Now;
 
             db.m_channels = 6;
-            db.m_trigger = 0;
+            db.m_triggerVoltage = 0;
+            db.m_triggerPos = 0;
             db.m_sampleRate = m_sampleRate;
             db.m_stride = 1;
             db.m_channelOffset = 0;

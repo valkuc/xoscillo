@@ -9,14 +9,16 @@ namespace XOscillo
    class GraphDigital : Graph
    {
 
-      public GraphDigital(Control cntrl, HScrollBar h)
-         : base(cntrl, h)
+      public GraphDigital()
+         : base()
       {
       }
 
-      public void DrawGraph(Graphics g, DataBlock db)
+      override public void Draw(Graphics g, DataBlock db)
       {
-         Draw(g);
+         DrawSelection(g);
+         DrawHorizontalLines(g);
+         DrawVerticalLines(g);
 
          float xx = 0;
          int i = 0;

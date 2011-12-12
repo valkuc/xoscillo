@@ -6,12 +6,12 @@ namespace XOscillo
 {
    class AnalogArduino : SerialArduino
    {
-      int m_numSamples = 1024;
+      int m_numSamples = 10240;
       int SampleID = 0;
-
 
       public AnalogArduino() : base(115200, 12000)
       {
+            
          //needs tunning
          //baudrate = 1000000;
          //m_sampleRate = 59250; // this is actual number of samples per second I am able to archieve on the arduino
@@ -55,9 +55,11 @@ namespace XOscillo
          {
             db.m_sample = SampleID++;
             db.m_start = DateTime.Now;
-
+            db.m_00 = 0;
+            db.m_FF = 5;
             db.m_channels = m_numberOfChannels;
-            db.m_trigger = 0;
+            db.m_triggerVoltage = 0;
+            db.m_triggerPos = 0;
             db.m_sampleRate = m_sampleRate / m_numberOfChannels;
             db.m_stride = m_numberOfChannels;
             db.m_channelOffset = m_numberOfChannels;

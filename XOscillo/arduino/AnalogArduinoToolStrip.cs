@@ -80,7 +80,7 @@ namespace XOscillo
             "3",
             "4"});
          this.channels.Name = "channels";
-         this.channels.Size = new System.Drawing.Size(75, 25);
+         this.channels.Size = new System.Drawing.Size(25, 25);
          this.channels.SelectedIndexChanged += new System.EventHandler(this.channels_SelectedIndexChanged);
 
          channels.SelectedItem = "1";

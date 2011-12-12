@@ -12,9 +12,12 @@ namespace XOscillo
 
       MouseEventArgs m_mouse = null;
 
-      public GraphAnalog(Control cntrl, HScrollBar h)
-         : base(cntrl, h)
-      {         
+      public bool showValueTicks;
+
+      public GraphAnalog()
+         : base()
+      {
+         showValueTicks = false;
       }
 
       private void DrawGraph(Graphics g, Pen p, DataBlock db, int channel)
@@ -44,6 +47,13 @@ namespace XOscillo
                if (i > 0)
                {
                   g.DrawLine(p, xx, yy, x, y);
+
+                  if (showValueTicks)
+                  {
+                     g.DrawLine(p, x, y-2, x, y+2);
+                     g.DrawLine(p, x - 2, y, x + 2, y);
+                  }
+
                }
                  
                yy = y;
@@ -62,25 +72,59 @@ namespace XOscillo
          }
 
          {
-            float t = (512 * db.GetTotalTime()) / (float)db.GetChannelLength();
+            float t = (db.m_triggerPos * db.GetTotalTime()) / (float)db.GetChannelLength();
             float x = ValueXToRect(t);
-            g.DrawLine(Pens.LightGreen, x, m_Bounds.Y, x, m_Bounds.Y + m_Bounds.Height);
+            g.DrawLine(Pens.Green, x, m_Bounds.Y, x, m_Bounds.Y + m_Bounds.Height);
+         }
+
+
+
+         Point pp = new Point();
+         pp.X = 0;
+         pp.Y = 32;
+
+         try
+         {
+            float time = RectToValueX(m_mouse.X);
+            float voltage = RectToValueY(m_mouse.Y);
+
+            string info = string.Format("({0}, {1})", ToEngineeringNotation(time), voltage);
+            g.DrawString(info, parent.Font, Brushes.White, pp);
+            pp.Y += 16;
+
+            info = string.Format("({0}s/div, {1}Ks/s)", ToEngineeringNotation(DivX), db.m_sampleRate/1000);
+            g.DrawString(info, parent.Font, Brushes.White, pp);
+            pp.Y += 16;
+         }
+         catch
+         {
          }
 
          if (Selected())
          {
-            Point pp = new Point();
-            pp.X = 0;
-            pp.Y = 32;
+            
+            g.DrawString(string.Format("({0}, {1}) - ({2}, {3})", ToEngineeringNotation(m_selectT0), db.GetVoltage(0, m_selectT0), ToEngineeringNotation(m_selectT1), db.GetVoltage(0, m_selectT1)), parent.Font, Brushes.White, pp);
+            pp.Y += 16;
 
-            g.DrawString(string.Format("({0}, {1}) - ({2}, {3})", ToEngineeringNotation(m_selectT0), db.GetVoltage(0, m_selectT0), ToEngineeringNotation(m_selectT1), db.GetVoltage(0, m_selectT1)), m_cntrl.Font, Brushes.White, pp);
+            g.DrawString(string.Format("ΔVoltage = {0}", db.GetVoltage(0, m_selectT1) - db.GetVoltage(0, m_selectT0)), parent.Font, Brushes.White, pp);
+            pp.Y += 16;
+            
+            string time = string.Format("ΔTime = {0}", ToEngineeringNotation(m_selectT1 - m_selectT0));
+            if (m_selectT1 - m_selectT0 > 0)
+            {
+               time += string.Format(", {0} Hz", (int)(1.0f / (m_selectT1 - m_selectT0)));
+            }
+            g.DrawString(time, parent.Font, Brushes.White, pp);
+            pp.Y += 16;
          }
 
       }
 
-      public void DrawGraph(Graphics g, DataBlock db)
+      override public void Draw(Graphics g, DataBlock db)
       {
-         Draw( g);
+         DrawSelection(g);
+         DrawHorizontalLines(g);
+         DrawVerticalLines(g);
 
          for (int ch = 0; ch < db.m_channels; ch++)
          {
@@ -92,7 +136,7 @@ namespace XOscillo
       {
          base.GraphControl_MouseMove(sender, e);
          m_mouse = e;
-         m_cntrl.Invalidate();
+         parent.Invalidate();
       }
 
    }

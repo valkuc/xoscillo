@@ -18,7 +18,6 @@ namespace XOscillo
       private System.Windows.Forms.ToolStripButton play = null;
       private System.Windows.Forms.ToolStripLabel timeLabel;
       public System.Windows.Forms.ToolStripComboBox time;
-      private System.Windows.Forms.ToolStripButton fft;
       private GraphControl graphControl;
 
       public System.EventHandler selectedIndexChanged;
@@ -33,7 +32,6 @@ namespace XOscillo
          this.timeLabel = new System.Windows.Forms.ToolStripLabel();
          this.clone = new System.Windows.Forms.ToolStripButton();
          this.play = new System.Windows.Forms.ToolStripButton();
-         this.fft = new System.Windows.Forms.ToolStripButton();
          this.time = new System.Windows.Forms.ToolStripComboBox();
 
 
@@ -42,8 +40,7 @@ namespace XOscillo
             this.timeLabel,
             this.time,
             this.clone,
-            this.play,
-            this.fft});
+            this.play});
          this.toolStrip.Location = new System.Drawing.Point(0, 0);
          this.toolStrip.Name = "toolStrip2";
          this.toolStrip.Size = new System.Drawing.Size(497, 25);
@@ -54,9 +51,13 @@ namespace XOscillo
          // time
          // 
          this.time.Name = "time";
-         this.time.Size = new System.Drawing.Size(75, 25);
+         this.time.Size = new System.Drawing.Size(50, 25);
          this.time.SelectedIndexChanged += new System.EventHandler(this.time_SelectedIndexChanged);
-         
+
+         // 
+         // channels
+         // 
+
          // 
          // clone
          // 
@@ -84,18 +85,6 @@ namespace XOscillo
             this.play.CheckedChanged += new System.EventHandler(this.play_CheckedChanged);
             this.play.Checked = true;
          }
-         // 
-         // fft
-         // 
-         this.fft.CheckOnClick = true;
-         this.fft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-         this.fft.Image = null;// ((System.Drawing.Image)(resources.GetObject("fft.Image")));
-         this.fft.ImageTransparentColor = System.Drawing.Color.Magenta;
-         this.fft.Name = "fft";
-         this.fft.Size = new System.Drawing.Size(30, 22);
-         this.fft.Text = "FFT";
-         this.fft.CheckStateChanged += new System.EventHandler(this.fft_CheckStateChanged);
-
          
       }
 
@@ -128,11 +117,6 @@ namespace XOscillo
 
             m_acquirer.Stop();
          }
-      }
-
-      private void fft_CheckStateChanged(object sender, EventArgs e)
-      {
-         graphControl.DrawFFT(fft.Checked);
       }
 
       private void clone_Click(object sender, EventArgs e)

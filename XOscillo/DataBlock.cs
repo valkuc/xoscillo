@@ -30,9 +30,12 @@ namespace XOscillo
       public DATA_TYPE m_dataType;
       public int m_channels;
       public int m_stride;
+      public float m_00;
+      public float m_FF;
       public int m_channelOffset;
       public int m_sampleRate;
-      public int m_trigger;
+      public int m_triggerVoltage;
+      public int m_triggerPos;
       public byte[] m_Buffer = null;
       public RESULT m_result;
 
@@ -42,16 +45,24 @@ namespace XOscillo
 
       public DataBlock(DataBlock db)
       {
+         if (db == null)
+         {
+            return;
+         }
+
          this.m_Buffer = new byte[db.m_Buffer.Length];
          System.Array.Copy(db.m_Buffer, 0, this.m_Buffer, 0, db.m_Buffer.Length);
          this.m_channels = db.m_channels;
          this.m_sample = db.m_sample;
          this.m_start = db.m_start;
          this.m_stop = db.m_stop;
+         this.m_00 = db.m_00;
+         this.m_FF = db.m_FF;
          this.m_stride = db.m_stride;
          this.m_channelOffset = db.m_channelOffset;
          this.m_sampleRate = db.m_sampleRate;
-         this.m_trigger = db.m_trigger;
+         this.m_triggerVoltage = db.m_triggerVoltage;
+         this.m_triggerPos = db.m_triggerPos;
          this.m_result = db.m_result;
          this.m_dataType = db.m_dataType;
       }
@@ -68,13 +79,17 @@ namespace XOscillo
          this.m_sample = db.m_sample;
          this.m_start = db.m_start;
          this.m_stop = db.m_stop;
+         this.m_00 = db.m_00;
+         this.m_FF = db.m_FF;
          this.m_stride = db.m_stride;
          this.m_channelOffset = db.m_channelOffset;
          this.m_sampleRate = db.m_sampleRate;
-         this.m_trigger = db.m_trigger;
+         this.m_triggerVoltage = db.m_triggerVoltage;
+         this.m_triggerPos = db.m_triggerPos;
          this.m_result = db.m_result;
          this.m_dataType = db.m_dataType;
       }
+
       public void Alloc(int size)
       {
          m_Buffer = new byte[size];
@@ -140,14 +155,14 @@ namespace XOscillo
          }
          m_channels = 1;
          m_sampleRate = (115600 / 8);
-         m_trigger = 0;
+         m_triggerVoltage = 0;
          //this.m_start = Time.now;
       }
 
       public void GenerateSin(double freq)
       {
          DataBlock db = new DataBlock();
-         m_trigger = 1500 * 0;
+         m_triggerVoltage = 1500 * 0;
          m_channels = 1;
          m_sampleRate = 1024;
 
@@ -155,50 +170,8 @@ namespace XOscillo
 
          for (int i = 0; i < m_Buffer.Length; i++)
          {
-            m_Buffer[i] = (byte)(128 + 64.0 * Math.Sin((double)2 * 3.1415 * (i - m_trigger) * freq / (double)m_sampleRate));
+            m_Buffer[i] = (byte)(128 + 64.0 * Math.Sin((double)2 * 3.1415 * (i - m_triggerVoltage) * freq / (double)m_sampleRate));
          }
-      }
-
-      public void LowPass( double cutOffFreq )
-      {
-         double RC = 1.0 / (cutOffFreq * 2.0 * Math.PI);
-         double dt = 1.0 / (float)m_sampleRate;
-
-         double alfa = dt / (RC + dt);
-
-         double last = m_Buffer[0];
-         for (int i = 1; i < m_Buffer.Length; i++)
-         {
-            double  y = ((alfa * (double)m_Buffer[i]) + (1.0 - alfa) * last);
-            last = y;
-            m_Buffer[i] = (byte)y;
-         }
-      }
-
-      public void HighPass(double cutOffFreq)
-      {
-         double RC = 1.0 / (cutOffFreq * 2.0 * Math.PI);
-         double dt = 1.0 / (float)m_sampleRate;
-         double alfa = RC / (RC + dt);
-
-         double lastY = (double)m_Buffer[0] - 127;
-         double lastX = (double)m_Buffer[0] - 127;
-         for (int i = 1; i < m_Buffer.Length; i++)
-         {
-            double x = (double)m_Buffer[i] - 127;
-            double y = (alfa * (lastY + x - lastX));
-            lastY = y;
-            lastX = x;
-
-            y += 127;
-            if (y < 0 || y > 255)
-            {
-               y = 0;
-            }
-
-            m_Buffer[i] = (byte)(y);
-         }
-
       }
 
 
@@ -224,6 +197,11 @@ namespace XOscillo
          return m_Buffer.Length;
       }
 
+      public virtual void SetVoltage(int channel, int index, byte voltage)
+      {
+         m_Buffer[index * m_stride + m_channelOffset * channel] = voltage;
+      }
+      
       public virtual byte GetVoltage(int channel, int index)
       {
          return m_Buffer[index * m_stride + m_channelOffset * channel];

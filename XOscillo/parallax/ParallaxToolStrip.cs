@@ -38,6 +38,7 @@ namespace XOscillo
          this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.triggerLabel,
             this.trigger,
+            this.triggerMode,
             this.toolStripLabel2,
             this.channels});
          this.toolStrip.Location = new System.Drawing.Point(3, 0);
@@ -70,18 +71,20 @@ namespace XOscillo
          // triggerMode
          // 
          this.triggerMode.Items.AddRange(new object[] {
-            "ch1 rising",
-            "ch1 falling",
-            "ch2 rising",
-            "ch2 falling",
-            "external rising"});
+            "ch1 ˄",
+            "ch1 ˅",
+            "ch2 ˄",
+            "ch2 ˅",
+            "ext ˄"});
          this.triggerMode.Name = "triggerMode";
-         this.triggerMode.Size = new System.Drawing.Size(80, 25);
+         this.triggerMode.Size = new System.Drawing.Size(20, 25);
          this.triggerMode.SelectedIndexChanged += new System.EventHandler(this.triggerMode_SelectedIndexChanged);
-         channels.SelectedItem = "1";
-         trigger.Text = "0";
-         triggerMode.SelectedIndex = 1;
-         oscillo.TriggerVoltage = (byte.Parse(trigger.Text));
+         triggerMode.SelectedIndex = 0;
+         
+         //channels.SelectedIndex = 0;
+         trigger.Text = "2.57";
+         triggerMode.SelectedIndex = 0;
+         oscillo.TriggerVoltage = (float.Parse(trigger.Text));
       }
 
       public ToolStrip GetToolStrip()

@@ -16,14 +16,12 @@ namespace XOscillo
 
       private DataBlock ScopeData = null;
 
-      private bool m_drawFFT = false;
-
       public List<int> Lines = new List<int>();
       public List<int> VerticalLines = new List<int>();
 
-      private GraphAnalog ga;
-      private GraphFFT gf;
-      private GraphDigital gd;
+      GraphConsumer graphConsumer = null;
+
+      private Graph graph;
 
       bool waitingForTrigger = true;
 
@@ -33,15 +31,33 @@ namespace XOscillo
 		public GraphControl()
 		{
 			InitializeComponent();
-
-         ga = new GraphAnalog(this, hScrollBar1);
-         gf = new GraphFFT(this, hScrollBar1);
-         gd = new GraphDigital(this, hScrollBar1);
-
+        
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 
+         graphConsumer = new GraphConsumer(this);
          timer.Start();
 		}
+
+      public Graph SetRenderer(Graph gr)
+      {
+         Graph oldRenderer = graph;
+
+         if ( graph != null)
+         {
+            MouseMove -= graph.GraphControl_MouseMove;
+            gr.parent = null;
+         }
+
+         graph = gr;
+
+         if (graph != null)
+         {
+            gr.parent = this;
+            MouseMove += gr.GraphControl_MouseMove;
+         }
+
+         return oldRenderer;
+      }
 
       public void SetSecondsPerDivision(float secondsPerDiv)
       {
@@ -51,40 +67,25 @@ namespace XOscillo
 
       public void SetMinMaxVoltages(int min, int max)
       {
-         ga.SetVerticalRange(min, max, 32, "Volts");
-      }
-
-      public void DrawFFT(bool value)
-      {
-         m_drawFFT = value;
-         Invalidate();
-      }
-
-      public void SetLowPassCutOffFrequency(double lpcf)
-      {
-         m_lpcf = lpcf;
-         Invalidate();
+         graph.SetVerticalRange(min, max, 32, "Volts");
       }
 
       public void SetScopeData( DataBlock db )
       {
          lock(this)
          {
-            if (m_lpcf > 0)
-            {
-               ScopeData.Copy(db);
-               ScopeData.LowPass(m_lpcf);
-            }
-            else
-            {
-               ScopeData = db;
-            }
+            ScopeData = db;
 
             //reset timeout
             waitingForTrigger = false;
 
             Invalidate();
          }
+      }
+
+      public Consumer GetConsumer()
+      {
+         return graphConsumer;
       }
       
       public DataBlock GetScopeData()
@@ -108,40 +109,26 @@ namespace XOscillo
          }
 
          e.Graphics.Clear(Color.Black);
-
          Rectangle r = this.Bounds;
          r.Height -= hScrollBar1.Height;
 
          if (ScopeData != null && ScopeData.m_channels != 0)
          {
-            if ( ScopeData.m_dataType == DataBlock.DATA_TYPE.ANALOG)
-            {
-               if (m_drawFFT)
-               {
-                  gf.SetVerticalRange(0, 1024, 32, "power");
-                  gf.SetHorizontalRange(0, (float)(ScopeData.GetTotalTime() / 2.0), 1000, "Freq");
-                  gf.SetRectangle(r);
-                  gf.DrawFFT(e.Graphics, ScopeData);
-               }
-               else
-               {
-                  //draw channels
-                  ga.SetVerticalRange(255, 0, 32, "Volts");
-                  ga.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
-                  ga.SetRectangle(r);
-                  ga.ResizeToRectangle();
-                  
-                  ga.DrawGraph(e.Graphics, ScopeData);
-               }
-            }
-            else if (ScopeData.m_dataType == DataBlock.DATA_TYPE.DIGITAL)
+            /*
+            if (ScopeData.m_dataType == DataBlock.DATA_TYPE.DIGITAL)
             {
                gd.SetVerticalRange(0, 255, (float)(255.0/6.5), "Volts");
                gd.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
                gd.SetRectangle(r);
                gd.ResizeToRectangle();
-               gd.DrawGraph(e.Graphics, ScopeData);
+               gd.Draw(e.Graphics, ScopeData);
             }
+             */
+
+            graph.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
+            graph.SetRectangle(r);
+            graph.ResizeToRectangle(hScrollBar1);
+            graph.Draw(e.Graphics, ScopeData);
          }
 
          {
@@ -172,7 +159,11 @@ namespace XOscillo
 
 		private void UserControl1_Resize(object sender, EventArgs e)
 		{
-         Invalidate();
+         if (graph!=null)
+         {
+            graph.ResizeToRectangle(hScrollBar1);
+            Invalidate();
+         }
 		}
 
       private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
