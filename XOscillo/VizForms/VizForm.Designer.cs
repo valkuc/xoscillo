@@ -64,7 +64,7 @@
          this.Controls.Add(this.toolStripContainer);
          this.Name = "VizForm";
          this.Text = "VizForm";
-         this.Load += new System.EventHandler(this.Form1_Load);
+         this.Load += new System.EventHandler(this.Form_Load);
          this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VizForm_FormClosing);
          this.toolStripContainer.ContentPanel.ResumeLayout(false);
          this.toolStripContainer.ResumeLayout(false);
@@ -75,7 +75,7 @@
 
       #endregion
 
-      protected System.Windows.Forms.ToolStripContainer toolStripContainer;
+      private System.Windows.Forms.ToolStripContainer toolStripContainer;
       protected GraphControl graphControl;
 
    }

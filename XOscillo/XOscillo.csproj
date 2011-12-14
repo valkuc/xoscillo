@@ -58,6 +58,7 @@
       <DependentUpon>DigitalVizArduino.cs</DependentUpon>
     </Compile>
     <Compile Include="arduino\DigitalArduino.cs" />
+    <Compile Include="Autodetection\Autodetection.cs" />
     <Compile Include="Consumer.cs" />
     <Compile Include="DataBlock.cs" />
     <Compile Include="DebugConsole.cs" />
@@ -78,10 +79,10 @@
     <Compile Include="Graph\GraphFFT.cs" />
     <Compile Include="Graph\GraphAnalog.cs" />
     <Compile Include="Graph\GraphDigital.cs" />
-    <Compile Include="ManualSerialPortSelection.cs">
+    <Compile Include="Autodetection\ManualSerialPortSelection.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ManualSerialPortSelection.Designer.cs">
+    <Compile Include="Autodetection\ManualSerialPortSelection.Designer.cs">
       <DependentUpon>ManualSerialPortSelection.cs</DependentUpon>
     </Compile>
     <Compile Include="ring.cs" />
@@ -155,7 +156,7 @@
     <EmbeddedResource Include="DebugConsoleForm.resx">
       <DependentUpon>DebugConsoleForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ManualSerialPortSelection.resx">
+    <EmbeddedResource Include="Autodetection\ManualSerialPortSelection.resx">
       <DependentUpon>ManualSerialPortSelection.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PID\PID.resx">

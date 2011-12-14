@@ -12,22 +12,28 @@ namespace XOscillo
          : base()
       {
          ga = new GraphAnalog(sh.graph);
-         dataBlock = sh.dataBlock;
-         Init();
-         fc.SetDataBlock(dataBlock);
+         dataBlock = sh.dataBlock;         
       }
 
-      override public void Form1_Load(object sender, EventArgs e)
+      override public void Form_Load(object sender, EventArgs e)
       {
-         toolStripContainer.TopToolStripPanel.Controls.Add(ft.GetToolStrip());
-         toolStripContainer.TopToolStripPanel.Controls.Add(fft.GetToolStrip());
+         GetFirstConsumerInChain().SetDataBlock(dataBlock);
+         SetToolbar(GetFilteringToolStrip());
+         SetToolbar(GetFftToolStrip());
 
-         base.Form1_Load(sender, e);
+         commonToolStrip = new CommonToolStrip(this, null, graphControl);
+         float[] divs = { 1.0f, 0.5f, 0.2f, 0.1f, 0.05f, 0.02f, 0.01f, 0.005f, 0.002f, 0.001f, 0.0002f, 0.0005f, 0.00002f };
+         foreach (float t in divs)
+         {
+            commonToolStrip.time.Items.Add(t);
+         }
+         commonToolStrip.time.SelectedIndex = 10;
+         SetToolbar(commonToolStrip);
       }
 
       override public void UpdateGraph(object sender, EventArgs e)
       {
-         fc.SetDataBlock(dataBlock);
+         GetFirstConsumerInChain().SetDataBlock(dataBlock);
          Invalidate();
       }
    }

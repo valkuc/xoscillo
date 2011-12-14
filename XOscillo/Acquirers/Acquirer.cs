@@ -21,18 +21,6 @@ namespace XOscillo
          m_Oscillo = os;
          m_GraphControl = gc;
 
-         ManualSerialPortSelection msps = new ManualSerialPortSelection(os);
-
-         if (msps.TryDetection() == false)
-         {
-            msps.ShowDialog();
-         }
-
-         if ( os.IsOpened() == false )
-         {
-            return false;
-         }
-
          return m_Oscillo.Ping();
       }
 

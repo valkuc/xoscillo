@@ -20,29 +20,23 @@ namespace XOscillo
          InitializeComponent();
       }
 
-      virtual public bool Init()
-      {
-         return true;
-      }
-
       override public DataBlock GetDataBlock()
       {
          return this.graphControl.GetScopeData();
       }
 
-      virtual public void Form1_Load(object sender, EventArgs e)
+      public virtual bool Init()
+      {
+         return true;
+      }
+
+      virtual public void Form_Load(object sender, EventArgs e)
       {         
-         commonToolStrip = new CommonToolStrip(this, null, graphControl);
+      }
 
-         float[] divs = { 1.0f, 0.5f, 0.2f, 0.1f, 0.05f, 0.02f, 0.01f, 0.005f, 0.002f, 0.001f, 0.0005f, 0.0002f, 0.0005f, 0.00002f };
-         foreach (float t in divs)
-         {
-            commonToolStrip.time.Items.Add(t);
-         }
-         commonToolStrip.time.SelectedIndex = 10;
-
-         this.toolStripContainer.TopToolStripPanel.Controls.Add(commonToolStrip.GetToolStrip());
-
+      public void SetToolbar( MyToolbar mt)
+      {
+         this.toolStripContainer.TopToolStripPanel.Controls.Add(mt.GetToolStrip());
       }
 
       virtual public VizForm Clone()

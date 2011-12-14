@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
+using System.IO.Ports;
+
+namespace XOscillo
+{
+   class Autodetection<T> where T : Oscillo, new()
+   {
+      public T TryMTDetection()
+      {
+         DebugConsole.Instance.Show();
+
+         string[] ports = SerialPort.GetPortNames();
+         T[] oscillos = new T[ports.Length];
+         ManualResetEvent[] doneEvents = new ManualResetEvent[ports.Length];
+         bool[] results = new bool[ports.Length];
+
+         for (int i = 0; i < results.Length; i++)
+         {
+            doneEvents[i] = new ManualResetEvent(false);
+            oscillos[i] = new T();
+         }
+
+         DebugConsole.Instance.EnableLogging(false);
+
+         for (int i = 0; i < results.Length; i++)
+         {
+            ThreadPool.QueueUserWorkItem(cntx =>
+            {
+               try
+               {
+                  int j = (int)cntx;
+                  results[j] = oscillos[j].Open(ports[j]);
+                  doneEvents[j].Set();
+               }
+               catch
+               {
+                  return ;
+               }
+            },
+            i);
+         }
+
+         for (int i = 0; i < results.Length; i++)
+         {
+            doneEvents[i].WaitOne();
+         }
+
+         DebugConsole.Instance.EnableLogging(true);
+
+         for (int i = 0; i < results.Length; i++)
+         {
+            if (results[i] == true)
+            {
+               return oscillos[i];
+            }
+         }
+
+         return null;
+      }
+
+      public T TrySTDetection()
+      {
+         DebugConsole.Instance.Show();
+
+         string[] ports = SerialPort.GetPortNames();
+
+         T oscillo = new T();
+
+         DebugConsole.Instance.AddLn("Autodetecting " + oscillo.GetName() + " port");
+         foreach (string portName in ports)
+         {
+            if (oscillo.Open(portName) == true)
+            {
+               DebugConsole.Instance.Hide();
+               return oscillo;
+            }
+         }
+
+         DebugConsole.Instance.Hide();
+         DebugConsole.Instance.AddLn("Autodetection failed, trying manual mode");
+
+         return null;
+      }
+
+      public T TryManualDetection()
+      {
+         string[] ports = SerialPort.GetPortNames();
+
+         T oscillo = new T();
+
+         ManualSerialPortSelection msps = new ManualSerialPortSelection(ports);
+         msps.ShowDialog();
+
+         oscillo.Open( ports[msps.GetSelection()] );
+
+         return oscillo;
+      }
+
+      public T Detection()
+      {
+         T res;
+         
+         DebugConsole.Instance.Add("Checking MT autodetection...");
+         res = TryMTDetection();
+         if (res != null)
+         {
+            DebugConsole.Instance.AddLn("OK");
+            return res;
+         }
+         
+         DebugConsole.Instance.AddLn("NOPE");
+         DebugConsole.Instance.Add("Checking ST autodetection...");
+         res = TrySTDetection();
+         if (res != null)
+         {
+            DebugConsole.Instance.AddLn("OK");
+            return res;
+         }
+         
+         DebugConsole.Instance.AddLn("NOPE");
+         DebugConsole.Instance.Add("Forcing Manual...");
+         return TryManualDetection();
+      }
+
+   }
+}

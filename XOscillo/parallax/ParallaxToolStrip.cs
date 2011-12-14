@@ -7,12 +7,11 @@ using System.Drawing;
 
 namespace XOscillo
 {
-   class ParallaxToolStrip
+   class ParallaxToolStrip : MyToolbar
    {
       SerialParallax oscillo;
       GraphControl graphControl;
       
-      private System.Windows.Forms.ToolStrip toolStrip;
       private System.Windows.Forms.ToolStripLabel triggerLabel;
       private System.Windows.Forms.ToolStripTextBox trigger;
       private System.Windows.Forms.ToolStripLabel toolStripLabel2;
@@ -85,11 +84,6 @@ namespace XOscillo
          trigger.Text = "2.57";
          triggerMode.SelectedIndex = 0;
          oscillo.TriggerVoltage = (float.Parse(trigger.Text));
-      }
-
-      public ToolStrip GetToolStrip()
-      {
-         return toolStrip;
       }
 
       private void triggerMode_SelectedIndexChanged(object sender, EventArgs e)

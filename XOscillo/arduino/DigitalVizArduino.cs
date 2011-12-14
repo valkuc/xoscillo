@@ -10,9 +10,9 @@ using System.IO.Ports;
 
 namespace XOscillo
 {
-   public partial class DigitalVizArduino : XOscillo.VizForm
+   public partial class DigitalVizArduino : VizForm
    {
-      DigitalArduino oscillo;      
+      DigitalArduino oscillo = new DigitalArduino();
 
       public DigitalVizArduino()
       {
@@ -21,12 +21,11 @@ namespace XOscillo
 
       override public bool Init()
       {
-         oscillo = new DigitalArduino();
 
          return m_Acq.Open(oscillo, graphControl.GetConsumer());
       }
 
-      override public void Form1_Load(object sender, EventArgs e)
+      override public void Form_Load(object sender, EventArgs e)
       {
          commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl);
 
@@ -44,7 +43,7 @@ namespace XOscillo
          commonToolStrip.time.Items.Add(0.0002);
          commonToolStrip.time.SelectedIndex = 10;
 
-         this.toolStripContainer.TopToolStripPanel.Controls.Add(commonToolStrip.GetToolStrip());
+         SetToolbar(commonToolStrip);
 
          GraphDigital gd = new GraphDigital();
 

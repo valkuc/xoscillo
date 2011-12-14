@@ -12,19 +12,17 @@ namespace XOscillo
 {
    public partial class AnalogVizArduino : AnalogVizForm
    {
-      AnalogArduino oscillo = new AnalogArduino();
+      
 
-      override public bool Init()
+      override public void Form_Load(object sender, EventArgs e)
       {
-         base.Init();
-         m_Acq = new Acquirer();
-         m_Acq.Open(oscillo, fc);
-         gf.drawSlidingFFT = true;
-         return true;
-      }
+         Autodetection<AnalogArduino> au = new Autodetection<AnalogArduino>();            
+         AnalogArduino oscillo = au.Detection();
 
-      override public void Form1_Load(object sender, EventArgs e)
-      {        
+         m_Acq = new Acquirer();
+         m_Acq.Open(oscillo, GetFirstConsumerInChain());
+         gf.drawSlidingFFT = true;
+         
          commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl);
 
          float [] divs = {1.0f, 0.5f,0.2f,0.1f,0.05f,0.02f,0.01f,0.005f,0.002f,0.001f,0.0005f,0.0002f};
@@ -37,10 +35,10 @@ namespace XOscillo
          commonToolStrip.time.SelectedIndex = 10;
 
          AnalogArduinoToolbar aat = new AnalogArduinoToolbar(oscillo, graphControl);
-         this.toolStripContainer.TopToolStripPanel.Controls.Add(ft.GetToolStrip());
-         this.toolStripContainer.TopToolStripPanel.Controls.Add(aat.GetToolStrip());
-         this.toolStripContainer.TopToolStripPanel.Controls.Add(fft.GetToolStrip());
-         this.toolStripContainer.TopToolStripPanel.Controls.Add(commonToolStrip.GetToolStrip());
+         SetToolbar(GetFilteringToolStrip());
+         SetToolbar(aat);
+         SetToolbar(GetFftToolStrip());
+         SetToolbar(commonToolStrip);
 
          ga.SetVerticalRange(255, 0, 32, "Volts");         
       }

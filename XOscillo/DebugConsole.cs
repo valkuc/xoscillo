@@ -10,14 +10,24 @@ namespace XOscillo
 
       private DebugConsoleForm f = new DebugConsoleForm();
 
+      bool loggingEnabled = true;
+
+      public void EnableLogging(bool status)
+      {
+         loggingEnabled = status;
+      }
+
       public void Add(string str)
       {
-         f.Add(str);
+         if (loggingEnabled)
+         {
+            f.Add(str);
+         }
       }
 
       public void AddLn(string str)
       {
-         f.Add(str + "\r\n");
+         Add(str + "\r\n");
       }
 
       public void Show()

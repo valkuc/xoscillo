@@ -103,6 +103,7 @@ namespace XOscillo
             // Make it a child of this MDI form before showing it.
             childForm.MdiParent = this;
             childForm.Text = fileName;
+            childForm.Init();
             childForm.Show();
             childForm.WindowState = FormWindowState.Maximized;
 
