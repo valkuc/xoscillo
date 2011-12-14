@@ -12,8 +12,6 @@ namespace XOscillo
 {
    public partial class AnalogVizArduino : AnalogVizForm
    {
-      
-
       override public void Form_Load(object sender, EventArgs e)
       {
          Autodetection<AnalogArduino> au = new Autodetection<AnalogArduino>();            

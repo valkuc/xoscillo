@@ -16,17 +16,16 @@ namespace XOscillo
 
       public DigitalVizArduino()
       {
-         m_Acq = new Acquirer();
-      }
-
-      override public bool Init()
-      {
-
-         return m_Acq.Open(oscillo, graphControl.GetConsumer());
       }
 
       override public void Form_Load(object sender, EventArgs e)
       {
+         Autodetection<DigitalArduino> au = new Autodetection<DigitalArduino>();
+         DigitalArduino oscillo = au.Detection();
+         m_Acq = new Acquirer();
+         m_Acq.Open(oscillo, graphControl.GetConsumer());
+         SetToolbar(new DigitalArduinoToolStrip(oscillo, graphControl));
+
          commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl);
 
          commonToolStrip.time.Items.Add(1.0);

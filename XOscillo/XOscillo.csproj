@@ -51,6 +51,7 @@
     <Compile Include="Acquirers\Acquirer.cs" />
     <Compile Include="arduino\AnalogArduino.cs" />
     <Compile Include="arduino\AnalogArduinoToolStrip.cs" />
+    <Compile Include="arduino\DigitalArduinoToolStrip.cs" />
     <Compile Include="arduino\DigitalVizArduino.cs">
       <SubType>Form</SubType>
     </Compile>
