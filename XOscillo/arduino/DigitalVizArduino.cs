@@ -28,18 +28,11 @@ namespace XOscillo
 
          commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl);
 
-         commonToolStrip.time.Items.Add(1.0);
-         commonToolStrip.time.Items.Add(0.5);
-         commonToolStrip.time.Items.Add(0.2);
-         commonToolStrip.time.Items.Add(0.1);
-         commonToolStrip.time.Items.Add(0.05);
-         commonToolStrip.time.Items.Add(0.02);
-         commonToolStrip.time.Items.Add(0.01);
-         commonToolStrip.time.Items.Add(0.005);
-         commonToolStrip.time.Items.Add(0.002);
-         commonToolStrip.time.Items.Add(0.001);
-         commonToolStrip.time.Items.Add(0.0005);
-         commonToolStrip.time.Items.Add(0.0002);
+         float[] divs = { 1.0f, 0.5f, 0.2f, 0.1f, 0.05f, 0.02f, 0.01f, 0.005f, 0.002f, 0.001f, 0.0002f, 0.0005f };
+         foreach (float t in divs)
+         {
+            commonToolStrip.time.Items.Add(t);
+         }
          commonToolStrip.time.SelectedIndex = 10;
 
          SetToolbar(commonToolStrip);

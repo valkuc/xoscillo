@@ -22,14 +22,11 @@ namespace XOscillo
          gf.drawSlidingFFT = true;
          
          commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl);
-
-         float [] divs = {1.0f, 0.5f,0.2f,0.1f,0.05f,0.02f,0.01f,0.005f,0.002f,0.001f,0.0005f,0.0002f};
-
+         float [] divs = { 1.0f, 0.5f, 0.2f, 0.1f, 0.05f, 0.02f, 0.01f, 0.005f, 0.002f, 0.001f, 0.0002f, 0.0005f };
          foreach (float t in divs)
          {
             commonToolStrip.time.Items.Add(t);
-         }
-         
+         }        
          commonToolStrip.time.SelectedIndex = 10;
 
          AnalogArduinoToolbar aat = new AnalogArduinoToolbar(oscillo, graphControl);
