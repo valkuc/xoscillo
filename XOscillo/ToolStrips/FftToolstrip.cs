@@ -8,10 +8,8 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   public class FftToolStrip
+   public class FftToolStrip : MyToolbar
    {
-      private System.Windows.Forms.ToolStrip toolStrip;
-
       private System.Windows.Forms.ToolStripButton fft;
 
       GraphControl graphControl;
@@ -22,8 +20,7 @@ namespace XOscillo
       {
          graphControl = gc;
          oldGraph = gf;
-
-         this.toolStrip = new System.Windows.Forms.ToolStrip();
+         
          this.fft = new System.Windows.Forms.ToolStripButton();
 
          this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
@@ -46,13 +43,6 @@ namespace XOscillo
          this.fft.Size = new System.Drawing.Size(30, 22);
          this.fft.Text = "FFT";
          this.fft.CheckStateChanged += new System.EventHandler(this.fft_CheckStateChanged);
-
-
-      }
-
-      public ToolStrip GetToolStrip()
-      {
-         return toolStrip;
       }
 
       private void fft_CheckStateChanged(object sender, EventArgs e)

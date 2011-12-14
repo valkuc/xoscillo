@@ -7,7 +7,6 @@ namespace XOscillo
    
    class DigitalArduino : SerialArduino
    {
-      int m_numSamples = 1200;
       int SampleID = 0;
 
       public DigitalArduino()

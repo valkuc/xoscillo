@@ -15,7 +15,8 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Acquirer.cs" />
+    <Compile Include="Acquirers\Acquirer.cs" />
     <Compile Include="arduino\AnalogArduino.cs" />
     <Compile Include="arduino\AnalogArduinoToolStrip.cs" />
     <Compile Include="arduino\DigitalVizArduino.cs">
@@ -84,6 +85,10 @@
       <DependentUpon>ManualSerialPortSelection.cs</DependentUpon>
     </Compile>
     <Compile Include="ring.cs" />
+    <Compile Include="ToolStrips\MyToolbar.cs" />
+    <Compile Include="ToolStrips\OnlyNumbersToolStripTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="tools\DecodeFSK.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,10 +117,17 @@
     <Compile Include="DataBlockRing.cs" />
     <Compile Include="ToolStrips\CommonToolStrip.cs">
     </Compile>
-    <Compile Include="VizForm.cs">
+    <Compile Include="VizForms\AnalogVizForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VizForm.Designer.cs">
+    <Compile Include="VizForms\FileAnalogVizForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VizForms\SerializationHelper.cs" />
+    <Compile Include="VizForms\VizForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VizForms\VizForm.Designer.cs">
       <DependentUpon>VizForm.cs</DependentUpon>
     </Compile>
     <Compile Include="parallax\VizParallax.cs">
@@ -165,7 +177,10 @@
       <DependentUpon>AnalogVizArduino.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="VizForm.resx">
+    <EmbeddedResource Include="VizForms\FileAnalogVizForm.resx">
+      <DependentUpon>FileAnalogVizForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VizForms\VizForm.resx">
       <DependentUpon>VizForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -191,6 +206,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

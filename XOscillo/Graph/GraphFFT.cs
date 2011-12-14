@@ -10,6 +10,8 @@ namespace XOscillo
    {
       fft f;
 
+      public bool drawSlidingFFT = false;
+
       public GraphFFT()
          : base()
       {
@@ -60,13 +62,15 @@ namespace XOscillo
          g.DrawLine(Pens.Red, r.X, y, 1024, y);
       }
 
-      virtual public void ResizeToRectangle(HScrollBar hBar)
+      override public void ResizeToRectangle(HScrollBar hBar)
       {
          hBar.LargeChange = m_Bounds.Width;
          hBar.Maximum = 1024;
 
          SetDisplayWindow(hBar.Value, 1024);
       }
+
+      Point pp = new Point();
 
       override public void Draw(Graphics g, DataBlock db)
       {
@@ -77,6 +81,14 @@ namespace XOscillo
          if (f == null)
          {
             f = new fft(db.GetChannelLength());
+         }
+
+         if (db.GetChannelLength() < 1024)
+         {
+            pp.X = 0;
+            pp.Y = 0;
+            g.DrawString("FFT needs at least 1024 samples to work", parent.Font, Brushes.White, pp);
+            return;
          }
 
          f.SetData(db.m_Buffer, 0, db.GetChannelLength());
@@ -91,17 +103,17 @@ namespace XOscillo
 
          r.X -= (int)MinXD;
 
-         if (false)
-         {
-            DrawFFTBars(g, r);
-         }
-         else
+         if (drawSlidingFFT)
          {
             DrawSlidingFFT(g, r, db);
 
             r.Y -= 256;
             DrawFFTBars(g, r);
             r.Y += 256;
+         }
+         else
+         {
+            DrawFFTBars(g, r);
          }
 
          int freqStep;
@@ -114,7 +126,6 @@ namespace XOscillo
          }
 
          //draw legend
-         Point pp = new Point();
          for (int i = 0; i < (int)maxFreq; i += freqStep)
          {
             int x = lerp(0, 512, minFreq, maxFreq, i);

@@ -7,17 +7,20 @@ using System.Drawing;
 
 namespace XOscillo
 {
-   class AnalogArduinoToolbar
+   class AnalogArduinoToolbar : MyToolbar
    {
       AnalogArduino oscillo;
       GraphControl graphControl;
       
-      private System.Windows.Forms.ToolStrip toolStrip;
       private System.Windows.Forms.ToolStripLabel triggerLabel;
-      private System.Windows.Forms.ToolStripTextBox trigger;
+      private OnlyNumbersToolStripTextBox trigger;
       private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-      private System.Windows.Forms.ToolStripLabel toolStripLabel2;
+      private System.Windows.Forms.ToolStripLabel channelsLabel;
       private System.Windows.Forms.ToolStripComboBox channels;
+      private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+      private System.Windows.Forms.ToolStripLabel sampleCountLabel;
+      private OnlyNumbersToolStripTextBox sampleCount;
+      
 
       public AnalogArduinoToolbar(AnalogArduino osc, GraphControl gc)
       {
@@ -25,11 +28,19 @@ namespace XOscillo
          graphControl = gc;
 
          this.toolStrip = new System.Windows.Forms.ToolStrip();
+
          this.triggerLabel = new System.Windows.Forms.ToolStripLabel();
-         this.trigger = new System.Windows.Forms.ToolStripTextBox();
+         this.trigger = new OnlyNumbersToolStripTextBox();
+         
          this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-         this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+
+         this.channelsLabel = new System.Windows.Forms.ToolStripLabel();
          this.channels = new System.Windows.Forms.ToolStripComboBox();
+
+         this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+
+         this.sampleCountLabel = new System.Windows.Forms.ToolStripLabel();
+         this.sampleCount = new OnlyNumbersToolStripTextBox();
 
          // 
          // toolStrip2
@@ -39,8 +50,12 @@ namespace XOscillo
             this.triggerLabel,
             this.trigger,
             this.toolStripSeparator1,
-            this.toolStripLabel2,
-            this.channels});
+            this.channelsLabel,
+            this.channels,
+            this.toolStripSeparator2,
+            this.sampleCountLabel,
+            this.sampleCount
+         });
          this.toolStrip.Location = new System.Drawing.Point(3, 0);
          this.toolStrip.Name = "toolStrip2";
          this.toolStrip.Size = new System.Drawing.Size(243, 25);
@@ -58,19 +73,18 @@ namespace XOscillo
          this.trigger.Name = "trigger";
          this.trigger.Size = new System.Drawing.Size(50, 25);
          this.trigger.Text = "0";
-         this.trigger.Validating += new System.ComponentModel.CancelEventHandler(this.trigger_Validating);
-         this.trigger.Validated += new System.EventHandler(this.trigger_Validated);
+         this.trigger.textReady += new EventHandler(trigger_textReady);
          // 
          // toolStripSeparator1
          // 
          this.toolStripSeparator1.Name = "toolStripSeparator1";
          this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
          // 
-         // toolStripLabel2
+         // channelsLabel
          // 
-         this.toolStripLabel2.Name = "toolStripLabel2";
-         this.toolStripLabel2.Size = new System.Drawing.Size(54, 22);
-         this.toolStripLabel2.Text = "channels";
+         this.channelsLabel.Name = "channelsLabel";
+         this.channelsLabel.Size = new System.Drawing.Size(42, 22);
+         this.channelsLabel.Text = "channels";
          // 
          // channels
          // 
@@ -81,16 +95,55 @@ namespace XOscillo
             "4"});
          this.channels.Name = "channels";
          this.channels.Size = new System.Drawing.Size(25, 25);
+         this.channels.SelectedItem = "1";
          this.channels.SelectedIndexChanged += new System.EventHandler(this.channels_SelectedIndexChanged);
 
-         channels.SelectedItem = "1";
-         trigger.Text = "0";
+         // 
+         // sampleCountLabel
+         // 
+         this.sampleCountLabel.Size = new System.Drawing.Size(54, 22);
+         this.sampleCountLabel.Text = "samples";
+
+         // 
+         // sampleCountLabel
+         // 
+         this.sampleCount.Size = new System.Drawing.Size(54, 22);
+         this.sampleCount.Text = "1024";
+         this.sampleCount.textReady += new EventHandler(sampleCount_textReady);
+
+         //set values
+         oscillo.SetNumberOfChannels(int.Parse(this.channels.SelectedItem.ToString()));
          oscillo.SetTriggerVoltage(byte.Parse(trigger.Text));
+         oscillo.SetNumberOfSamples(int.Parse(sampleCount.Text));
       }
 
-      public ToolStrip GetToolStrip()
+      private void sampleCount_textReady(object sender, EventArgs e)
       {
-         return toolStrip;
+         ToolStripTextBox textbox = sender as ToolStripTextBox;
+
+         if (textbox != null)
+         {
+            oscillo.SetNumberOfSamples(int.Parse(textbox.Text));
+         }
+      }
+
+      private void trigger_textReady(object sender, EventArgs e)
+      {
+         ToolStripTextBox textbox = sender as ToolStripTextBox;
+
+         if (textbox != null)
+         {
+            int val = int.Parse(textbox.Text);
+            if (val < 256)
+            {
+               textbox.BackColor = System.Drawing.Color.White;
+               oscillo.SetTriggerVoltage((byte)val);
+            }
+            else
+            {
+               textbox.BackColor = System.Drawing.Color.Red;
+            }
+         }
       }
 
       private void channels_SelectedIndexChanged(object sender, EventArgs e)

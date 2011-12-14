@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace XOscillo
 {
@@ -23,6 +24,5 @@ namespace XOscillo
       virtual public void SetDataBlock(DataBlock db)
       {
       }
-
    }
 }

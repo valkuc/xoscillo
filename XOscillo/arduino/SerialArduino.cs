@@ -20,6 +20,7 @@ namespace XOscillo
       private SerialPort serialPort;
       protected byte m_triggerValue = 127;
       int m_baudrate;
+      protected int m_numSamples = 1024;
 
       public SerialArduino(int baudrate, int samplerate)
       {
@@ -106,6 +107,12 @@ namespace XOscillo
          }
 
          serialPort.Close();
+         return true;
+      }
+
+      public bool SetNumberOfSamples(int v)
+      {
+         this.m_numSamples = v;
          return true;
       }
 

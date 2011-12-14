@@ -14,6 +14,12 @@ namespace XOscillo
       {
       }
 
+      public GraphDigital(GraphDigital g)
+         : base( g)
+      {
+      }
+
+
       override public void Draw(Graphics g, DataBlock db)
       {
          DrawSelection(g);

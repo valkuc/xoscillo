@@ -10,35 +10,21 @@ using System.IO.Ports;
 
 namespace XOscillo
 {
-   public partial class AnalogVizArduino : XOscillo.VizForm
+   public partial class AnalogVizArduino : AnalogVizForm
    {
-      AnalogArduino oscillo;
-
-      GraphAnalog ga = new GraphAnalog();
-      GraphFFT gf = new GraphFFT();
-
-      public AnalogVizArduino()
-      {
-         m_Acq = new Acquirer();
-      }
+      AnalogArduino oscillo = new AnalogArduino();
 
       override public bool Init()
       {
+         base.Init();
+         m_Acq = new Acquirer();
+         m_Acq.Open(oscillo, fc);
+         gf.drawSlidingFFT = true;
          return true;
       }
 
       override public void Form1_Load(object sender, EventArgs e)
-      {
-         oscillo = new AnalogArduino();
-
-         FilterConsumer fc = new FilterConsumer(graphControl.GetConsumer());
-         Filter lowPass = new LowPass();
-         lowPass.SeSampleRate(oscillo.GetSampleRate());
-         fc.SetFilter(lowPass);
-
-         m_Acq.Open(oscillo, fc);
-
-         
+      {        
          commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl);
 
          float [] divs = {1.0f, 0.5f,0.2f,0.1f,0.05f,0.02f,0.01f,0.005f,0.002f,0.001f,0.0005f,0.0002f};
@@ -51,16 +37,18 @@ namespace XOscillo
          commonToolStrip.time.SelectedIndex = 10;
 
          AnalogArduinoToolbar aat = new AnalogArduinoToolbar(oscillo, graphControl);
-         FftToolStrip fft = new FftToolStrip(graphControl, gf);
+         this.toolStripContainer.TopToolStripPanel.Controls.Add(ft.GetToolStrip());
+         this.toolStripContainer.TopToolStripPanel.Controls.Add(aat.GetToolStrip());
+         this.toolStripContainer.TopToolStripPanel.Controls.Add(fft.GetToolStrip());
+         this.toolStripContainer.TopToolStripPanel.Controls.Add(commonToolStrip.GetToolStrip());
 
-         FilteringToolStrip ft = new FilteringToolStrip(fc);
-         this.toolStripContainer1.TopToolStripPanel.Controls.Add(ft.GetToolStrip());
-         this.toolStripContainer1.TopToolStripPanel.Controls.Add(aat.GetToolStrip());
-         this.toolStripContainer1.TopToolStripPanel.Controls.Add(fft.GetToolStrip());
-         this.toolStripContainer1.TopToolStripPanel.Controls.Add(commonToolStrip.GetToolStrip());
-
-         graphControl.SetRenderer(ga);
          ga.SetVerticalRange(255, 0, 32, "Volts");         
+      }
+
+      override public void UpdateGraph(object sender, EventArgs e)
+      {
+         //fc.SetDataBlock(m_Acq.);
+         Invalidate();
       }
 
    }

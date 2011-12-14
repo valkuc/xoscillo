@@ -8,12 +8,11 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   public class CommonToolStrip
+   public class CommonToolStrip : MyToolbar
    {
       VizForm vizForm;
       private Acquirer m_acquirer = null;
 
-      private System.Windows.Forms.ToolStrip toolStrip;
       private System.Windows.Forms.ToolStripButton clone;
       private System.Windows.Forms.ToolStripButton play = null;
       private System.Windows.Forms.ToolStripLabel timeLabel;
@@ -28,7 +27,6 @@ namespace XOscillo
          m_acquirer = acq;
          graphControl = gc;
 
-         this.toolStrip = new System.Windows.Forms.ToolStrip();
          this.timeLabel = new System.Windows.Forms.ToolStripLabel();
          this.clone = new System.Windows.Forms.ToolStripButton();
          this.play = new System.Windows.Forms.ToolStripButton();
@@ -88,9 +86,8 @@ namespace XOscillo
          
       }
 
-      public ToolStrip GetToolStrip()
+      public CommonToolStrip(CommonToolStrip ct) : this( ct.vizForm, null, ct.graphControl )
       {
-         return toolStrip;
       }
 
       private void time_SelectedIndexChanged(object sender, EventArgs e)

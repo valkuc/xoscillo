@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.IO;
 
 
 namespace XOscillo
@@ -72,8 +73,7 @@ namespace XOscillo
             return;
          }
          childForm.Show();
-         childForm.WindowState = FormWindowState.Maximized;
-         
+         childForm.WindowState = FormWindowState.Maximized;         
       }
 
 
@@ -86,16 +86,26 @@ namespace XOscillo
 			{
 				string fileName = openFileDialog.FileName;
 
-            DataBlock db = new DataBlock();
-            db.LoadXML(fileName);
+            FileStream stream = File.Open(fileName, FileMode.Open);
+            SerializationHelper sh = SerializationHelper.LoadXML(stream);
+            stream.Close();
 
-            VizForm childForm = new VizForm();
+            VizForm childForm;
+            if (sh.dataBlock.m_dataType == DataBlock.DATA_TYPE.ANALOG)
+            {
+               childForm = new FileAnalogVizForm(sh);
+            }
+            else
+            {
+               return;
+            }
+
             // Make it a child of this MDI form before showing it.
             childForm.MdiParent = this;
             childForm.Text = fileName;
             childForm.Show();
             childForm.WindowState = FormWindowState.Maximized;
-            childForm.SetDataBlock(db);
+
          }
 		}
 
@@ -106,9 +116,13 @@ namespace XOscillo
          saveFileDialog.Filter = "XML Files (*.xml)|*.xml|Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
 			if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
 			{
-				string FileName = saveFileDialog.FileName;
-				// TODO: Add code here to save the current contents of the form to a file.
-            ((VizForm)ActiveMdiChild).GetDataBlock().Save(FileName);
+				string fileName = saveFileDialog.FileName;
+				
+            // Open the file, creating it if necessary.
+            FileStream stream = File.Open(fileName, FileMode.Create);
+            ((VizForm)ActiveMdiChild).SaveXML(stream);
+            stream.Close();
+
 			}
 		}
 

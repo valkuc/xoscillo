@@ -3,39 +3,60 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace XOscillo
 {
+   [Serializable]
    public class Graph
    {
-      protected float MinY;
-      protected float MaxY;
-      protected float DivY;
-      string unitsX = "";
+      public float MinY;
+      public float MaxY;
+      public float DivY;
+      public string unitsX = "";
 
-      protected float MinX;
-      protected float MaxX;
-      protected float DivX;
-      string unitsY = "";
+      public float MinX;
+      public float MaxX;
+      public float DivX;
+      public string unitsY = "";
 
-      protected float MinXD;
-      protected float MaxXD;
+      public float MinXD;
+      public float MaxXD;
 
+      // selection
+      bool m_selecting = false;
+      public float m_selectT0 = 0;
+      public float m_selectT1 = 0;
+
+      [System.Xml.Serialization.XmlIgnore]
+      
       public Control parent;
 
       float m_centre;
       float m_window;
       float m_s = 100000000.0f;
 
-      // selection
-      bool m_selecting = false;
-      protected float m_selectT0 = 0;
-      protected float m_selectT1 = 0;
-
       protected Rectangle m_Bounds;
 
       public Graph()
       {
+      }
+
+      public Graph(Graph g)
+      {
+         MinX = g.MinX;
+         MaxX = g.MaxX;
+         DivX = g.DivX;
+         unitsX = g.unitsX;
+
+         MinY = g.MinY;
+         MaxY = g.MaxY;
+         DivY = g.DivY;
+         unitsY = g.unitsY;
+
+         MinXD = g.MinXD;
+         MaxXD = g.MaxXD;
       }
 
       public void SetRectangle(Rectangle Bounds)
@@ -64,6 +85,8 @@ namespace XOscillo
          MinXD = min;
          MaxXD = max;         
       }
+
+      
 
       protected string ToEngineeringNotation(double d)
       {
@@ -185,6 +208,11 @@ namespace XOscillo
 
       virtual public void ResizeToRectangle(HScrollBar hBar)
       {
+         if (m_Bounds.Height==0)
+         {
+            return;
+         }
+
          m_window = (float)(m_Bounds.Width * 8.0f * DivX) / (float)m_Bounds.Height;
 
          m_centre = ((float)hBar.Value + (float)hBar.LargeChange / 2.0f) / m_s;
@@ -210,9 +238,12 @@ namespace XOscillo
             m_centre = (t1 + t0) / 2.0f;
          }
 
-
          SetDisplayWindow(t0, t1);
 
+         if (MaxX < m_window)
+         {
+            return;
+         }
 
          hBar.Maximum = (int)(MaxX * m_s);
          hBar.LargeChange = (int)(m_window * m_s);
@@ -329,6 +360,20 @@ namespace XOscillo
 
       }
 
+      public void SaveXML(FileStream stream)
+      {
+         // Convert the object to XML data and put it in the stream.
+         XmlSerializer serializer = new XmlSerializer(typeof(Graph));
+         serializer.Serialize(stream, this);
+      }
 
+      static public Graph LoadXML(FileStream stream)
+      {
+         // Convert the object to XML data and put it in the stream.
+         XmlSerializer serializer = new XmlSerializer(typeof(Graph));
+
+         return (Graph)serializer.Deserialize(stream);         
+      }
+      
    }
 }

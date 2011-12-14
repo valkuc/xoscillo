@@ -6,7 +6,6 @@ namespace XOscillo
 {
    class AnalogArduino : SerialArduino
    {
-      int m_numSamples = 10240;
       int SampleID = 0;
 
       public AnalogArduino() : base(115200, 12000)

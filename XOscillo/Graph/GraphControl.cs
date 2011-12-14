@@ -26,7 +26,6 @@ namespace XOscillo
       bool waitingForTrigger = true;
 
       float m_secondsPerDiv = 1.0f;
-      double m_lpcf;
 
 		public GraphControl()
 		{
@@ -114,17 +113,6 @@ namespace XOscillo
 
          if (ScopeData != null && ScopeData.m_channels != 0)
          {
-            /*
-            if (ScopeData.m_dataType == DataBlock.DATA_TYPE.DIGITAL)
-            {
-               gd.SetVerticalRange(0, 255, (float)(255.0/6.5), "Volts");
-               gd.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
-               gd.SetRectangle(r);
-               gd.ResizeToRectangle();
-               gd.Draw(e.Graphics, ScopeData);
-            }
-             */
-
             graph.SetHorizontalRange(0, ScopeData.GetTotalTime(), m_secondsPerDiv, "Time");
             graph.SetRectangle(r);
             graph.ResizeToRectangle(hScrollBar1);

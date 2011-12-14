@@ -6,8 +6,10 @@ namespace XOscillo
 {
    public class LowPass : Filter
    {
-      double last;
-      double alfa;
+      double last = 0;
+      double alfa = 0;
+
+      double cutOffFreq;
 
       public LowPass()
       {
@@ -18,11 +20,7 @@ namespace XOscillo
       {
          if (i == 0)
          {
-            //set cut off freq
-            double RC = 1.0 / (val * 2.0 * Math.PI);
-            double dt = 1.0 / sampleRate;
-
-            alfa = dt / (RC + dt);
+            cutOffFreq = val;
             return true;
          }
 
@@ -32,9 +30,21 @@ namespace XOscillo
       override public double DoFilter(double data)
       {
          double y = ((alfa * data) + (1.0 - alfa) * last);
+
          last = y;
 
          return y;
+      }
+
+      override public void SetSampleRate( double sr )
+      {
+         base.SetSampleRate(sr);
+
+         //set cut off freq
+         double RC = 1.0 / (cutOffFreq * 2.0 * Math.PI);
+         double dt = 1.0 / sampleRate;
+
+         alfa = dt / (RC + dt);
       }
    }
 }

@@ -6,22 +6,27 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   class GraphAnalog : Graph
+   public class GraphAnalog : Graph
    {
       Pen[] m_pens = { Pens.Red, Pens.Blue, Pens.Green, Pens.Yellow };
 
       MouseEventArgs m_mouse = null;
 
-      public bool showValueTicks;
+      public bool showValueTicks = false;
 
       public GraphAnalog()
          : base()
       {
-         showValueTicks = false;
       }
+
+      public GraphAnalog(Graph g)
+         : base(g)
+      {
+      }      
 
       private void DrawGraph(Graphics g, Pen p, DataBlock db, int channel)
       {
+
          float yy = 0;
          float xx = 0;
          int i = 0;
@@ -77,8 +82,6 @@ namespace XOscillo
             g.DrawLine(Pens.Green, x, m_Bounds.Y, x, m_Bounds.Y + m_Bounds.Height);
          }
 
-
-
          Point pp = new Point();
          pp.X = 0;
          pp.Y = 32;
@@ -102,12 +105,14 @@ namespace XOscillo
 
          if (Selected())
          {
-            
-            g.DrawString(string.Format("({0}, {1}) - ({2}, {3})", ToEngineeringNotation(m_selectT0), db.GetVoltage(0, m_selectT0), ToEngineeringNotation(m_selectT1), db.GetVoltage(0, m_selectT1)), parent.Font, Brushes.White, pp);
-            pp.Y += 16;
+            if ((m_selectT0 < db.GetTotalTime()) && (m_selectT1 < db.GetTotalTime()))
+            {
+               g.DrawString(string.Format("({0}, {1}) - ({2}, {3})", ToEngineeringNotation(m_selectT0), db.GetVoltage(0, m_selectT0), ToEngineeringNotation(m_selectT1), db.GetVoltage(0, m_selectT1)), parent.Font, Brushes.White, pp);
+               pp.Y += 16;
 
-            g.DrawString(string.Format("ΔVoltage = {0}", db.GetVoltage(0, m_selectT1) - db.GetVoltage(0, m_selectT0)), parent.Font, Brushes.White, pp);
-            pp.Y += 16;
+               g.DrawString(string.Format("ΔVoltage = {0}", db.GetVoltage(0, m_selectT1) - db.GetVoltage(0, m_selectT0)), parent.Font, Brushes.White, pp);
+               pp.Y += 16;
+            }
             
             string time = string.Format("ΔTime = {0}", ToEngineeringNotation(m_selectT1 - m_selectT0));
             if (m_selectT1 - m_selectT0 > 0)
@@ -136,7 +141,8 @@ namespace XOscillo
       {
          base.GraphControl_MouseMove(sender, e);
          m_mouse = e;
-         parent.Invalidate();
+         Control ctr = sender as Control;
+         ctr.Invalidate();
       }
 
    }

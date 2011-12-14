@@ -95,33 +95,19 @@ namespace XOscillo
          m_Buffer = new byte[size];
       }
 
-      public void Save(string file)
+      public void SaveXML(FileStream stream)
       {
-         // Open the file, creating it if necessary.
-         FileStream stream = File.Open(file, FileMode.Create);
-
          // Convert the object to XML data and put it in the stream.
          XmlSerializer serializer = new XmlSerializer(typeof(DataBlock));
          serializer.Serialize(stream, this);
-
-         // Close the file.
-         stream.Close();
       }
 
-      public void LoadXML(string file)
+      static public DataBlock LoadXML(FileStream stream)
       {
-         // Open the file, creating it if necessary.
-         FileStream stream = File.Open(file, FileMode.Open);
-
          // Convert the object to XML data and put it in the stream.
          XmlSerializer serializer = new XmlSerializer(typeof(DataBlock));
 
-         DataBlock db = (DataBlock)serializer.Deserialize(stream);
-         Copy(db);
-
-
-         // Close the file.
-         stream.Close();
+         return (DataBlock)serializer.Deserialize(stream);
       }
 
       public void LoadCSV(string file)

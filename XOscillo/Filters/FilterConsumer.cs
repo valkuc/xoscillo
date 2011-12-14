@@ -36,8 +36,10 @@ namespace XOscillo
       override public void SetDataBlock(DataBlock db)
       {
          dataBlock.Copy(db);
+         
          if (enabled)
          {
+            filter.SetSampleRate(db.m_sampleRate);
 
             //filter a few times the first value to initialize filter
             for (int i = 0; i < 4; i++)

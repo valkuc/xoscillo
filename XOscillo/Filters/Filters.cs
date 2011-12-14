@@ -10,7 +10,7 @@ namespace XOscillo
 
       protected String[] names;
 
-      public void SeSampleRate( double sr )
+      virtual public void SetSampleRate( double sr )
       {
          sampleRate = sr;
       }
@@ -25,16 +25,14 @@ namespace XOscillo
          return false;
       }
 
-      virtual public String GetValueName(int i)
+      virtual public string GetValueName(int i)
       {
-         if (names != null)
+         if (i >= names.Length)
          {
-            if (i < names.Length)
-            {
-               return names[i];
-            }
+            return null;
          }
-         return null;
+
+         return names[i];
       }
 
    }

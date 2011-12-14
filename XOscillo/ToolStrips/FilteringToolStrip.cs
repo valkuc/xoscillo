@@ -7,44 +7,44 @@ using System.Drawing;
 
 namespace XOscillo
 {
-   class FilteringToolStrip
+   public class FilteringToolStrip : MyToolbar
    {
-      FilterConsumer fc;
-      Filter filter;
+      FilterConsumer filterConsumer;
+      Filter lowPass = new LowPass();
       
-      private System.Windows.Forms.ToolStrip toolStrip1;
       private System.Windows.Forms.ToolStripLabel toolStripLabel4;
-      private System.Windows.Forms.ToolStripTextBox cof;
+      private OnlyNumbersToolStripTextBox cof;
       private System.Windows.Forms.CheckBox enableFiltering;
       private System.Windows.Forms.ToolStripControlHost enable;
 
+      public event EventHandler dataChanged = null;
+
       public FilteringToolStrip(FilterConsumer fc)
       {
-         this.fc = fc;
-         this.filter = fc.GetFilter();
+         this.filterConsumer = fc;
+         fc.SetFilter(lowPass);
 
-         this.toolStrip1 = new System.Windows.Forms.ToolStrip();
          this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
-         this.cof = new System.Windows.Forms.ToolStripTextBox();
+         this.cof = new OnlyNumbersToolStripTextBox();
          this.enableFiltering = new CheckBox();
          this.enable = new System.Windows.Forms.ToolStripControlHost(this.enableFiltering);
 
          // 
          // toolStrip1
          // 
-         this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
-         this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+         this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
+         this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.enable,
             this.toolStripLabel4,
             this.cof});
-         this.toolStrip1.Location = new System.Drawing.Point(252, 0);
-         this.toolStrip1.Name = "toolStrip1";
-         this.toolStrip1.Size = new System.Drawing.Size(197, 25);
-         this.toolStrip1.TabIndex = 2;
+         this.toolStrip.Location = new System.Drawing.Point(252, 0);
+         this.toolStrip.Name = "toolStrip1";
+         this.toolStrip.Size = new System.Drawing.Size(197, 25);
+         this.toolStrip.TabIndex = 2;
 
          for (int i = 0; ; i++)
          {
-            string name = filter.GetValueName(i);
+            string name = lowPass.GetValueName(i);
             if (name == null)
             {
                break;
@@ -65,46 +65,29 @@ namespace XOscillo
             // cof
             this.cof.Name = name;
             this.cof.Size = new System.Drawing.Size(50, 25);
-            this.cof.Text = "0";
+            this.cof.Text = "100";
             this.cof.Tag = i;
             this.cof.Enabled = this.enableFiltering.Checked;
-            this.cof.Validating += new System.ComponentModel.CancelEventHandler(this.cof_Validating);
-            this.cof.Validated += new System.EventHandler(this.cof_Validated);
+            this.cof.textReady += new EventHandler(cof_textReady);
          }
-      }
-
-      public ToolStrip GetToolStrip()
-      {
-         return this.toolStrip1;
       }
 
       private void enableFilteringChanged(object sender, EventArgs e)
       {
          cof.Enabled = enableFiltering.Checked;
-         fc.Enable(enableFiltering.Checked);
-      }
-
-      private void cof_Validated(object sender, EventArgs e)
-      {
-         ToolStripTextBox textbox = sender as ToolStripTextBox;
-         if (textbox != null)
+         filterConsumer.Enable(enableFiltering.Checked);
+         if (dataChanged != null)
          {
-            filter.SetValue((int)(textbox.Tag), double.Parse(cof.Text));
+            lowPass.SetValue((int)(cof.Tag), double.Parse(cof.Text));
+            dataChanged(sender, e);
          }
       }
 
-      private void cof_Validating(object sender, CancelEventArgs e)
+      private void cof_textReady(object sender, EventArgs e)
       {
-         int value;
-         if (int.TryParse(cof.Text, out value))
-         {
-            cof.BackColor = Color.White;
-         }
-         else
-         {
-            cof.BackColor = Color.Red;
-            e.Cancel = true;
-         }
+         lowPass.SetValue((int)(cof.Tag), double.Parse(cof.Text));
+         dataChanged(sender, e);
       }
+
    }
 }

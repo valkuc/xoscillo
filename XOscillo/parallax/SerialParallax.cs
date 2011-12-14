@@ -19,6 +19,7 @@ namespace XOscillo
 
    public class SerialParallax : Oscillo
    {
+      int SampleID = 0;
 
       enum VoltageRange
       {
@@ -97,13 +98,11 @@ namespace XOscillo
 
       TriggerMode triggerMode;
 
-      int triggerPos;
-
       public TriggerChannel triggerChannel;
 
       public bool externalTrigger;
 
-      FastChannelSelection fastChannelSelection;
+      //FastChannelSelection fastChannelSelection;
 
       bool fastMode;
 
@@ -285,7 +284,7 @@ namespace XOscillo
          Read(res, 1);
          if (res[0] == 85)
          {
-            db.m_sample = 0;
+            db.m_sample = SampleID++; ;
             db.m_start = time;
             db.m_dataType = DataBlock.DATA_TYPE.ANALOG;
             db.m_stop = DateTime.Now;
