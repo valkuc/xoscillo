@@ -55,5 +55,10 @@ namespace XOscillo
       public virtual void SaveXML(FileStream stream)
       {
       }
+
+      virtual public void UpdateGraph(object sender, EventArgs e)
+      {
+      }
+
    }
 }

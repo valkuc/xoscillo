@@ -63,8 +63,6 @@ namespace XOscillo
 
       public T TrySTDetection()
       {
-         DebugConsole.Instance.Show();
-
          string[] ports = SerialPort.GetPortNames();
 
          T oscillo = new T();
@@ -79,7 +77,6 @@ namespace XOscillo
             }
          }
 
-         DebugConsole.Instance.Hide();
          DebugConsole.Instance.AddLn("Autodetection failed, trying manual mode");
 
          return null;
@@ -102,7 +99,7 @@ namespace XOscillo
       public T Detection()
       {
          T res;
-         
+
          DebugConsole.Instance.Add("Checking MT autodetection...");
          res = TryMTDetection();
          if (res != null)
@@ -112,16 +109,23 @@ namespace XOscillo
          }
          
          DebugConsole.Instance.AddLn("NOPE");
+
+         DebugConsole.Instance.Show();
+
          DebugConsole.Instance.Add("Checking ST autodetection...");
          res = TrySTDetection();
          if (res != null)
          {
+            DebugConsole.Instance.Hide();
             DebugConsole.Instance.AddLn("OK");
             return res;
          }
          
          DebugConsole.Instance.AddLn("NOPE");
          DebugConsole.Instance.Add("Forcing Manual...");
+
+         DebugConsole.Instance.Hide();
+
          return TryManualDetection();
       }
 

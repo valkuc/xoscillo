@@ -22,11 +22,13 @@ namespace XOscillo
          this.gf = gf;
       }
 
-      public AnalogVizForm() : this ( new GraphAnalog(), new GraphFFT())
+      public AnalogVizForm()
+         : this ( new GraphAnalog(), new GraphFFT())
       {
       }
 
-      public AnalogVizForm(AnalogVizForm avf) : this(new GraphAnalog(avf.ga), new GraphFFT())
+      public AnalogVizForm(AnalogVizForm avf)
+         : this(new GraphAnalog(avf.ga), new GraphFFT())
       {
       }
 
@@ -57,11 +59,6 @@ namespace XOscillo
       {
          return fc;
       }
-
-      virtual public void UpdateGraph(object sender, EventArgs e)
-      {
-      }
-
 
       override public VizForm Clone()
       {

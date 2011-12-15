@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   class GraphDigital : Graph
+   public class GraphDigital : Graph
    {
 
       public GraphDigital()
@@ -14,7 +14,7 @@ namespace XOscillo
       {
       }
 
-      public GraphDigital(GraphDigital g)
+      public GraphDigital(Graph g)
          : base( g)
       {
       }

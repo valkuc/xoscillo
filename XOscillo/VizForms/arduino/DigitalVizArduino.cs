@@ -10,7 +10,7 @@ using System.IO.Ports;
 
 namespace XOscillo
 {
-   public partial class DigitalVizArduino : VizForm
+   public partial class DigitalVizArduino : DigitalVizForm
    {
       DigitalArduino oscillo = new DigitalArduino();
 
@@ -36,8 +36,6 @@ namespace XOscillo
          commonToolStrip.time.SelectedIndex = 10;
 
          SetToolbar(commonToolStrip);
-
-         GraphDigital gd = new GraphDigital();
 
          gd.SetVerticalRange(0, 255, (float)(255.0 / 6.5), "Volts");
 

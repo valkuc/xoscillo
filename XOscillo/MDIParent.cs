@@ -95,8 +95,13 @@ namespace XOscillo
             {
                childForm = new FileAnalogVizForm(sh);
             }
+            else if (sh.dataBlock.m_dataType == DataBlock.DATA_TYPE.DIGITAL)
+            {
+               childForm = new FileDigitalVizForm(sh);
+            }
             else
             {
+               MessageBox.Show("file not supported");
                return;
             }
 
