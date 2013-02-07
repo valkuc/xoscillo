@@ -89,10 +89,13 @@ namespace XOscillo
       
       public DataBlock GetScopeData()
       {
+          return ScopeData;
+          /*
          lock (this)
          {
             return new DataBlock(ScopeData);
          }
+           */
       }
       
 

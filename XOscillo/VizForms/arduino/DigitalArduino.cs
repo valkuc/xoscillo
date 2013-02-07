@@ -10,12 +10,9 @@ namespace XOscillo
       int SampleID = 0;
 
       public DigitalArduino()
-         : base(115200, 12000)
+         //: base(115200, 12000)
+          : base(1000000, 59250)
       {
-         //needs tunning
-         //baudrate = 1000000;
-         //m_sampleRate = 59250; // this is actual number of samples per second I am able to archieve on the arduino
-
          m_triggerValue = 1;
       }
 

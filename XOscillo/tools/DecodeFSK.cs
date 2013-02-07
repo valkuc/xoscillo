@@ -12,6 +12,9 @@ namespace XOscillo
    {
       DataBlock m_db;
 
+
+      BitDecoder bitDecoder = new BitDecoder();
+
       public DecodeFSK()
       {
          InitializeComponent();
@@ -22,17 +25,6 @@ namespace XOscillo
          return m_db;
       }
 
-      public int Error(int a, int b)
-      {
-         if (a < b)
-         {
-            int c = a;
-            a = b;
-            b = c;
-         }
-         return ((b - a) * 100 ) / b;
-      }
-
       public string ReverseString(string s)
       {
          char[] arr = s.ToCharArray();
@@ -40,94 +32,34 @@ namespace XOscillo
          return new string(arr);
       }
 
-      public bool IsNoise(byte b)
-      {
-         int average = m_db.GetAverate(0);
-
-         return ( b < ( average + 5 ) ) && ( b > (average - 5) );
-      }
-
-
-      public List<int> GetMinMax()
-      {
-         int average = m_db.GetAverate(0);
-
-         List<int> MinMax = new List<int>();
-
-         byte lastValue = m_db.GetVoltage(0, 0);
-
-         int Tip = average;
-         int Run = 0;
-
-         for (int i = 1; i < m_db.GetChannelLength(); i++)
-         {
-            byte value = m_db.GetVoltage(0, i);
-
-            // up
-            if (value > average  && lastValue <= average)
-            {
-               if ( value - Tip > 10 )
-                  MinMax.Add(Run);
-               Tip = value;
-            }
-
-            //down
-            if (value < average && lastValue >= average)
-            {
-               if ( Tip - value  > 10)
-                  MinMax.Add(Run);
-               Tip = value;
-            }
-
-            if ( value > average )
-            {
-               //find max
-               if ( value > Tip )
-               {
-                  Tip = value;
-                  Run = i;
-               }
-            }
-
-            if ( value < average )
-            {
-               if ( value < Tip )
-               {
-                  Tip = value;
-                  Run = i;
-               }
-            }            
-
-            lastValue = value;
-         }
-
-         return MinMax;
-      }
 
       public int FindClockedSignal(List<int> deltas, int offset)
       {
          int run = 0;
-         int v = deltas[offset];
-         for (int j = offset + 1; j < deltas.Count; j++)
+
+         for (; offset < deltas.Count; offset++)
          {
-            int val = deltas[j];
-            if (Error(v, val*2) < 30)
-            {
-               run++;
-               v = val*2;
-            }
-            else if (Error(v, val) < 30)
-            {
-               run++;
-               v = val;
-            }
-            else
-            {
-               break;
-            }
+             if (deltas[offset] != 0)
+             {
+                 bitDecoder.SetClock((byte)deltas[offset]);
+
+                 for (int j = offset + 1; j < deltas.Count; j++)
+                 {
+                     if (bitDecoder.IsClock((byte)deltas[j]))
+                     {
+                         run++;
+                     }
+                     else
+                     {
+                         break;
+                     }
+                 }
+
+                 return run;
+             }
          }
 
-         return run;
+         return 0;
       }
 
       public int ScanForClockedSignal(List<int> Zeroes, int ConsecutiveOnes )
@@ -143,152 +75,35 @@ namespace XOscillo
          return -1;
       }
 
-      public List<int> ComputeDeltas(List<int> Peaks)
-      {
-         List<int> deltas = new List<int>();
-         for (int i = 1; i < Peaks.Count; i++)
-         {
-            deltas.Add(Peaks[i] - Peaks[i - 1]);
-         }
-
-         return deltas;
-      }
-
-
-      public string ExtractBits(List<int> delta, int offset, int longDuration)
+      public string ExtractBits(List<int> delta)
       {   
-         int zeroDuration = longDuration;
-         int oneDuration = zeroDuration / 2;
-
          string bits = "";
 
-         for (int i = offset; i < delta.Count; i++)
+         int offset = 0;
+
+         for (; offset < delta.Count; offset++)
          {
-            int average = (zeroDuration + oneDuration) /2;
+             int consecutive = FindClockedSignal(delta, offset);
+             if (consecutive > 10)
+             {
+                 bitDecoder.SetClock((byte)delta[offset]);
+                 for (; offset < delta.Count; offset++)
+                 {
+                     BIT_RESULT res = bitDecoder.DecodeBit((byte)delta[offset]);
 
-            int duration = delta[i];
-
-            if (duration > average * 4)
-            {
-               bits += "p";
-               continue;
-            }
-
-            if (duration > average)
-            {
-               if (Error(duration, zeroDuration) < 40)
-               {
-                  bits += "0";
-                  zeroDuration = (zeroDuration + duration)/2;
-               }
-               else
-               {
-                  bits += "*";
-               }
-            }
-            else
-            {
-               if (Error(duration, oneDuration) < 40)
-               {
-                  bits += "1";
-                  oneDuration = (oneDuration + duration) / 2;
-               }
-               else
-               {
-                  bits += "*";
-               }
-            }
-
-          
+                     if (res == BIT_RESULT.BIT_ZERO)
+                        bits += "0";
+                     else if (res == BIT_RESULT.BIT_ONE)
+                         bits += "1";
+                     else if (res == BIT_RESULT.BIT_ERROR)
+                     {
+                         bits += "--";
+                         break;
+                     }
+                 }
+             }
          }
-
          return bits;
-      }
-
-      public int DetectFSK(string bitstream)
-      {
-         int err = 0;
-
-         bool wasOne = false;
-
-         for(int i=0;i<bitstream.Length;i++)
-         {
-            if ( wasOne )
-            {   
-               if ( bitstream[i] != '1' )
-               {                  
-                  err++;
-               }
-               wasOne = false;
-            }
-            else
-            {
-               wasOne = (bitstream[i] == '1' );
-            }
-         }
-
-         return err;
-      }
-
-      string GetBitStreamFromFSK(string bitstream)
-      {
-         string outdata = "";
-
-         bool wasOne = false;
-
-         for (int i = 0; i < bitstream.Length; i++)
-         {
-            if (wasOne)
-            {
-               if (bitstream[i] == '1')
-               {
-                  outdata += "1";
-               }
-               else
-               {
-                  outdata += "*";
-               }
-               wasOne = false;
-            }
-            else
-            {               
-               if (bitstream[i] == '1')
-               {
-                  wasOne = true;
-               }
-               else
-               {
-                  outdata += "0";
-               }
-            }
-         }
-         return outdata;
-      }
-
-      public string GetBitStreamFromAlternating(string bitstream)
-      {
-         string outdata = "";
-
-         for (int i = 1; i < bitstream.Length; i+=2)
-         {
-            char last = bitstream[i-1];
-            char cur = bitstream[i];
-
-            if (last=='0' && cur == '1')
-            {
-               outdata += "1";
-            }
-            else if (last == '1' && cur == '0')
-            {
-               outdata += "0";
-            }
-            else
-            {
-               outdata += "*";
-            }
-         }
-
-         return outdata;
       }
 
       public string Decode4BitsToString(string data, bool parityCheck)
@@ -374,23 +189,44 @@ namespace XOscillo
          m_db = new DataBlock();
          m_db.Copy(db);
 
-         List<int> PeakOffsets = GetMinMax();
+         //List<int> PeakOffsets = GetMinMax(m_db);
 
-         List<int> deltas = ComputeDeltas(PeakOffsets);
+         List<int> PeakOffsets = new List<int>();
+         List<int> deltas = new List<int>();
 
-         int offset = ScanForClockedSignal(deltas, 5);
+         PeakFinder.InitLoopThoughWave(db);
+         int t = 0;        
+         for (; ; )
+         {
+             byte v = PeakFinder.LoopThoughWave();
+             if (v == 255)
+                 break;
+             t = t + v;
+             PeakOffsets.Add(t);
+             deltas.Add(v);
+         }
+        
+         db.m_Annotations = PeakOffsets.ToArray();
+
+         int offset = 0;
+
+         for (; offset < deltas.Count; offset++)
+         {
+             if (deltas[offset] != 0)
+                 break;
+         }
+
          if (offset >= 0)
          {
-            output.Text += string.Format("Clocked signal found: {0}\r\n", offset);
+            //output.Text += string.Format("Clocked signal found: {0}\r\n", offset);
 
-            string bitstream = ExtractBits(deltas, offset, deltas[offset]);
+            string bitstream = ExtractBits(deltas);
 
             output.Text += bitstream + "\r\n";
 
-            output.Text += string.Format("Errors as FSK: {0}\r\n", DetectFSK(bitstream));
-            output.Text += GetBitStreamFromFSK(bitstream) + "\r\n";
+            //output.Text += string.Format("Errors as FSK: {0}\r\n", DetectFSK(bitstream));
             output.Text += "\r\nText:\r\n";
-            output.Text += Decode4BitsToString(GetBitStreamFromFSK(bitstream), true) + "\r\n";
+            output.Text += Decode4BitsToString(bitstream, false) + "\r\n";
             //output.Text += string.Format("Alternating: \r\n");
             //output.Text += GetBitStreamFromAlternating(bitstream) + "\r\n";
             

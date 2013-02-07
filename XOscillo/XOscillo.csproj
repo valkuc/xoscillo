@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acquirers\Acquirer.cs" />
+    <Compile Include="tools\BitDecoder.cs" />
+    <Compile Include="tools\PeakFinder.cs" />
     <Compile Include="VizForms\arduino\AnalogArduino.cs" />
     <Compile Include="VizForms\arduino\AnalogArduinoToolStrip.cs" />
     <Compile Include="VizForms\arduino\DigitalArduinoToolStrip.cs" />
@@ -214,7 +216,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

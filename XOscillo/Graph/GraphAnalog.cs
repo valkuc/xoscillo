@@ -38,6 +38,16 @@ namespace XOscillo
             i1 = db.GetChannelLength();
          }
 
+         if (db.m_Annotations != null)
+         {
+             for (int an = 0; an < db.m_Annotations.Length; an++)
+             {
+                 float time = db.GetTime(db.m_Annotations[an]);
+                 float x = ValueXToRect(time);
+                 g.DrawLine(Pens.Green, x, 0, x, ValueYToRect(5));
+             }
+         }
+
          try
          {
             for (i = i0; i <= i1; i++)
@@ -86,8 +96,8 @@ namespace XOscillo
          pp.X = 0;
          pp.Y = 32;
 
-         try
-         {
+        if (m_mouse != null)
+        {
             float time = RectToValueX(m_mouse.X);
             float voltage = RectToValueY(m_mouse.Y);
 
@@ -95,13 +105,11 @@ namespace XOscillo
             g.DrawString(info, parent.Font, Brushes.White, pp);
             pp.Y += 16;
 
-            info = string.Format("({0}s/div, {1}Ks/s)", ToEngineeringNotation(DivX), db.m_sampleRate/1000);
+            info = string.Format("({0}s/div, {1}Ks/s)", ToEngineeringNotation(DivX), db.m_sampleRate / 1000);
             g.DrawString(info, parent.Font, Brushes.White, pp);
             pp.Y += 16;
-         }
-         catch
-         {
-         }
+        }
+
 
          if (Selected())
          {

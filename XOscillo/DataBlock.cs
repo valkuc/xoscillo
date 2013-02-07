@@ -39,6 +39,8 @@ namespace XOscillo
       public byte[] m_Buffer = null;
       public RESULT m_result;
 
+      public int[] m_Annotations = null;
+
       public DataBlock()
       {
       }
@@ -65,6 +67,7 @@ namespace XOscillo
          this.m_triggerPos = db.m_triggerPos;
          this.m_result = db.m_result;
          this.m_dataType = db.m_dataType;
+         this.m_Annotations = db.m_Annotations;
       }
 
       public void Copy(DataBlock db)
@@ -190,7 +193,13 @@ namespace XOscillo
       
       public virtual byte GetVoltage(int channel, int index)
       {
-         return m_Buffer[index * m_stride + m_channelOffset * channel];
+          int i = index * m_stride + m_channelOffset * channel;
+          if (i < m_Buffer.Length)
+          {
+              return m_Buffer[i];
+          }
+
+          return 0;
       }
 
       public virtual byte GetVoltage(int channel, float time)
@@ -210,7 +219,7 @@ namespace XOscillo
          return (float)GetChannelLength() / (float)m_sampleRate;
       }
 
-      public int GetAverate(int channel)
+      public byte GetAverate(int channel)
       {
          int average = 0;
          for (int i = 0; i < GetChannelLength(); i++)
@@ -219,7 +228,7 @@ namespace XOscillo
          }
          average /= GetChannelLength();
 
-         return average;
+         return (byte)average;
       }
 
    };
