@@ -32,7 +32,7 @@ namespace XOscillo
          int i = 0;
          int i0 = (int)(db.GetChannelLength() * MinXD / db.GetTotalTime());
 
-         int i1 = (int)(db.GetChannelLength() * MaxXD / db.GetTotalTime());
+         int i1 = (int)(db.GetChannelLength() * MaxXD / db.GetTotalTime())+1;
          if (i1 > db.GetChannelLength())
          {
             i1 = db.GetChannelLength();
@@ -50,7 +50,7 @@ namespace XOscillo
 
          try
          {
-            for (i = i0; i <= i1; i++)
+            for (i = i0; i < i1; i++)
             {
                int rawvolt = db.GetVoltage(channel, i);
 
