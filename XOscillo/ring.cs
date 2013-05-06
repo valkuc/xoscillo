@@ -14,6 +14,8 @@ namespace XOscillo
 
       protected bool m_stop;
 
+      bool buffering = true;
+
       public Ring(int size)
       {
          m_ring = new T[size];
@@ -47,10 +49,13 @@ namespace XOscillo
 
       public int GetLength()
       {
-         return m_len;
+          lock (this)
+          {
+              return m_len;
+          }
       }
       
-      public virtual void getLock(out T data)
+      public virtual bool getLock(out T data)
       {
          lock (this)
          {
@@ -64,13 +69,15 @@ namespace XOscillo
             if (m_stop)
             {
                data = default(T);
-               return;
+               return false;
             }
 
             data = m_ring[m_read];
 
-            m_read = (m_read + 1) % m_ring.Length;
+            
+            return true;
          }
+         
       }
 
       public virtual void getUnlock()
@@ -78,22 +85,29 @@ namespace XOscillo
          lock (this)
          {
             m_len--;
+            m_read = (m_read + 1) % m_ring.Length;
             Monitor.Pulse(this);
          }
       }
 
-      public virtual void putLock( out T data)
+      public virtual bool putLock( out T data)
       {
          lock (this)
          {
-            while (GetLength() == m_ring.Length)
+            while ((GetLength() == m_ring.Length)  && (m_stop==false))
             {
                Monitor.Wait(this);
             }
 
-            data = m_ring[m_write];
+            if (m_stop)
+            {
+                data = default(T);
+                return false;
+            }
 
-            m_write = (m_write + 1) % m_ring.Length;
+            data = m_ring[m_write];
+            
+            return true;
          }        
       }
 
@@ -102,28 +116,8 @@ namespace XOscillo
          lock (this)
          {
             m_len++;
+            m_write = (m_write + 1) % m_ring.Length;
             Monitor.Pulse(this);
-         }
-      }
-
-
-      public virtual void Peek(out T data)
-      {
-         lock (this)
-         {
-            if ((GetLength() == 0) && (m_stop == false))
-            {
-               Monitor.Wait(this);
-            }
-
-            if (m_stop)
-            {
-               data = default(T);
-               return;
-            }
-
-
-            data = m_ring[m_read];
          }
       }
    }

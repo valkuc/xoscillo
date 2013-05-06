@@ -11,10 +11,12 @@ namespace XOscillo
       public Oscillo m_Oscillo = null;
       public Consumer m_GraphControl = null;
 
-      DataBlockRing m_ring = new DataBlockRing(16);
+      Ring<DataBlock> m_ring = new Ring<DataBlock>(16);
 
       Thread m_threadProvider = null;
       Thread m_threadConsumer = null;
+
+      bool running = false;
 
       public bool Open(Oscillo os, Consumer gc)
       {
@@ -27,6 +29,7 @@ namespace XOscillo
       public void Close()
       {
          Stop();
+         running = false;
 
          if (m_Oscillo != null)
          {
@@ -34,62 +37,68 @@ namespace XOscillo
          }
       }
 
+      public void SetBuffering(int i)
+      {
+          if (running)
+          {
+              Stop();
+              m_ring = new Ring<DataBlock>(i);
+              Play();
+          }
+          else
+          {
+              m_ring = new Ring<DataBlock>(i);
+          }
+      }
+
       private void Provider()
       {
          DataBlock db;
 
-         for(;;)
+         for(;running;)
          {
-            if (m_ring.IsStopped())
+            if (m_ring.putLock(out db))
             {
-               return;
-            }
-
-            m_ring.putLock(out db);
-
-            if (m_ring.IsStopped()==false)
-            {
-               for (;;)
-               {
-                  try
-                  {
-                     m_Oscillo.GetDataBlock(ref db);
-                     if (db.m_result == DataBlock.RESULT.OK)
-                     {
+                while (true)
+                {
+                    try
+                    {
+                        m_Oscillo.GetDataBlock(ref db);
                         break;
-                     }
-                  }
-                  catch
-                  {
-                  }
-
-                  m_Oscillo.Reset();
-               }
+                    }
+                    catch
+                    {
+                    }
+                }
+                m_ring.putUnlock();
+                m_Oscillo.Reset();
             }
-
-            m_ring.putUnlock();
          }
       }
 
       private void Consumer()
       {
-         for(;;)
-         {
-            DataBlock db;
-            m_ring.GetFirstElementButDoNotRemoveIfLastOne(out db);
+          DataBlock db;
 
-            if (m_ring.IsStopped())
+          for (; running; )
+          {
+            if (m_ring.getLock(out db))
             {
-               break;
+                m_GraphControl.SetDataBlock(db);
+                m_ring.getUnlock();
             }
-
-            m_GraphControl.SetDataBlock(db); 
          }
       }
 
       public void Play()
       {
-         m_ring.Start();
+          if (running == true)
+          {
+              return;
+          }
+
+          m_ring.Start();
+         running = true;
 
          m_threadProvider = new Thread(new ThreadStart(Provider));
          m_threadProvider.Name = "Provider";
@@ -102,8 +111,15 @@ namespace XOscillo
 
       public void Stop()
       {
+        if (running == false)
+        {
+            return;
+        }
+
          //so consumer can finish
          m_ring.Stop();
+         running = false;
+         DebugConsole.Instance.Add("Stopping threads...");
 
          if (m_threadConsumer != null)
          {
@@ -116,6 +132,7 @@ namespace XOscillo
             m_threadProvider.Join();
             m_threadProvider = null;
          }
+         DebugConsole.Instance.Add("OK\n");
       }
    }
 }

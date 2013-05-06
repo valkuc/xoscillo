@@ -115,7 +115,7 @@ namespace XOscillo
          // Create a new SerialPort object with default settings.
          serialPort = new SerialPort();
          triggerVoltage = 1;
-         voltageRange = VoltageRange.VR_20VPP_20VPP;
+         voltageRange = VoltageRange.VR_4VPP_4VPP;
          edge = Edge.EDGE_RAISING;
          channleOnOff = ChannelOnOFF.COF_CH1;
          triggerMode = TriggerMode.TM_NORMAL;

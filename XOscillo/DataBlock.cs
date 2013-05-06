@@ -12,6 +12,7 @@ namespace XOscillo
       public enum RESULT
       {
          OK,
+         PROGRESSIVE,
          ERROR,
          TIMEOUT,
       };
@@ -37,12 +38,14 @@ namespace XOscillo
       public int m_triggerVoltage;
       public int m_triggerPos;
       public byte[] m_Buffer = null;
+      public int m_index;
       public RESULT m_result;
 
       public int[] m_Annotations = null;
 
       public DataBlock()
       {
+          m_index = 0;
       }
 
       public DataBlock(DataBlock db)
@@ -68,6 +71,7 @@ namespace XOscillo
          this.m_result = db.m_result;
          this.m_dataType = db.m_dataType;
          this.m_Annotations = db.m_Annotations;
+         this.m_index = db.m_index;
       }
 
       public void Copy(DataBlock db)
@@ -91,6 +95,7 @@ namespace XOscillo
          this.m_triggerPos = db.m_triggerPos;
          this.m_result = db.m_result;
          this.m_dataType = db.m_dataType;
+         this.m_index = db.m_index;
       }
 
       public void Alloc(int size)
@@ -172,6 +177,9 @@ namespace XOscillo
 
       public int GetChannelLength()
       {
+         if (m_channels == 0)
+              return 0;
+
          if (m_dataType == DATA_TYPE.ANALOG)
          {
             //every byte is a value
@@ -216,6 +224,8 @@ namespace XOscillo
 
       public float GetTotalTime()
       {
+         if (m_sampleRate == 0)
+              return 0;
          return (float)GetChannelLength() / (float)m_sampleRate;
       }
 

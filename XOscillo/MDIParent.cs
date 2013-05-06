@@ -47,6 +47,23 @@ namespace XOscillo
          childForm.WindowState = FormWindowState.Maximized;
       }
 
+      private void newAnalogTeensy_Click(object sender, EventArgs e)
+      {
+          // Create a new instance of the child form.
+          AnalogVizTeensy childForm;
+          childForm = new AnalogVizTeensy();
+          childForm.MdiParent = this;
+          childForm.Text = "Analog Teensy";
+          if (childForm.Init() == false)
+          {
+              return;
+          }
+
+          childForm.Show();
+          childForm.WindowState = FormWindowState.Maximized;
+      }
+
+
       private void newDigitalArduino_Click(object sender, EventArgs e)
       {
 			// Create a new instance of the child form.
@@ -229,6 +246,7 @@ namespace XOscillo
       {
          DebugConsole.Instance.Show();
       }
+
 
 	}
 }

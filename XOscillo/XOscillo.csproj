@@ -118,7 +118,6 @@
     <Compile Include="VizForms\arduino\AnalogVizArduino.Designer.cs">
       <DependentUpon>AnalogVizArduino.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataBlockRing.cs" />
     <Compile Include="ToolStrips\CommonToolStrip.cs">
     </Compile>
     <Compile Include="VizForms\AnalogVizForm.cs">
@@ -134,6 +133,15 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="VizForms\SerializationHelper.cs" />
+    <Compile Include="VizForms\Teensy\AnalogTeensy.cs" />
+    <Compile Include="VizForms\Teensy\AnalogTeensyToolbar.cs" />
+    <Compile Include="VizForms\Teensy\AnalogVizTeensy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VizForms\Teensy\AnalogVizTeensy.Designer.cs">
+      <DependentUpon>AnalogVizTeensy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VizForms\Teensy\SerialTeensy.cs" />
     <Compile Include="VizForms\VizForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -189,6 +197,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="VizForms\FileAnalogVizForm.resx">
       <DependentUpon>FileAnalogVizForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VizForms\Teensy\AnalogVizTeensy.resx">
+      <DependentUpon>AnalogVizTeensy.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="VizForms\VizForm.resx">
       <DependentUpon>VizForm.cs</DependentUpon>
