@@ -74,7 +74,7 @@ namespace XOscillo
 
                             db.m_stop = DateTime.Now;
 
-                            Console.WriteLine("{3} {0} {1}ms  {2}", db.m_sample, (db.m_stop - db.m_start).Milliseconds, m_ring.GetLength(), res);
+                            //Console.WriteLine("{3} {0} {1}ms  {2}", db.m_sample, (db.m_stop - db.m_start).Milliseconds, m_ring.GetLength(), res);
 
                             if (res == true)
                             {
