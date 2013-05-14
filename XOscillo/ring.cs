@@ -14,8 +14,6 @@ namespace XOscillo
 
       protected bool m_stop;
 
-      bool buffering = true;
-
       public Ring(int size)
       {
          m_ring = new T[size];

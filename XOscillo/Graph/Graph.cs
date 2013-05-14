@@ -62,6 +62,8 @@ namespace XOscillo
       public void SetRectangle(Rectangle Bounds)
       {
          m_Bounds = Bounds;
+         m_Bounds.Y+=2;
+         m_Bounds.Height-=4;
       }
 
       public void SetHorizontalRange( float min, float max, float div, string units)

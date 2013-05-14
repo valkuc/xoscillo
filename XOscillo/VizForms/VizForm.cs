@@ -9,7 +9,7 @@ using System.IO;
 
 namespace XOscillo
 {
-   public partial class VizForm : BaseForm
+   public abstract partial class VizForm : BaseForm
    {
       protected Acquirer m_Acq = null;
 
@@ -25,10 +25,7 @@ namespace XOscillo
          return this.graphControl.GetScopeData();
       }
 
-      public virtual bool Init()
-      {
-         return true;
-      }
+      public abstract bool Init();
 
       virtual public void Form_Load(object sender, EventArgs e)
       {         

@@ -34,6 +34,7 @@ namespace XOscillo
             this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.newParallax = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -73,7 +74,6 @@ namespace XOscillo
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
@@ -135,13 +135,23 @@ namespace XOscillo
             this.toolStripMenuItem2.Text = "New Digital Arduino ";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.newDigitalArduino_Click);
             // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuItem3.Image")));
+            this.toolStripMenuItem3.ImageTransparentColor = System.Drawing.Color.Black;
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(210, 22);
+            this.toolStripMenuItem3.Text = "New Analog Arduino ";
+            this.toolStripMenuItem3.Click += new System.EventHandler(this.newAnalogArduino_Click);
+            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuItem1.Image")));
             this.toolStripMenuItem1.ImageTransparentColor = System.Drawing.Color.Black;
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(210, 22);
-            this.toolStripMenuItem1.Text = "New Digital Teensy";
+            this.toolStripMenuItem1.Text = "New Analog Teensy";
+            this.toolStripMenuItem1.Visible = false;
             this.toolStripMenuItem1.Click += new System.EventHandler(this.newAnalogTeensy_Click);
             // 
             // openToolStripMenuItem
@@ -442,14 +452,6 @@ namespace XOscillo
             this.toolStripStatusLabel.Size = new System.Drawing.Size(49, 18);
             this.toolStripStatusLabel.Text = "Status";
             // 
-            // toolStripMenuItem3
-            // 
-            this.toolStripMenuItem3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuItem3.Image")));
-            this.toolStripMenuItem3.ImageTransparentColor = System.Drawing.Color.Black;
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(210, 22);
-            this.toolStripMenuItem3.Text = "New Analog Arduino ";
-            // 
             // MDIParent
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -459,7 +461,7 @@ namespace XOscillo
             this.Controls.Add(this.menuStrip);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MDIParent";
             this.Text = "XOscillo";
             this.menuStrip.ResumeLayout(false);

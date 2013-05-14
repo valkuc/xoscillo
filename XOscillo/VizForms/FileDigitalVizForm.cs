@@ -19,7 +19,7 @@ namespace XOscillo
       {
          this.graphControl.SetScopeData(dataBlock);
 
-         commonToolStrip = new CommonToolStrip(this, null, graphControl);
+         commonToolStrip = new CommonToolStrip(this, null, graphControl, null);
          float[] divs = { 1.0f, 0.5f, 0.2f, 0.1f, 0.05f, 0.02f, 0.01f, 0.005f, 0.002f, 0.001f, 0.0002f, 0.0005f, 0.00002f };
          foreach (float t in divs)
          {

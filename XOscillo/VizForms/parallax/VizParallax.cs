@@ -10,42 +10,52 @@ using System.IO.Ports;
 
 namespace XOscillo
 {
-   public partial class VizParallax : AnalogVizForm
-   {
-      SerialParallax oscillo;
+    public partial class VizParallax : AnalogVizForm
+    {
+        SerialParallax oscillo;
 
-      float[] divs = { 1.0f, 0.5f, 0.2f, 0.1f, 0.05f, 0.02f, 0.01f, 0.005f, 0.002f, 0.001f, 0.0005f, 0.0002f, 0.00001f, 0.000005f };
-      int[] samplerates = { 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000, 250000,500000,1000000 };
+        float[] divs = { 0.2f, 0.1f, 0.05f, 0.02f, 0.01f, 0.005f, 0.002f, 0.001f, 500e-6f, 200e-6f, 100e-6f, 50e-6f };
+        int[] samplerates = { 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000, 250000, 500000, 1000000 };
 
-      override public void Form_Load(object sender, EventArgs e)
-      {
-         Autodetection<SerialParallax> au = new Autodetection<SerialParallax>();
-         oscillo = au.Detection();
+        override public bool Init()
+        {
+            Autodetection<SerialParallax> au = new Autodetection<SerialParallax>();
+            oscillo = au.Detection();
+            if (oscillo == null)
+                return false;
 
-         m_Acq = new Acquirer();
-         m_Acq.Open(oscillo, GetFirstConsumerInChain());
-         gf.drawSlidingFFT = true;
+            Text = oscillo.GetName();
 
-         commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl);         
+            return base.Init();
+        }
 
-         foreach (float t in divs)
-         {
-            commonToolStrip.time.Items.Add(t);
-         }
-         commonToolStrip.selectedIndexChanged += this.time_SelectedIndexChanged;
-         commonToolStrip.time.SelectedIndex = 10;
 
-         SetToolbar(GetFilteringToolStrip());
-         SetToolbar( new ParallaxToolStrip(oscillo, graphControl));
-         SetToolbar(GetFftToolStrip());
-         SetToolbar(commonToolStrip);
+        override public void Form_Load(object sender, EventArgs e)
+        {
+            m_Acq = new Acquirer();
+            m_Acq.Open(oscillo, GetFirstConsumerInChain());
+            gf.drawSlidingFFT = true;
 
-         ga.SetVerticalRange(0, 255, 32, "Volts");         
-      }
+            commonToolStrip = new CommonToolStrip(this, m_Acq, graphControl, oscillo);
 
-      private void time_SelectedIndexChanged(object sender, EventArgs e)
-      {
-         oscillo.SetSamplingRate(samplerates[commonToolStrip.time.SelectedIndex] );
-      }
-   }
+            foreach (float t in divs)
+            {
+                commonToolStrip.time.Items.Add(t);
+            }
+            commonToolStrip.selectedIndexChanged += this.time_SelectedIndexChanged;
+            commonToolStrip.time.SelectedIndex = 10;
+
+            SetToolbar(GetFilteringToolStrip());
+            SetToolbar(GetFftToolStrip());
+            SetToolbar(new ParallaxToolStrip(oscillo, graphControl));
+            SetToolbar(commonToolStrip);
+
+            ga.SetVerticalRange(0, 255, 32, "Volts");
+        }
+
+        private void time_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            oscillo.SetSampleRate(samplerates[commonToolStrip.time.SelectedIndex]);
+        }
+    }
 }

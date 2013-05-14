@@ -46,6 +46,10 @@ namespace XOscillo
 
                for (int ch = 0; ch < db.m_channels; ch++)
                {
+                   //skip unselected channels
+                   if ((db.m_channelsBitField & (1 << ch)) == 0)
+                       continue;
+
                   float y = ValueYToRect( (ch +1) * DivY);
                   
                   if ( ((last_rv >>ch)&1) != ((rawvolt>>ch)&1))

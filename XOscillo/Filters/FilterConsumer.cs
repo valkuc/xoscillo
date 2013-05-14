@@ -45,13 +45,13 @@ namespace XOscillo
             for (int i = 0; i < 4; i++)
             {
                double volt = db.GetVoltage(0, 0);
-               filter.DoFilter(volt - 127);
+               filter.DoFilter(volt);
             }
 
             for (int i = 0; i < db.GetChannelLength(); i++)
             {
                double volt = db.GetVoltage(0, i);
-               dataBlock.SetVoltage(0, i, (byte)(filter.DoFilter(volt - 127) + 127));
+               dataBlock.SetVoltage(0, i, (int)filter.DoFilter(volt));
             }
          }
          base.SetDataBlock(dataBlock);

@@ -6,82 +6,83 @@ using System.Xml.Serialization;
 
 namespace XOscillo
 {
-   public class AnalogVizForm : VizForm
-   {
-      protected GraphAnalog ga;
-      protected GraphFFT gf;
+    public class AnalogVizForm : VizForm
+    {
+        protected GraphAnalog ga;
+        protected GraphFFT gf;
 
-      private FilterConsumer fc;
-      private FilteringToolStrip ft;
-      private FftToolStrip fft;
+        private FilterConsumer fc;
+        private FilteringToolStrip ft;
+        private FftToolStrip fft;
 
-      public AnalogVizForm(GraphAnalog ga, GraphFFT gf)
-         : base()
-      {
-         this.ga = ga;
-         this.gf = gf;
-      }
+        public AnalogVizForm(GraphAnalog ga, GraphFFT gf)
+            : base()
+        {
+            this.ga = ga;
+            this.gf = gf;
+        }
 
-      public AnalogVizForm()
-         : this ( new GraphAnalog(), new GraphFFT())
-      {
-      }
+        public AnalogVizForm()
+            : this(new GraphAnalog(), new GraphFFT())
+        {
+        }
 
-      public AnalogVizForm(AnalogVizForm avf)
-         : this(new GraphAnalog(avf.ga), new GraphFFT())
-      {
-      }
+        public AnalogVizForm(AnalogVizForm avf)
+            : this(new GraphAnalog(avf.ga), new GraphFFT())
+        {
+        }
 
-      public override bool Init()
-      {
-         fc = new FilterConsumer(graphControl.GetConsumer());
-         ft = new FilteringToolStrip(fc);
-         ft.dataChanged += UpdateGraph;
-         fft = new FftToolStrip(graphControl, gf);
+        override public bool Init()
+        {
+            fc = new FilterConsumer(graphControl.GetConsumer());
+            ft = new FilteringToolStrip(fc);
+            fft = new FftToolStrip(graphControl, gf);
 
-         graphControl.SetRenderer(ga);
+            ft.dataChanged += UpdateGraph;
 
-         gf.SetVerticalRange(0, 1024, 32, "power");
-         return true;
-      }
+            graphControl.SetRenderer(ga);
 
-      public FilteringToolStrip GetFilteringToolStrip()
-      {
-         return ft;
-      }
+            gf.SetVerticalRange(0, 1024, 32, "power");
+            return true;
+        }
 
-      public FftToolStrip GetFftToolStrip()
-      {
-         return fft;
-      }
+        public FilteringToolStrip GetFilteringToolStrip()
+        {
+            return ft;
+        }
 
-      public FilterConsumer GetFirstConsumerInChain()
-      {
-         return fc;
-      }
+        public FftToolStrip GetFftToolStrip()
+        {
+            return fft;
+        }
 
-      override public VizForm Clone()
-      {
-         SerializationHelper sh = new SerializationHelper();
-         sh.dataBlock = this.GetDataBlock();
-         sh.graph = new Graph(ga);
+        public FilterConsumer GetFirstConsumerInChain()
+        {
+            return fc;
+        }
 
-         FileAnalogVizForm avf = new FileAnalogVizForm(sh);
-         avf.MdiParent = MdiParent;
-         avf.Text = Text;// +Parent.childFormNumber++;
-         avf.Init();
-         avf.Show();
-         return avf;
-      }
+        override public VizForm Clone()
+        {
+            SerializationHelper sh = new SerializationHelper();
+            sh.dataBlock = this.GetDataBlock();
+            sh.graph = new Graph(ga);
 
-      public override void SaveXML(FileStream stream)
-      {
-         SerializationHelper sh = new SerializationHelper();
-         sh.dataBlock = this.graphControl.GetScopeData();
-         sh.graph = new Graph(ga);
+            FileAnalogVizForm avf = new FileAnalogVizForm(sh);
+            avf.MdiParent = MdiParent;
+            avf.Text = Text;// +Parent.childFormNumber++;
+            avf.Init();
+            avf.Show();
+            return avf;
+        }
 
-         sh.SaveXML(stream);
-      }
+        public override void SaveXML(FileStream stream)
+        {
+            SerializationHelper sh = new SerializationHelper();
+            sh.dataBlock = this.graphControl.GetScopeData();
+            sh.graph = new Graph(ga);
 
-   }
+            sh.SaveXML(stream);
+        }
+
+    }
 }

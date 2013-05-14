@@ -6,188 +6,135 @@ using System.Threading;
 
 namespace XOscillo
 {
-   enum COMMANDS
-   {
-      IDLE = 0,
-      RESET = 175,
-      PING = 63,
-      READ_ADC_TRACE = 170,
-      READ_BIN_TRACE = 171      
-   }
+    enum COMMANDS
+    {
+        IDLE = 0,
+        RESET = 175,
+        PING = 63,
+        READ_ADC_TRACE = 170,
+        READ_BIN_TRACE = 171
+    }
 
-   class SerialArduino : Oscillo
-   {
-      private SerialPort serialPort;
-      protected byte m_triggerValue = 127;
-      int m_baudrate;
-      protected int m_numSamples = 1024;
+    class SerialArduino : OscilloSerial
+    {
+        protected byte m_triggerValue = 127;
+        int m_baudrate;
 
-      public SerialArduino(int baudrate, int samplerate)
-      {
-         // Create a new SerialPort object with default settings.
-         serialPort = new SerialPort();
-         
-         m_baudrate = baudrate;
-         m_sampleRate = samplerate;
 
-         m_sampleRates = new int[1] { m_sampleRate };        
-      }
+        public SerialArduino(int baudrate, int samplerate, int numChannels)
+            : base(numChannels)
+        {
+            // Create a new SerialPort object with default settings.
+            serialPort = new SerialPort();
 
-      override public string GetName()
-      {
-         return "Arduino";
-      }
+            m_baudrate = baudrate;
+            SetSampleRate(samplerate);
+        }
 
-      override public bool Open(string portName)
-      {
-         string os = Environment.OSVersion.Platform.ToString();
+        override public string GetName()
+        {
+            return "Arduino";
+        }
 
-         try
-         {
-            serialPort = new SerialPort(portName, m_baudrate, Parity.None, 8,StopBits.One);
-            serialPort.Handshake = Handshake.None;
+        override public bool Open(string portName)
+        {
+            string os = Environment.OSVersion.Platform.ToString();
 
-            DebugConsole.Instance.Add(portName + ", rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString() + "   trying...");
-            serialPort.Open();
-            //DebugConsole.Instance.Add(" rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString());
-
-            if ( os == "Unix" )
+            try
             {
-               DebugConsole.Instance.Add("lowering RTS");
-               serialPort.RtsEnable = false;
-               for (int i = 0; i < 8; i++)
-               {
-                  Thread.Sleep(250);
-                  DebugConsole.Instance.Add(".");
-               }
+                serialPort = new SerialPort(portName, m_baudrate, Parity.None, 8, StopBits.One);
+                serialPort.Handshake = Handshake.None;
+                serialPort.ReadBufferSize = 1024 * 10;
+
+                DebugConsole.Instance.Add(portName + ", rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString() + "   trying...");
+                serialPort.Open();
+                //DebugConsole.Instance.Add(" rts:" + serialPort.RtsEnable.ToString() + ", dtr:" + serialPort.DtrEnable.ToString());
+
+                if (os == "Unix")
+                {
+                    DebugConsole.Instance.Add("lowering RTS");
+                    serialPort.RtsEnable = false;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        Thread.Sleep(250);
+                        DebugConsole.Instance.Add(".");
+                    }
+                }
             }
-         }
-         catch
-         {
-            DebugConsole.Instance.AddLn("Can't open!");
-            return false;
-         }
-
-         try
-         {
-            serialPort.WriteTimeout = 1000;
-            serialPort.ReadTimeout = 1000;
-
-            DebugConsole.Instance.Add("pinging....");
-            if (Ping() == true)
+            catch
             {
-               DebugConsole.Instance.AddLn("Found!");
-               return true;
+                DebugConsole.Instance.AddLn("Can't open!");
+                return false;
             }
-            else
+
+            try
             {
-               DebugConsole.Instance.AddLn("Bad reply");
+                serialPort.WriteTimeout = 1000;
+                serialPort.ReadTimeout = 1000;
+
+                DebugConsole.Instance.Add("pinging....");
+                if (Ping() == true)
+                {
+                    DebugConsole.Instance.AddLn("Found!");
+                    return true;
+                }
+                else
+                {
+                    DebugConsole.Instance.AddLn("Bad reply");
+                }
             }
-         }
-         catch
-         {
-            DebugConsole.Instance.AddLn("Timeout");
-         }
+            catch
+            {
+                DebugConsole.Instance.AddLn("Timeout");
+            }
 
-         serialPort.Close();
+            serialPort.Close();
 
-         return false;
-      }
-
-      override public bool IsOpened()
-      {
-         return serialPort.IsOpen;
-      }
-
-      override public bool Close()
-      {
-         if (IsOpened() == false)
-         {
             return false;
-         }
+        }
 
-         serialPort.Close();
-         return true;
-      }
+        override public bool Reset()
+        {
+            if (IsOpened() == false)
+            {
+                return false;
+            }
 
-      public bool SetNumberOfSamples(int v)
-      {
-         this.m_numSamples = v;
-         return true;
-      }
+            try
+            {
+                Thread.Sleep(100);
+                byte[] data = { (byte)COMMANDS.RESET };
+                serialPort.Write(data, 0, 1);
+                serialPort.DiscardInBuffer();
 
-      override public bool SetSamplingRate(int v)
-      {
-         return true;
-      }
+                byte[] readBuffer = new byte[2];
+                Read(readBuffer, readBuffer.Length);
 
-      override public bool SetNumberOfChannels(int n)
-      {
-         this.m_numberOfChannels = n;
-         return true;
-      }
 
-      public bool Read(byte[] readBuffer, int length)
-      {
-         if (IsOpened() == false)
-         {
-            return false;
-         }
+                return readBuffer.ToString() == "OK";
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
-         int dataread = 0;
-         while (dataread < length)
-         {
-            dataread += serialPort.Read(readBuffer, dataread, length - dataread);
-         }
-         return true;
-      }
+        override public bool Ping()
+        {
+            if (IsOpened() == false)
+            {
+                return false;
+            }
 
-      public void Write(byte[] writeBuffer, int length)
-      {
-         serialPort.Write(writeBuffer, 0, length);
-      }
+            Reset();
 
-      override public bool Reset()
-      {
-         if (IsOpened() == false)
-         {
-            return false;
-         }
+            byte[] cmd = { (byte)COMMANDS.PING };
+            serialPort.Write(cmd, 0, 1);
 
-         try
-         {
-            byte[] data = { (byte)COMMANDS.RESET };
-            serialPort.Write(data, 0, 1);
-            serialPort.BaseStream.Flush();
-
-            byte[] readBuffer = new byte[2];
+            byte[] readBuffer = new byte[7];
             Read(readBuffer, readBuffer.Length);
 
-
-            return readBuffer.ToString() == "OK";
-         }
-         catch
-         {
-            return false;
-         }
-      }
-
-      override public bool Ping()
-      {
-         if (IsOpened() == false)
-         {
-            return false;
-         }
-
-         Reset();
-
-         byte[] cmd = {(byte)COMMANDS.PING};
-         serialPort.Write(cmd,0,1);
-
-         byte[] readBuffer = new byte[7];
-         Read(readBuffer, readBuffer.Length);
-
-         return (readBuffer[0] == 79) && (readBuffer[1]==67);
-      }
-   }
+            return (readBuffer[0] == 79) && (readBuffer[1] == 67);
+        }
+    }
 }

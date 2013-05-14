@@ -10,7 +10,7 @@ namespace XOscillo
 {
    public partial class DecodeFrequency : XOscillo.BaseForm
    {
-      DataBlock m_db;
+       DataBlock m_db;
       
       public DecodeFrequency()
       {
@@ -52,7 +52,7 @@ namespace XOscillo
          int lastValue=0;
          int run = 0;
 
-         int average = m_db.GetAverate( 0 );
+         int average = m_db.GetAverage( 0 );
 
          textBox1.Text += string.Format("Average {0}\r\n", average);
 

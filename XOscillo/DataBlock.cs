@@ -30,16 +30,16 @@ namespace XOscillo
       public DateTime m_stop = new DateTime();
       public DATA_TYPE m_dataType;
       public int m_channels;
-      public int m_stride;
-      public float m_00;
-      public float m_FF;
-      public int m_channelOffset;
+      public uint m_channelsBitField;
+      public float m_min;
+      public float m_max;
       public int m_sampleRate;
+      public int m_samplesPerChannel;
       public int m_triggerVoltage;
-      public int m_triggerPos;
-      public byte[] m_Buffer = null;
+      public int m_triggerPos;      
       public int m_index;
       public RESULT m_result;
+      public int[] m_Buffer = null;
 
       public int[] m_Annotations = null;
 
@@ -55,52 +55,39 @@ namespace XOscillo
             return;
          }
 
-         this.m_Buffer = new byte[db.m_Buffer.Length];
-         System.Array.Copy(db.m_Buffer, 0, this.m_Buffer, 0, db.m_Buffer.Length);
+         Copy(db);
+      }
+
+      public void Copy(DataBlock db)
+      {
+         this.m_channelsBitField = db.m_channelsBitField;
          this.m_channels = db.m_channels;
          this.m_sample = db.m_sample;
          this.m_start = db.m_start;
          this.m_stop = db.m_stop;
-         this.m_00 = db.m_00;
-         this.m_FF = db.m_FF;
-         this.m_stride = db.m_stride;
-         this.m_channelOffset = db.m_channelOffset;
+         this.m_min = db.m_min;
+         this.m_max = db.m_max;
          this.m_sampleRate = db.m_sampleRate;
+         this.m_samplesPerChannel = db.m_samplesPerChannel;
          this.m_triggerVoltage = db.m_triggerVoltage;
          this.m_triggerPos = db.m_triggerPos;
          this.m_result = db.m_result;
          this.m_dataType = db.m_dataType;
          this.m_Annotations = db.m_Annotations;
          this.m_index = db.m_index;
-      }
 
-      public void Copy(DataBlock db)
-      {
-         if (m_Buffer == null || db.m_Buffer.Length != m_Buffer.Length)
-         {
-            m_Buffer = new byte[db.m_Buffer.Length];
-         }
+         Alloc();
 
          System.Array.Copy(db.m_Buffer, 0, m_Buffer, 0, db.m_Buffer.Length);
-         this.m_channels = db.m_channels;
-         this.m_sample = db.m_sample;
-         this.m_start = db.m_start;
-         this.m_stop = db.m_stop;
-         this.m_00 = db.m_00;
-         this.m_FF = db.m_FF;
-         this.m_stride = db.m_stride;
-         this.m_channelOffset = db.m_channelOffset;
-         this.m_sampleRate = db.m_sampleRate;
-         this.m_triggerVoltage = db.m_triggerVoltage;
-         this.m_triggerPos = db.m_triggerPos;
-         this.m_result = db.m_result;
-         this.m_dataType = db.m_dataType;
-         this.m_index = db.m_index;
       }
 
-      public void Alloc(int size)
+      public void Alloc()
       {
-         m_Buffer = new byte[size];
+          int size = m_samplesPerChannel * m_channels;
+          if (m_Buffer == null || m_Buffer.Length != size)
+          {
+              m_Buffer = new int[size];
+          }
       }
 
       public void SaveXML(FileStream stream)
@@ -142,103 +129,96 @@ namespace XOscillo
 
          DataBlock db = new DataBlock();
 
-         m_Buffer = new byte[parsedData.Count];
+         m_Buffer = new int[parsedData.Count];
          for (int i = 0; i < parsedData.Count; i++)
          {
-            m_Buffer[i] = byte.Parse(parsedData[i]);
+            m_Buffer[i] = int.Parse(parsedData[i]);
          }
          m_channels = 1;
          m_sampleRate = (115600 / 8);
          m_triggerVoltage = 0;
          //this.m_start = Time.now;
       }
+      /*
+     public void GenerateSin(double freq)
+     {
+        DataBlock db = new DataBlock();
+        m_triggerVoltage = 1500 * 0;
+        m_channels = 1;
+        m_sampleRate = 1024;
 
-      public void GenerateSin(double freq)
-      {
-         DataBlock db = new DataBlock();
-         m_triggerVoltage = 1500 * 0;
-         m_channels = 1;
-         m_sampleRate = 1024;
+        m_Buffer = new byte[3000];
 
-         m_Buffer = new byte[3000];
-
-         for (int i = 0; i < m_Buffer.Length; i++)
-         {
-            m_Buffer[i] = (byte)(128 + 64.0 * Math.Sin((double)2 * 3.1415 * (i - m_triggerVoltage) * freq / (double)m_sampleRate));
-         }
-      }
-
+        for (int i = 0; i < m_Buffer.Length; i++)
+        {
+           m_Buffer[i] = (byte)(128 + 64.0 * Math.Sin((double)2 * 3.1415 * (i - m_triggerVoltage) * freq / (double)m_sampleRate));
+        }
+     }
+      */
 
       public void Load(string file)
-      {
-         GenerateSin(10);
-         //LoadCSV(file);
-      }
+     {
+        //GenerateSin(10);
+        LoadCSV(file);
+     }
+      
 
       public int GetChannelLength()
       {
          if (m_channels == 0)
               return 0;
 
-         if (m_dataType == DATA_TYPE.ANALOG)
-         {
-            //every byte is a value
-            return m_Buffer.Length / m_channels;
-         }
-         else if (m_dataType == DATA_TYPE.DIGITAL)
-         {
-            // every byte are 8 channels
-            return m_Buffer.Length;
-         }
-
-         return m_Buffer.Length;
+         return m_samplesPerChannel;
       }
 
-      public virtual void SetVoltage(int channel, int index, byte voltage)
+      public virtual void SetVoltage(int channel, int index, int voltage)
       {
-         m_Buffer[index * m_stride + m_channelOffset * channel] = voltage;
+         m_Buffer[index * m_channels + channel] = voltage;
       }
       
-      public virtual byte GetVoltage(int channel, int index)
+      public virtual int GetVoltage(int channel, int index)
       {
-          int i = index * m_stride + m_channelOffset * channel;
-          if (i < m_Buffer.Length)
+          int i = index * m_channels + channel;
+          if (i>=0 && i < m_Buffer.Length)
           {
               return m_Buffer[i];
           }
 
-          return 0;
+          return (int)0;
       }
 
-      public virtual byte GetVoltage(int channel, float time)
+      public virtual int GetVoltage(int channel, float time)
       {
+         if (time < 0)
+              time = 0;
+
          int i = (int)(GetChannelLength() * time / GetTotalTime());
 
-         return m_Buffer[i * m_stride + m_channelOffset * channel];
+         return (int)m_Buffer[i * m_channels + channel];
       }
 
       public float GetTime(int index)
       {
-         return (float)index / (float)m_sampleRate;
+          if (m_sampleRate == 0)
+              return 0;
+          return (float)index / (float)m_sampleRate;
       }
 
       public float GetTotalTime()
       {
-         if (m_sampleRate == 0)
-              return 0;
-         return (float)GetChannelLength() / (float)m_sampleRate;
+         return GetTime(GetChannelLength());
       }
 
-      public byte GetAverate(int channel)
+      public int GetAverage(int channel)
       {
          int average = 0;
          for (int i = 0; i < GetChannelLength(); i++)
          {
-            average += GetVoltage(channel, i);
+            average += (int)GetVoltage(channel, i);
          }
          average /= GetChannelLength();
 
-         return (byte)average;
+         return average;
       }
 
    };

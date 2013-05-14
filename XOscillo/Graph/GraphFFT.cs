@@ -12,6 +12,8 @@ namespace XOscillo
 
       public bool drawSlidingFFT = false;
 
+      MouseEventArgs m_mouse = null;
+
       public GraphFFT()
          : base()
       {
@@ -80,18 +82,30 @@ namespace XOscillo
 
          if (f == null)
          {
-            f = new fft(db.GetChannelLength());
+            f = new fft(1024);
          }
 
-         if (db.GetChannelLength() < 1024)
+         if (db.m_result != DataBlock.RESULT.OK)
+         {
+             pp.X = 0;
+             pp.Y = 0;
+             g.DrawString(string.Format("Waiting for a chunk of data to analyze"), parent.Font, Brushes.White, pp);
+             return;
+         }
+
+         if (db.GetChannelLength() < f.GetNumOfSamples())
          {
             pp.X = 0;
             pp.Y = 0;
-            g.DrawString("FFT needs at least 1024 samples to work", parent.Font, Brushes.White, pp);
+            g.DrawString(string.Format("FFT needs at least 1024 samples to work, got only {0}, try increasing the measurement time",db.GetChannelLength()) , parent.Font, Brushes.White, pp);
             return;
          }
 
-         f.SetData(db.m_Buffer, 0, db.GetChannelLength());
+         for (int i = 0; i < f.GetNumOfSamples(); i++)
+         {
+             f.x[i] = db.GetVoltage(0, i);
+             f.y[i] = 0;
+         }
          f.FFT(0);
 
          int maxFreq = db.m_sampleRate / 2;
@@ -120,7 +134,7 @@ namespace XOscillo
 
          for (freqStep = 500; freqStep < maxFreq; freqStep += 500)
          {
-            int ft = lerp(0, 512, minFreq, maxFreq, freqStep);
+             int ft = lerp(0, f.GetNumOfSamples() / 2, minFreq, maxFreq, freqStep);
             if (ft > 30)
                break;
          }
@@ -136,6 +150,24 @@ namespace XOscillo
             g.DrawLine(Pens.Gray, pp.X, 0, pp.X, pp.Y);
             g.DrawString(string.Format("{0}", i), parent.Font, Brushes.White, pp);
          }
+
+         if (m_mouse != null)
+         {
+             DrawCross(g, Pens.Blue, m_mouse.X, m_mouse.Y);
+
+             pp.X = r.X ;
+             pp.Y = r.Y + 40;
+
+             g.DrawString(string.Format("Freq: {0} Hz", ((m_mouse.X / 2) * maxFreq) / f.GetNumOfSamples() / 2), parent.Font, Brushes.White, pp);
+         }
+
+      }
+      public override void GraphControl_MouseMove(object sender, MouseEventArgs e)
+      {
+          base.GraphControl_MouseMove(sender, e);
+          m_mouse = e;
+          Control ctr = sender as Control;
+          ctr.Invalidate();
       }
 
    }

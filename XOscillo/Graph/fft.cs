@@ -14,6 +14,11 @@ namespace XOscillo
          x = new double[ length ];
          y = new double[ length ];
       }
+      
+      public int GetNumOfSamples()
+      {
+          return x.Length;
+      }
 
       public void SetData( byte [] data, int offset, int length )
       {

@@ -10,7 +10,7 @@ namespace XOscillo
 {
    public partial class DecodeFSK : BaseForm
    {
-      DataBlock m_db;
+       DataBlock m_db;
 
 
       BitDecoder bitDecoder = new BitDecoder();
@@ -186,7 +186,7 @@ namespace XOscillo
 
       override public void SetDataBlock(DataBlock db)
       {
-         m_db = new DataBlock();
+          m_db = new DataBlock();
          m_db.Copy(db);
 
          //List<int> PeakOffsets = GetMinMax(m_db);
@@ -198,7 +198,7 @@ namespace XOscillo
          int t = 0;        
          for (; ; )
          {
-             byte v = PeakFinder.LoopThoughWave();
+             int v = PeakFinder.LoopThoughWave();
              if (v == 255)
                  break;
              t = t + v;

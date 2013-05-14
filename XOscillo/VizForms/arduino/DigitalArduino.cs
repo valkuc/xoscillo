@@ -11,7 +11,7 @@ namespace XOscillo
 
       public DigitalArduino()
          //: base(115200, 12000)
-          : base(1000000, 59250)
+          : base(1000000, 59250,6)
       {
          m_triggerValue = 1;
       }
@@ -21,14 +21,18 @@ namespace XOscillo
 
       public void Config()
       {
+         int numSamples = GetNumberOfSamplesPerChannel();
+
          byte[] configBuffer = new byte[4];
          configBuffer[0] = (byte)COMMANDS.READ_BIN_TRACE; ;
          configBuffer[1] = m_triggerValue;
-         configBuffer[2] = (byte)(m_numSamples >> 8);
-         configBuffer[3] = (byte)(m_numSamples & 0xff);
+         configBuffer[2] = (byte)(numSamples >> 8);
+         configBuffer[3] = (byte)(numSamples & 0xff);
 
          Write(configBuffer, configBuffer.Length);
       }
+
+      byte[] m_arduinoBuffer = new byte[1000];
 
       override public bool GetDataBlock(ref DataBlock db)
       {
@@ -47,17 +51,25 @@ namespace XOscillo
             db.m_channels = 6;
             db.m_triggerVoltage = 0;
             db.m_triggerPos = 0;
-            db.m_sampleRate = m_sampleRate;
-            db.m_stride = 1;
-            db.m_channelOffset = 0;
+            db.m_sampleRate = GetSampleRate();
+            db.m_samplesPerChannel = GetNumberOfSamplesPerChannel();
+            db.m_channelsBitField = GetChannelBitField();
             db.m_dataType = DataBlock.DATA_TYPE.DIGITAL;
 
-            if (db.m_Buffer == null || db.m_Buffer.Length != m_numSamples)
+            db.Alloc();
+
+            if (m_arduinoBuffer.Length != db.m_samplesPerChannel)
             {
-               db.Alloc(m_numSamples);
+                m_arduinoBuffer = new byte[db.m_samplesPerChannel];
             }
 
-            result = Read(db.m_Buffer, m_numSamples);
+            result = Read(m_arduinoBuffer, m_arduinoBuffer.Length);
+
+            for (int i = 0; i < m_arduinoBuffer.Length; i++)
+            {
+                db.SetVoltage(0, i, m_arduinoBuffer[i]);
+            }
+
             db.m_stop = DateTime.Now;
             return result;
          }

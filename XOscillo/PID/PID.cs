@@ -76,7 +76,9 @@ namespace XOscillo
             string loops = serialPort.ReadLine();
 
             DataBlock db = new DataBlock();
-            db.m_Buffer = new byte[2 * 500];
+            db.m_channels = 2;
+            db.m_samplesPerChannel = 500;
+            db.Alloc();
 
             for (int i = 0; i < 500; i++)
             {
@@ -92,13 +94,11 @@ namespace XOscillo
                if (val1 < 0)
                   val1 = 0;
 
-               db.m_Buffer[2 * i] = (byte)(val1 * 128 / Setpoint.Value);
-               db.m_Buffer[(2 * i) + 1] = (byte)((val2 / 2) + 128);
+               db.SetVoltage(0, i,  (int)(val1 * 128 / Setpoint.Value));
+               db.SetVoltage(1, i,  (int)((val2 / 2) + 128));
             }
             db.m_sampleRate = 25;
             db.m_channels = 2;
-            db.m_channelOffset = 1;
-            db.m_stride = 2;
             db.m_dataType = DataBlock.DATA_TYPE.ANALOG;
 
 

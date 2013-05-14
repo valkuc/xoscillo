@@ -5,79 +5,84 @@ using System.Threading;
 
 namespace XOscillo
 {
-   class AnalogTeensy : SerialTeensy
-   {
-      int SampleID = 0;
+    class AnalogTeensy : SerialTeensy
+    {
 
-      int m_numSamples = 1024;
-
-      public AnalogTeensy() 
-      {
-            
-         //needs tunning
-         //baudrate = 1000000;
-         m_sampleRate = 10*1024; // this is actual number of samples per second I am able to archieve on the Teensy
-      }
-
-      public void SetTriggerVoltage(byte v)
-      {
-         //this.m_triggerValue = v;
-      }
-
-      DateTime time = new DateTime();
-      byte[] res = new byte[1];
-
-      int index = 0;
-      Random random = new Random();
-      
-      override public bool GetDataBlock(ref DataBlock db)
-      {
-         bool result=true;
-
-         //assume it timed out
-        db.m_result = DataBlock.RESULT.TIMEOUT;
-
-        time = DateTime.Now;
-
-        m_numberOfChannels = 1;
-
-        db.m_sample = SampleID++;
-        db.m_start = DateTime.Now;
-        db.m_00 = 0;
-        db.m_FF = 5;
-        db.m_channels = m_numberOfChannels;
-        db.m_triggerVoltage = 0;
-        db.m_triggerPos = 0;
-        db.m_sampleRate = m_sampleRate / m_numberOfChannels;
-        db.m_stride = m_numberOfChannels;
-        db.m_channelOffset = m_numberOfChannels;
-        db.m_dataType = DataBlock.DATA_TYPE.ANALOG;
-            
-
-        if (db.m_Buffer == null || db.m_Buffer.Length != m_numSamples)
+        public AnalogTeensy()
         {
-            db.Alloc(m_numSamples);
         }
 
-        byte[] readBuffer = new byte[6];
-        Read(readBuffer, readBuffer.Length);
+        override public bool GetDataBlock(ref DataBlock db)
+        {
+            bool result = true;
+            lock (thisLock)
+            {
+                //assume it timed out
+                db.m_min = 0;
+                db.m_max = 5;
+                db.m_channels = GetNumberOfEnabledChannels();
+                db.m_channelsBitField = GetChannelBitField();
+                db.m_triggerVoltage = 0;
+                db.m_triggerPos = 0;
+                db.m_sampleRate = GetSampleRate();
+                db.m_samplesPerChannel = GetNumberOfSamplesPerChannel();
+                db.m_dataType = DataBlock.DATA_TYPE.ANALOG;
+                db.Alloc();
+            }
 
-        //Thread.Sleep(100);
-        //int index = (readBuffer[0] >> 4) & 0x7;
+            for (int i = 0; i < db.GetChannelLength(); i++)
+            {
+                /*
+                byte header = GetStream().ReadByte();
+                if (header < 128)
+                {
+                    byte b1 = GetStream().ReadByte();
+                    byte b2 = GetStream().ReadByte();
 
-        UInt16 v = (UInt16)(readBuffer[3] * 256 + readBuffer[4]);
+                    for (int c = 0; c < db.m_channels; c++)
+                    {
+                        UInt16 v = (UInt16)(GetStream().ReadByte() * 256 + GetStream().ReadByte());
+                        db.SetVoltage(c, i, v);
+                    }
+                    GetStream().ReadByte();
+                }
+                else
+                {
+                    GetResponse(header);
 
-        db.m_Buffer[index % m_numSamples] = (byte)(v/256);
-        index++;
+                    //if command received then abort 
+                    for (; i < db.GetChannelLength(); i++)
+                    {
+                        for (int c = 0; c < db.m_channels; c++)
+                        {
+                            db.SetVoltage(c, i, 0);
+                        }
+                    }
 
-        //result = Read(db.m_Buffer, m_numSamples);
-        db.m_stop = DateTime.Now;
+                }
+                 */
 
-        db.m_result = DataBlock.RESULT.OK;
+                byte[] header = new byte[1];
+                byte[] data = new byte[20];
+                Read(header, 1);
+                if (header[0] < 128)
+                {
+                    
+                    Read(data, 3 + 2 * db.m_channels);
+                    Console.WriteLine("{0} {1} {2} {3}", header[0], data[0], data[1], data[2]);
+                }
+                else
+                {
+                    Read(data, 3);
+                    Console.WriteLine("* {0} {1} {2} {3}",header[0],data[0],data[1],data[2]);
+                }
+            }
 
-        return result;
-      }
-  
+            db.m_result = DataBlock.RESULT.OK;
 
-   }
+            return result;
+        }
+
+
+    }
 }

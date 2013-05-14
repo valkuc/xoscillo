@@ -24,15 +24,15 @@ namespace XOscillo
 
       override public void SetDataBlock(DataBlock db)
       {
-         m_db = new DataBlock();
+          m_db = new DataBlock();
          m_db.Copy(db);
 
          int time = 0;
 
          bool oldBit = false;
-         for (int i = 0; i < m_db.m_Buffer.Length; i++)
+         for (int i = 0; i < m_db.GetChannelLength(); i++)
          {
-            bool bit = m_db.m_Buffer[i]>10;
+            bool bit = m_db.GetVoltage(0,i)>10;
 
             if ( oldBit == false && bit == true )
             {

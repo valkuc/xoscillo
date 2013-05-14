@@ -6,16 +6,16 @@ namespace XOscillo
 {
     class PeakFinder
     {
-        static byte extreme = 0;
-        static byte extreme_time = 0;
+        static int extreme = 0;
+        static int extreme_time = 0;
 
         static bool find_max = true;
-        static byte threshold = 5;
+        static int threshold = 5;
 
-        static byte delta_time = 0;
-        static byte fine = 0;
+        static int delta_time = 0;
+        static int fine = 0;
 
-        static byte zero = 0;
+        static int zero = 0;
         static DataBlock m_db;
         static int adc_ptr;
 
@@ -30,19 +30,19 @@ namespace XOscillo
             m_db = db;
             adc_ptr = 0;
 
-            zero = m_db.GetAverate(0);
+            zero = m_db.GetAverage(0);
         }
 
-        static byte adcRead()
+        static int adcRead()
         {
             return m_db.GetVoltage(0, adc_ptr++);
         }
 
-        public static byte LoopThoughWave()
+        public static int LoopThoughWave()
         {
             for (int timeout = 0; timeout < 65535; timeout++)
             {
-                byte v;
+                int v;
                 if (adc_ptr >= m_db.GetChannelLength())
                     v = 0;
                 else

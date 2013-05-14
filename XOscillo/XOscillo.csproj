@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acquirers\Acquirer.cs" />
+    <Compile Include="OscilloSerial.cs" />
     <Compile Include="tools\BitDecoder.cs" />
     <Compile Include="tools\PeakFinder.cs" />
     <Compile Include="VizForms\arduino\AnalogArduino.cs" />

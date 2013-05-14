@@ -127,11 +127,10 @@ namespace XOscillo
             pp.X = 0;
             pp.Y += 16;
 
-
             //display message if .5 seconds elapsed without data
             if (waitingForTrigger)
             {
-               e.Graphics.DrawString("Waiting for trigger... ", this.Font, Brushes.White, pp);
+               e.Graphics.DrawString("Scope maybe waiting for trigger... ", this.Font, Brushes.White, pp);
             }
             else
             {

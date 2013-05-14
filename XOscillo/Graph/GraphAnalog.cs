@@ -26,13 +26,11 @@ namespace XOscillo
 
       private void DrawGraph(Graphics g, Pen p, DataBlock db, int channel)
       {
-
          float yy = 0;
          float xx = 0;
          int i = 0;
-         int i0 = (int)(db.GetChannelLength() * MinXD / db.GetTotalTime());
-
-         int i1 = (int)(db.GetChannelLength() * MaxXD / db.GetTotalTime())+1;
+         int i0 = (int)Math.Floor( lerp(0, db.GetChannelLength(), 0, db.GetTotalTime(), MinXD) );
+         int i1 = (int)Math.Ceiling( lerp(0, db.GetChannelLength(), 0, db.GetTotalTime(), MaxXD) )+1;
          if (i1 > db.GetChannelLength())
          {
             i1 = db.GetChannelLength();
@@ -101,7 +99,7 @@ namespace XOscillo
             float time = RectToValueX(m_mouse.X);
             float voltage = RectToValueY(m_mouse.Y);
 
-            string info = string.Format("({0}, {1})", ToEngineeringNotation(time), voltage);
+            string info = string.Format("{0} ({1}, {2})", db.m_sample, ToEngineeringNotation(time), voltage);
             g.DrawString(info, parent.Font, Brushes.White, pp);
             pp.Y += 16;
 
@@ -134,14 +132,21 @@ namespace XOscillo
       }
 
       override public void Draw(Graphics g, DataBlock db)
-      {
+      {          
          DrawSelection(g);
          DrawHorizontalLines(g);
          DrawVerticalLines(g);
 
-         for (int ch = 0; ch < db.m_channels; ch++)
+         uint bitField = db.m_channelsBitField;
+         int index = 0;
+         for (int ch = 0; ch < db.m_channels; )
          {
-            DrawGraph(g, m_pens[ch], db, ch);
+             if (( (bitField>>index) & 1)==1)
+             {
+                 DrawGraph(g, m_pens[index], db, ch);
+                 ch++;
+             }
+             index++;
          }
       }
 
