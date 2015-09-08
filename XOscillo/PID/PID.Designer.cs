@@ -1,4 +1,6 @@
-﻿namespace XOscillo
+﻿using XOscillo.Graph;
+
+namespace XOscillo.PID
 {
    partial class PID
    {
@@ -32,7 +34,7 @@
          this.Ki = new System.Windows.Forms.TrackBar();
          this.Kd = new System.Windows.Forms.TrackBar();
          this.Setpoint = new System.Windows.Forms.TrackBar();
-         this.graphControl1 = new XOscillo.GraphControl();
+         this.graphControl1 = new GraphControl();
          ((System.ComponentModel.ISupportInitialize)(this.Kp)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.Ki)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.Kd)).BeginInit();

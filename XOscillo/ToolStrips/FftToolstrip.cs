@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+using XOscillo.Graph;
 
-namespace XOscillo
+namespace XOscillo.ToolStrips
 {
    public class FftToolStrip : MyToolbar
    {
@@ -14,7 +9,7 @@ namespace XOscillo
 
       GraphControl graphControl;
 
-      Graph oldGraph;
+      XOscillo.Graph.Graph oldGraph;
 
       public FftToolStrip(GraphControl gc, GraphFFT gf)
       {

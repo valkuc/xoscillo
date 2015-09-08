@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace XOscillo
+namespace XOscillo.VizForms
 {
    [Serializable]
    public class SerializationHelper
    {
       public DataBlock dataBlock;
-      public Graph graph;
+      public XOscillo.Graph.Graph graph;
 
       public bool SaveXML(FileStream stream)
       {

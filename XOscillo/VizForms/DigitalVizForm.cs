@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Xml.Serialization;
+﻿using System.IO;
+using XOscillo.Graph;
 
-namespace XOscillo
+namespace XOscillo.VizForms
 {
    public class DigitalVizForm : VizForm
    {
@@ -38,7 +35,7 @@ namespace XOscillo
       {
          SerializationHelper sh = new SerializationHelper();
          sh.dataBlock = this.GetDataBlock();
-         sh.graph = new Graph(gd);
+         sh.graph = new Graph.Graph(gd);
 
          FileDigitalVizForm avf = new FileDigitalVizForm(sh);
          avf.MdiParent = MdiParent;
@@ -52,7 +49,7 @@ namespace XOscillo
       {
          SerializationHelper sh = new SerializationHelper();
          sh.dataBlock = this.graphControl.GetScopeData();
-         sh.graph = new Graph(gd);
+         sh.graph = new Graph.Graph(gd);
 
          sh.SaveXML(stream);
       }

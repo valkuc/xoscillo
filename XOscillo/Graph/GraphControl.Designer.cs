@@ -1,4 +1,4 @@
-namespace XOscillo
+namespace XOscillo.Graph
 {
 	partial class GraphControl
 	{

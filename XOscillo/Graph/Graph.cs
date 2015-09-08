@@ -1,36 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using System.IO;
 
-namespace XOscillo
+namespace XOscillo.Graph
 {
    [Serializable]
    public class Graph
    {
-      public float MinY;
-      public float MaxY;
-      public float DivY;
-      public string unitsX = "";
+       private float MinY;
+       private float MaxY;
+       protected float DivY;
+       private string unitsX = "";
 
-      public float MinX;
-      public float MaxX;
-      public float DivX;
-      public string unitsY = "";
+       private float MinX;
+       private float MaxX;
+       protected float DivX;
+       private string unitsY = "";
 
-      public float MinXD;
-      public float MaxXD;
+       protected float MinXD;
+       protected float MaxXD;
 
       // selection
       bool m_selecting = false;
-      public float m_selectT0 = 0;
-      public float m_selectT1 = 0;
+       protected float m_selectT0 = 0;
+       protected float m_selectT1 = 0;
 
-      [System.Xml.Serialization.XmlIgnore]
-      
+      [XmlIgnore]
       public Control parent;
 
       float m_centre;
@@ -87,8 +84,6 @@ namespace XOscillo
          MinXD = min;
          MaxXD = max;         
       }
-
-      
 
       protected string ToEngineeringNotation(double d)
       {

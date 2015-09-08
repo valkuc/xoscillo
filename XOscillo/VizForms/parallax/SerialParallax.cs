@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO.Ports;
+﻿using System.IO.Ports;
 
-namespace XOscillo
+namespace XOscillo.VizForms.Parallax
 {
 
     class SerialParallax : OscilloSerial
@@ -33,7 +30,7 @@ namespace XOscillo
 
         override public bool SetSampleRate(int smp)
         {
-            lock (thisLock)
+            lock (ThisLock)
             {
                 switch (smp)
                 {
@@ -74,21 +71,21 @@ namespace XOscillo
         public float TriggerVoltage
         {
             get { return triggerVoltage; }
-            set { lock (thisLock) { triggerVoltage = (byte)(128 - ((value * 255) / 20)); } }
+            set { lock (ThisLock) { triggerVoltage = (byte)(128 - ((value * 255) / 20)); } }
         }
 
         private EdgeEnum edge;
         public EdgeEnum Edge
         {
             get { return edge; }
-            set { lock (thisLock) { edge = value; } }
+            set { lock (ThisLock) { edge = value; } }
         }
 
         private TriggerChannelEnum triggerChannel;
         public TriggerChannelEnum TriggerChannel
         {
             get { return triggerChannel; }
-            set { lock (thisLock) { triggerChannel = value; } }
+            set { lock (ThisLock) { triggerChannel = value; } }
         }
 
 
@@ -96,7 +93,7 @@ namespace XOscillo
         public bool ExternalTrigger
         {
             get { return externalTrigger; }
-            set { lock (thisLock) { externalTrigger = value; } }
+            set { lock (ThisLock) { externalTrigger = value; } }
         }
 
         //if this variables are accessed through the UI remember to create accessors and use lock(thisLock)
@@ -107,7 +104,7 @@ namespace XOscillo
             : base(2)
         {
             // Create a new SerialPort object with default settings.
-            serialPort = new SerialPort();
+            SerialPort = new SerialPort();
             voltageRange = VoltageRangeEnum.VR_4VPP_4VPP;
         }
 
@@ -125,8 +122,8 @@ namespace XOscillo
             try
             {
                 DebugConsole.Instance.Add("trying: " + portName + "...");
-                serialPort = new SerialPort(portName, 40000000);
-                serialPort.Open();
+                SerialPort = new SerialPort(portName, 40000000);
+                SerialPort.Open();
             }
             catch
             {
@@ -137,8 +134,8 @@ namespace XOscillo
             try
             {
                 DebugConsole.Instance.Add("is parallax...");
-                serialPort.WriteTimeout = 1000;
-                serialPort.ReadTimeout = 1000;
+                SerialPort.WriteTimeout = 1000;
+                SerialPort.ReadTimeout = 1000;
 
                 if (Ping() == true)
                 {
@@ -151,7 +148,7 @@ namespace XOscillo
                 DebugConsole.Instance.AddLn("nope.");
             }
 
-            serialPort.Close();
+            SerialPort.Close();
 
             return false;
         }
@@ -159,12 +156,12 @@ namespace XOscillo
         override public bool Reset()
         {
             byte[] data = { 175 };
-            if (serialPort.IsOpen)
+            if (SerialPort.IsOpen)
             {
-                serialPort.Write(data, 0, 1);
+                SerialPort.Write(data, 0, 1);
             }
-            serialPort.DiscardInBuffer();
-            serialPort.DiscardOutBuffer();
+            SerialPort.DiscardInBuffer();
+            SerialPort.DiscardOutBuffer();
 
             return true;
         }
@@ -172,7 +169,7 @@ namespace XOscillo
         override public bool Ping()
         {
             Reset();
-            serialPort.Write("?");
+            SerialPort.Write("?");
 
             byte[] readBuffer = new byte[7];
             Read(readBuffer, 7);
@@ -243,7 +240,7 @@ namespace XOscillo
             //remember the ui lives in a different thread and can change values.
             bool copyFastMode;
 
-            lock (thisLock)
+            lock (ThisLock)
             {
                 PrepareConfigBuffer();
 
@@ -262,13 +259,13 @@ namespace XOscillo
 
             if (db.m_sampleRate > 0)
             {
-                serialPort.ReadTimeout = (2 * db.m_samplesPerChannel * 1000) / db.m_sampleRate;
+                SerialPort.ReadTimeout = (2 * db.m_samplesPerChannel * 1000) / db.m_sampleRate;
             }
-            if (serialPort.ReadTimeout < 200)
+            if (SerialPort.ReadTimeout < 200)
             {
-                serialPort.ReadTimeout = 200;
+                SerialPort.ReadTimeout = 200;
             }
-            serialPort.Write(configBuffer, 0, 9);
+            SerialPort.Write(configBuffer, 0, 9);
             Read(res, 1);
             if (res[0] == 85)
             {

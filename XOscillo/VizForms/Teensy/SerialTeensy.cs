@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.IO.Ports;
-using System.Threading;
 
-namespace XOscillo
+namespace XOscillo.VizForms.Teensy
 {
     class SerialTeensy : OscilloSerial
     {
@@ -29,11 +26,11 @@ namespace XOscillo
 
             try
             {
-                serialPort = new SerialPort(portName, 460800, Parity.None, 8, StopBits.One);
-                serialPort.Handshake = Handshake.None;
-                serialPort.ReadBufferSize = 1024 * 10;
-                serialPort.Open();
-                streamReader = new BinaryReader(serialPort.BaseStream);
+                SerialPort = new SerialPort(portName, 460800, Parity.None, 8, StopBits.One);
+                SerialPort.Handshake = Handshake.None;
+                SerialPort.ReadBufferSize = 1024 * 10;
+                SerialPort.Open();
+                streamReader = new BinaryReader(SerialPort.BaseStream);
 
                 SetSampleRate(1000);
                 SetOscSubsampling(3);//set subsampling at (1<<3) = 8
@@ -113,7 +110,7 @@ namespace XOscillo
         override public bool SetSampleRate(int v)
         {
             //set appropriate sample rate according to measuring time
-            lock (thisLock)
+            lock (ThisLock)
             {
                 base.SetSampleRate(v);
                 Set(132, (byte)(v >> 8), (byte)(v & 0xff));

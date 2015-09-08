@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace XOscillo
+﻿namespace XOscillo
 {
    public class Consumer
    {
-      protected Consumer nextConsumer;
+      protected readonly Consumer NextConsumer;
 
       public Consumer()
       {
-         nextConsumer = null;
+         NextConsumer = null;
       }
 
       public Consumer(Consumer next)
       {
-         nextConsumer = next;
+         NextConsumer = next;
       }
 
       public virtual void SetDataBlock(DataBlock db)
       {
-         if (nextConsumer != null)
+         if (NextConsumer != null)
          {
-            nextConsumer.SetDataBlock(db);
+            NextConsumer.SetDataBlock(db);
          }
       }
    }

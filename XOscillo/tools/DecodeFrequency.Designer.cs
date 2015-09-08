@@ -1,4 +1,4 @@
-﻿namespace XOscillo
+﻿namespace XOscillo.Tools
 {
    partial class DecodeFrequency
    {

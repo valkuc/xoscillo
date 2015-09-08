@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace XOscillo
+﻿namespace XOscillo.Tools
 {
     public enum BIT_RESULT
     {

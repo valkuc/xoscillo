@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading;
-using System.IO.Ports;
+using XOscillo.Acquirers;
+using XOscillo.Autodetection;
 
-namespace XOscillo
+namespace XOscillo.VizForms.Arduino
 {
     public partial class DigitalVizArduino : DigitalVizForm
     {

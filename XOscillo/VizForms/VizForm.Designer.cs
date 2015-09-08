@@ -1,4 +1,6 @@
-﻿namespace XOscillo
+﻿using XOscillo.Graph;
+
+namespace XOscillo.VizForms
 {
    partial class VizForm
    {
@@ -29,7 +31,7 @@
       private void InitializeComponent()
       {
             this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
-            this.graphControl = new XOscillo.GraphControl();
+            this.graphControl = new GraphControl();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
             this.SuspendLayout();

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
-namespace XOscillo
+namespace XOscillo.VizForms.Teensy
 {
     class AnalogTeensy : SerialTeensy
     {
@@ -15,7 +12,7 @@ namespace XOscillo
         override public bool GetDataBlock(ref DataBlock db)
         {
             bool result = true;
-            lock (thisLock)
+            lock (ThisLock)
             {
                 //assume it timed out
                 db.m_min = 0;

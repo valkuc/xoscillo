@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 
 namespace XOscillo
 {
    public class Ring <T> where T : new ()
    {
-      protected int m_read = 0;
-      int m_write = 0;
-      protected int m_len = 0;
-      protected T[] m_ring;
+      private int m_read = 0;
+      private int m_write = 0;
+      private int m_len = 0;
+      private T[] m_ring;
 
       protected bool m_stop;
 
@@ -53,7 +50,7 @@ namespace XOscillo
           }
       }
       
-      public virtual bool getLock(out T data)
+      public bool GetLock(out T data)
       {
          lock (this)
          {
@@ -72,13 +69,12 @@ namespace XOscillo
 
             data = m_ring[m_read];
 
-            
             return true;
          }
          
       }
 
-      public virtual void getUnlock()
+      public void GetUnlock()
       {
          lock (this)
          {
@@ -88,7 +84,7 @@ namespace XOscillo
          }
       }
 
-      public virtual bool putLock( out T data)
+      public bool PutLock( out T data)
       {
          lock (this)
          {
@@ -109,7 +105,7 @@ namespace XOscillo
          }        
       }
 
-      public virtual void putUnlock()
+      public void PutUnlock()
       {
          lock (this)
          {

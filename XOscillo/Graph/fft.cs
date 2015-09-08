@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace XOscillo
+namespace XOscillo.Graph
 {
-   class fft
+   class FFT
    {
       public double[] x;
       public double[] y;
 
-      public fft(int length)
+      public FFT(int length)
       {
          x = new double[ length ];
          y = new double[ length ];
@@ -37,7 +35,6 @@ namespace XOscillo
          }
       }
 
-
       public double Power(int i)
       {
          return Math.Sqrt(x[i] * x[i] + y[i] * y[i]);
@@ -49,7 +46,7 @@ namespace XOscillo
          dir =  1 gives forward transform
          dir = -1 gives reverse transform 
       */
-      public bool FFT( int dir )
+      public bool DoFFT( int dir )
       {
          long n,i,i1,j,k,i2,l,l1,l2;
          double c1,c2,tx,ty,t1,t2,u1,u2,z;

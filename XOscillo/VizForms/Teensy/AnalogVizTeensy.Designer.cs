@@ -1,4 +1,4 @@
-﻿namespace XOscillo
+﻿namespace XOscillo.VizForms.Teensy
 {
     partial class AnalogVizTeensy
    {

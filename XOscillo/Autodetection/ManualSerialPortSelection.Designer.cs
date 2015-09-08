@@ -1,4 +1,4 @@
-﻿namespace XOscillo
+﻿namespace XOscillo.Autodetection
 {
    partial class ManualSerialPortSelection
    {

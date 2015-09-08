@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
 using System.IO;
+using XOscillo.Tools;
+using XOscillo.VizForms;
+using XOscillo.VizForms.Arduino;
+using XOscillo.VizForms.Parallax;
+using XOscillo.VizForms.Teensy;
 
 
 namespace XOscillo

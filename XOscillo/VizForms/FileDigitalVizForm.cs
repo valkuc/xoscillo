@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using XOscillo.Graph;
 
-namespace XOscillo
+namespace XOscillo.VizForms
 {
    class FileDigitalVizForm : DigitalVizForm
    {

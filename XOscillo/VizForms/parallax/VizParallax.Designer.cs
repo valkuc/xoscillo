@@ -1,4 +1,4 @@
-﻿namespace XOscillo
+﻿namespace XOscillo.VizForms.Parallax
 {
    partial class VizParallax
    {

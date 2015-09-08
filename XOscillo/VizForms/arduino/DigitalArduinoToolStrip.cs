@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Drawing;
+using XOscillo.Graph;
 
-namespace XOscillo
+namespace XOscillo.VizForms.Arduino
 {
     class DigitalArduinoToolStrip : MyToolbar
     {

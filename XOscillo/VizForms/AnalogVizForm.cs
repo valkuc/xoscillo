@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Xml.Serialization;
+﻿using System.IO;
+using XOscillo.Filters;
+using XOscillo.Graph;
+using XOscillo.ToolStrips;
 
-namespace XOscillo
+namespace XOscillo.VizForms
 {
     public class AnalogVizForm : VizForm
     {
@@ -65,7 +64,7 @@ namespace XOscillo
         {
             SerializationHelper sh = new SerializationHelper();
             sh.dataBlock = this.GetDataBlock();
-            sh.graph = new Graph(ga);
+            sh.graph = new Graph.Graph(ga);
 
             FileAnalogVizForm avf = new FileAnalogVizForm(sh);
             avf.MdiParent = MdiParent;
@@ -79,7 +78,7 @@ namespace XOscillo
         {
             SerializationHelper sh = new SerializationHelper();
             sh.dataBlock = this.graphControl.GetScopeData();
-            sh.graph = new Graph(ga);
+            sh.graph = new Graph.Graph(ga);
 
             sh.SaveXML(stream);
         }

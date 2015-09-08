@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
+using XOscillo.Acquirers;
 
-namespace XOscillo
+namespace XOscillo.VizForms
 {
     public abstract partial class VizForm : Form, DataBlockAware
    {

@@ -1,37 +1,34 @@
-﻿using System;
-using System.IO.Ports;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.IO.Ports;
 
 namespace XOscillo
 {
     abstract class OscilloSerial : Oscillo
     {
-        protected SerialPort serialPort;
+        protected SerialPort SerialPort;
 
         public OscilloSerial(int numChannels) : base(numChannels)
         {
             // Create a new SerialPort object with default settings.
-            serialPort = new SerialPort();
+            SerialPort = new SerialPort();
         }
 
         //public abstract bool Open(string portName);
 
         override public bool IsOpened()
         {
-            return serialPort.IsOpen;
+            return SerialPort.IsOpen;
         }
 
         override public bool Close()
         {
             base.Close();
-            serialPort.Close();
+            SerialPort.Close();
             return true;
         }
 
         public void Write(byte[] writeBuffer, int length)
         {
-            serialPort.Write(writeBuffer, 0, length);
+            SerialPort.Write(writeBuffer, 0, length);
         }
 
         public bool Read(byte[] readBuffer, int length)
@@ -44,7 +41,7 @@ namespace XOscillo
             int dataread = 0;
             while (dataread < length)
             {
-                dataread += serialPort.Read(readBuffer, dataread, length - dataread);
+                dataread += SerialPort.Read(readBuffer, dataread, length - dataread);
             }
             return true;
         }

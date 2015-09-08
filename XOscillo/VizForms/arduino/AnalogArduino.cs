@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace XOscillo
+﻿namespace XOscillo.VizForms.Arduino
 {
     class AnalogArduino : SerialArduino
     {
@@ -42,7 +38,7 @@ namespace XOscillo
             int numberOfEnabledChannels;
             uint channelsBitField;
             int sampleRate;
-            lock (thisLock)
+            lock (ThisLock)
             {
                 numberOfSamples = GetNumberOfSamplesPerChannel();
                 numberOfEnabledChannels = GetNumberOfEnabledChannels();

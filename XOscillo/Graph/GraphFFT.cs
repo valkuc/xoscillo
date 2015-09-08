@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace XOscillo
+namespace XOscillo.Graph
 {
    public class GraphFFT : Graph
    {
-      fft f;
+      FFT f;
 
       public bool drawSlidingFFT = false;
 
@@ -82,7 +79,7 @@ namespace XOscillo
 
          if (f == null)
          {
-            f = new fft(1024);
+            f = new FFT(1024);
          }
 
          if (db.m_result != DataBlock.RESULT.OK)
@@ -106,7 +103,7 @@ namespace XOscillo
              f.x[i] = db.GetVoltage(0, i);
              f.y[i] = 0;
          }
-         f.FFT(0);
+         f.DoFFT(0);
 
          int maxFreq = db.m_sampleRate / 2;
          int minFreq = 0;

@@ -54,18 +54,18 @@
     <Compile Include="Acquirers\Acquirer.cs" />
     <Compile Include="DataBlockAware.cs" />
     <Compile Include="OscilloSerial.cs" />
-    <Compile Include="tools\BitDecoder.cs" />
-    <Compile Include="tools\PeakFinder.cs" />
-    <Compile Include="VizForms\arduino\AnalogArduino.cs" />
-    <Compile Include="VizForms\arduino\AnalogArduinoToolStrip.cs" />
-    <Compile Include="VizForms\arduino\DigitalArduinoToolStrip.cs" />
-    <Compile Include="VizForms\arduino\DigitalVizArduino.cs">
+    <Compile Include="Tools\BitDecoder.cs" />
+    <Compile Include="Tools\PeakFinder.cs" />
+    <Compile Include="VizForms\Arduino\AnalogArduino.cs" />
+    <Compile Include="VizForms\Arduino\AnalogArduinoToolStrip.cs" />
+    <Compile Include="VizForms\Arduino\DigitalArduinoToolStrip.cs" />
+    <Compile Include="VizForms\Arduino\DigitalVizArduino.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VizForms\arduino\DigitalVizArduino.Designer.cs">
+    <Compile Include="VizForms\Arduino\DigitalVizArduino.Designer.cs">
       <DependentUpon>DigitalVizArduino.cs</DependentUpon>
     </Compile>
-    <Compile Include="VizForms\arduino\DigitalArduino.cs" />
+    <Compile Include="VizForms\Arduino\DigitalArduino.cs" />
     <Compile Include="Autodetection\Autodetection.cs" />
     <Compile Include="Consumer.cs" />
     <Compile Include="DataBlock.cs" />
@@ -93,34 +93,34 @@
     <Compile Include="Autodetection\ManualSerialPortSelection.Designer.cs">
       <DependentUpon>ManualSerialPortSelection.cs</DependentUpon>
     </Compile>
-    <Compile Include="ring.cs" />
+    <Compile Include="Ring.cs" />
     <Compile Include="ToolStrips\MyToolbar.cs" />
     <Compile Include="ToolStrips\OnlyNumbersToolStripTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="tools\DecodeFSK.cs">
+    <Compile Include="Tools\DecodeFSK.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="tools\DecodeFSK.Designer.cs">
+    <Compile Include="Tools\DecodeFSK.Designer.cs">
       <DependentUpon>DecodeFSK.cs</DependentUpon>
     </Compile>
-    <Compile Include="Graph\fft.cs" />
-    <Compile Include="tools\DecodeBeeper.cs">
+    <Compile Include="Graph\FFT.cs" />
+    <Compile Include="Tools\DecodeBeeper.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="tools\DecodeBeeper.Designer.cs">
+    <Compile Include="Tools\DecodeBeeper.Designer.cs">
       <DependentUpon>DecodeBeeper.cs</DependentUpon>
     </Compile>
-    <Compile Include="tools\DecodeFrequency.cs">
+    <Compile Include="Tools\DecodeFrequency.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="tools\DecodeFrequency.Designer.cs">
+    <Compile Include="Tools\DecodeFrequency.Designer.cs">
       <DependentUpon>DecodeFrequency.cs</DependentUpon>
     </Compile>
-    <Compile Include="VizForms\arduino\AnalogVizArduino.cs">
+    <Compile Include="VizForms\Arduino\AnalogVizArduino.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VizForms\arduino\AnalogVizArduino.Designer.cs">
+    <Compile Include="VizForms\Arduino\AnalogVizArduino.Designer.cs">
       <DependentUpon>AnalogVizArduino.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolStrips\CommonToolStrip.cs">
@@ -153,10 +153,10 @@
     <Compile Include="VizForms\VizForm.Designer.cs">
       <DependentUpon>VizForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="VizForms\parallax\VizParallax.cs">
+    <Compile Include="VizForms\Parallax\VizParallax.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VizForms\parallax\VizParallax.Designer.cs">
+    <Compile Include="VizForms\Parallax\VizParallax.Designer.cs">
       <DependentUpon>VizParallax.cs</DependentUpon>
     </Compile>
     <Compile Include="MDIParent.cs">
@@ -166,12 +166,12 @@
       <DependentUpon>MDIParent.cs</DependentUpon>
     </Compile>
     <Compile Include="Oscillo.cs" />
-    <Compile Include="VizForms\arduino\SerialArduino.cs" />
+    <Compile Include="VizForms\Arduino\SerialArduino.cs" />
     <Compile Include="OscilloFile.cs" />
-    <Compile Include="VizForms\parallax\SerialParallax.cs" />
+    <Compile Include="VizForms\Parallax\SerialParallax.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="VizForms\arduino\DigitalVizArduino.resx">
+    <EmbeddedResource Include="VizForms\Arduino\DigitalVizArduino.resx">
       <DependentUpon>DigitalVizArduino.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -184,19 +184,19 @@
     <EmbeddedResource Include="PID\PID.resx">
       <DependentUpon>PID.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="tools\DecodeFSK.resx">
+    <EmbeddedResource Include="Tools\DecodeFSK.resx">
       <DependentUpon>DecodeFSK.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="tools\DecodeBeeper.resx">
+    <EmbeddedResource Include="Tools\DecodeBeeper.resx">
       <DependentUpon>DecodeBeeper.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="tools\DecodeFrequency.resx">
+    <EmbeddedResource Include="Tools\DecodeFrequency.resx">
       <DependentUpon>DecodeFrequency.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="VizForms\arduino\AnalogVizArduino.resx">
+    <EmbeddedResource Include="VizForms\Arduino\AnalogVizArduino.resx">
       <DependentUpon>AnalogVizArduino.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -211,7 +211,7 @@
       <DependentUpon>VizForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="VizForms\parallax\VizParallax.resx">
+    <EmbeddedResource Include="VizForms\Parallax\VizParallax.resx">
       <DependentUpon>VizParallax.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -254,7 +254,7 @@
     <None Include="Resources\play.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="VizForms\parallax\ParallaxToolStrip.cs" />
+    <Compile Include="VizForms\Parallax\ParallaxToolStrip.cs" />
     <Compile Include="PID\PID.cs">
       <SubType>Form</SubType>
     </Compile>

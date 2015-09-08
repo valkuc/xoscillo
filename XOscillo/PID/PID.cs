@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Reflection;
-using System.Windows.Forms;
 using System.IO.Ports;
-using System.Text; 
+using System.Text;
+using System.Windows.Forms;
+using XOscillo.Graph;
 
-namespace XOscillo
+namespace XOscillo.PID
 {
    partial class PID : Form
    {

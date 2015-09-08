@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace XOscillo
+namespace XOscillo.Filters
 {
    public class HiPass : Filter
    {

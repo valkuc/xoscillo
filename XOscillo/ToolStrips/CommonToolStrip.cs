@@ -5,6 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using XOscillo.Acquirers;
+using XOscillo.Graph;
+using XOscillo.VizForms;
 
 namespace XOscillo
 {

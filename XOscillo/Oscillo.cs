@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-
 namespace XOscillo
 {
     public abstract class Oscillo
     {
-        protected object thisLock = new object();
+        protected readonly object ThisLock = new object();
 
         private int m_time = 1000;
         private int m_sampleRate;
@@ -57,7 +52,7 @@ namespace XOscillo
 
         virtual public bool SetChannel(int i, bool enabled)
         {
-            lock (thisLock)
+            lock (ThisLock)
             {
                 if (m_channelsEnabled == null || (i < 0) || (i >= m_channelsEnabled.Length))
                     return false;
@@ -69,7 +64,7 @@ namespace XOscillo
 
         virtual public uint GetChannelBitField()
         {
-            lock (thisLock)
+            lock (ThisLock)
             {
                 if (m_channelsEnabled == null)
                     return 0;
@@ -92,7 +87,7 @@ namespace XOscillo
 
         virtual public int GetNumberOfEnabledChannels()
         {
-            lock (thisLock)
+            lock (ThisLock)
             {
                 if (m_channelsEnabled == null)
                     return -1;
@@ -119,7 +114,7 @@ namespace XOscillo
 
         virtual public bool SetMeasuringTime(int v)
         {
-            lock (thisLock)
+            lock (ThisLock)
             {
                 m_time = v;
                 return false;
@@ -133,7 +128,7 @@ namespace XOscillo
 
         virtual public int GetNumberOfSamplesPerChannel()
         {
-            lock (thisLock)
+            lock (ThisLock)
             {
                 return (m_time * m_sampleRate) / 1000;
             }
@@ -146,7 +141,7 @@ namespace XOscillo
 
         virtual public bool SetSampleRate(int s)
         {
-            lock (thisLock)
+            lock (ThisLock)
             {
                 m_sampleRate = s;
                 return true;

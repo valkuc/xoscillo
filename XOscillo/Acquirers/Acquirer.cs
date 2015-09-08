@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 
-namespace XOscillo
+namespace XOscillo.Acquirers
 {
     public class Acquirer
     {
@@ -59,7 +56,7 @@ namespace XOscillo
 
             while(running)
             {
-                if (m_ring.putLock(out db))
+                if (m_ring.PutLock(out db))
                 {
                     while(running)
                     {
@@ -94,7 +91,7 @@ namespace XOscillo
                             m_Oscillo.Reset();
                         }
                     }
-                    m_ring.putUnlock();
+                    m_ring.PutUnlock();
                 }
             }
         }
@@ -105,10 +102,10 @@ namespace XOscillo
 
             for (; running; )
             {
-                if (m_ring.getLock(out db))
+                if (m_ring.GetLock(out db))
                 {
                     m_GraphControl.SetDataBlock(db);
-                    m_ring.getUnlock();
+                    m_ring.GetUnlock();
                 }
             }
         }
