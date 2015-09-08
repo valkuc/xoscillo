@@ -1,7 +1,7 @@
 # XOscillo
 This is a multiplatform software oscilloscope and logical analyzer. It supports arduino(with custom firmware) and a Parallax USB oscilloscope.
 
-# Features
+## Features
 * Panoramic view 
 * Load and save waveforms 
 * Zoom in and out 
@@ -15,6 +15,6 @@ This is a multiplatform software oscilloscope and logical analyzer. It supports 
   * Decodes fsk waves 
   * Calculates wave main frequency using a few methods 
 
-# Supported platforms
+## Supported platforms
 * Arduino 
 * Parallax 
