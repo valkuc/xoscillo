@@ -146,7 +146,9 @@ namespace XOscillo
                     return true;
                 }
             }
+#if DEBUG
             Console.WriteLine("Unknown command:{0} {1} {2} {3}", header, data[0], data[1], data[2]);
+#endif
             return false;
         }
 

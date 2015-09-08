@@ -38,7 +38,9 @@ namespace XOscillo
                    catch
                    {
                    }
+#if DEBUG
                    Console.WriteLine("Signaling {0}: {1} {2}", j, results[j], doneEvents[j]);
+#endif
                    doneEvents[j].Set();
                },
                i);

@@ -75,7 +75,9 @@ namespace XOscillo
          }
          catch
          {
+#if DEBUG
             Console.WriteLine("{0} {1} {2}", db, m_Bounds, i);
+#endif
          }
                 
          //Cursor.Hide();

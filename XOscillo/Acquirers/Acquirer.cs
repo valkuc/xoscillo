@@ -73,21 +73,24 @@ namespace XOscillo
                             bool res = m_Oscillo.GetDataBlock(ref db);
 
                             db.m_stop = DateTime.Now;
-
+#if DEBUG
                             //Console.WriteLine("{3} {0} {1}ms  {2}", db.m_sample, (db.m_stop - db.m_start).Milliseconds, m_ring.GetLength(), res);
-
+#endif
                             if (res == true)
                             {
                                 break;
                             }
 
                             m_Oscillo.Reset();
+#if DEBUG
                             Console.WriteLine("Reset");
-                        
+#endif
                         }
                         catch(Exception e)
                         {
+#if DEBUG
                             Console.WriteLine("{0} ", e.Message);
+#endif
                             m_Oscillo.Reset();
                         }
                     }

@@ -69,12 +69,16 @@ namespace XOscillo
                 {
                     
                     Read(data, 3 + 2 * db.m_channels);
+#if DEBUG
                     Console.WriteLine("{0} {1} {2} {3}", header[0], data[0], data[1], data[2]);
+#endif
                 }
                 else
                 {
                     Read(data, 3);
+#if DEBUG
                     Console.WriteLine("* {0} {1} {2} {3}",header[0],data[0],data[1],data[2]);
+#endif
                 }
             }
 
