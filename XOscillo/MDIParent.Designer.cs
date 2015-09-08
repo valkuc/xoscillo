@@ -93,6 +93,7 @@ namespace XOscillo
             this.menuStrip.Size = new System.Drawing.Size(744, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "MenuStrip";
+            this.menuStrip.ItemAdded += new System.Windows.Forms.ToolStripItemEventHandler(this.menuStrip_ItemAdded);
             // 
             // fileMenu
             // 

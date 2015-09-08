@@ -267,6 +267,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico" />
+    <Content Include="AppMainForm.ico" />
+    <None Include="Resources\oscilloscope.png" />
+    <None Include="Resources\mdi_child.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

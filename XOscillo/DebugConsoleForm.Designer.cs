@@ -47,7 +47,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 262);
             this.Controls.Add(this.text);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "DebugConsoleForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

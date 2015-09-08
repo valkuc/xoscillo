@@ -1,6 +1,8 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using XOscillo.Properties;
 using XOscillo.Tools;
 using XOscillo.VizForms;
 using XOscillo.VizForms.Arduino;
@@ -242,6 +244,13 @@ namespace XOscillo
             DebugConsole.Instance.Show();
         }
 
-
+        private void menuStrip_ItemAdded(object sender, ToolStripItemEventArgs e)
+        {
+            // Catch MDI child sys menu
+            if (e.Item.Text == string.Empty)
+            {
+                e.Item.Image = Resources.oscilloscope;
+            }
+        }
     }
 }
