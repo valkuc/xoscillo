@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.IO.Ports;
 
@@ -8,11 +10,13 @@ namespace XOscillo
 {
     class Autodetection<T> where T : Oscillo, new()
     {
+        private static readonly bool IsMonoRuntime = (Type.GetType("Mono.Runtime") != null);
+
         public T TryMTDetection()
         {
             DebugConsole.Instance.Show();
 
-            string[] ports = SerialPort.GetPortNames();
+            string[] ports = GetPortNames();
             T[] oscillos = new T[ports.Length];
             ManualResetEvent[] doneEvents = new ManualResetEvent[ports.Length];
             bool[] results = new bool[ports.Length];
@@ -60,7 +64,7 @@ namespace XOscillo
 
         public T TrySTDetection()
         {
-            string[] ports = SerialPort.GetPortNames();
+            string[] ports = GetPortNames();
 
             T oscillo = new T();
 
@@ -81,7 +85,7 @@ namespace XOscillo
 
         public T TryManualDetection()
         {
-            string[] ports = SerialPort.GetPortNames();
+            string[] ports = GetPortNames();
 
             T oscillo = new T();
 
@@ -131,5 +135,25 @@ namespace XOscillo
             return TryManualDetection();
         }
 
+        /// <summary>
+        /// Retrieve available serial ports.
+        /// </summary>
+        /// <returns>Array of serial port names.</returns>
+        public static string[] GetPortNames()
+        {
+            /**
+             * Under Mono SerialPort.GetPortNames() returns /dev/ttyS* devices,
+             * but Arduino is detected as ttyACM* or ttyUSB*
+             * */
+            if (IsMonoRuntime)
+            {
+                var searchPattern = new Regex("ttyACM.+|ttyUSB.+");
+                return Directory.GetFiles("/dev").Where(f => searchPattern.IsMatch(f)).ToArray();
+            }
+            else
+            {
+                return SerialPort.GetPortNames();
+            }
+        }
     }
 }
