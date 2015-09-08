@@ -1,5 +1,5 @@
 # XOscillo
-This is a multiplatform software oscilloscope and logical analyzer. It supports arduino(with custom firmware) and a Parallax USB oscilloscope.
+This is a multiplatform software oscilloscope and logical analyzer. It supports Arduino (with custom firmware) and a Parallax USB oscilloscope.
 
 ## Features
 * Panoramic view 
