@@ -28,30 +28,33 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.text = new System.Windows.Forms.TextBox();
-         this.SuspendLayout();
-         // 
-         // text
-         // 
-         this.text.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.text.Location = new System.Drawing.Point(0, 0);
-         this.text.Multiline = true;
-         this.text.Name = "text";
-         this.text.ReadOnly = true;
-         this.text.Size = new System.Drawing.Size(284, 262);
-         this.text.TabIndex = 0;
-         // 
-         // DebugConsoleForm
-         // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(284, 262);
-         this.Controls.Add(this.text);
-         this.Name = "DebugConsoleForm";
-         this.Text = "DebugConsoleForm";
-         this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugConsoleForm_FormClosing);
-         this.ResumeLayout(false);
-         this.PerformLayout();
+            this.text = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
+            // 
+            // text
+            // 
+            this.text.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.text.Location = new System.Drawing.Point(0, 0);
+            this.text.Multiline = true;
+            this.text.Name = "text";
+            this.text.ReadOnly = true;
+            this.text.Size = new System.Drawing.Size(284, 262);
+            this.text.TabIndex = 0;
+            // 
+            // DebugConsoleForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.Controls.Add(this.text);
+            this.MaximizeBox = false;
+            this.Name = "DebugConsoleForm";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.Text = "Debug Console";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugConsoleForm_FormClosing);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
       }
 

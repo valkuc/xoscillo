@@ -9,7 +9,7 @@ using System.IO;
 
 namespace XOscillo
 {
-   public abstract partial class VizForm : BaseForm
+    public abstract partial class VizForm : Form, DataBlockAware
    {
       protected Acquirer m_Acq = null;
 
@@ -20,15 +20,19 @@ namespace XOscillo
          InitializeComponent();
       }
 
-      override public DataBlock GetDataBlock()
+      public DataBlock GetDataBlock()
       {
          return this.graphControl.GetScopeData();
+      }
+
+      public void SetDataBlock(DataBlock db)
+      {
       }
 
       public abstract bool Init();
 
       virtual public void Form_Load(object sender, EventArgs e)
-      {         
+      {
       }
 
       public void SetToolbar( MyToolbar mt)

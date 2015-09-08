@@ -55,7 +55,7 @@ namespace XOscillo
             // 
             this.triggerLabel.Name = "triggerLabel";
             this.triggerLabel.Size = new System.Drawing.Size(42, 22);
-            this.triggerLabel.Text = "trigger";
+            this.triggerLabel.Text = "Trigger";
             // 
             // trigger
             // 
@@ -73,7 +73,7 @@ namespace XOscillo
             // sampleCountLabel
             // 
             this.sampleCountLabel.Size = new System.Drawing.Size(54, 22);
-            this.sampleCountLabel.Text = "time(ms)";
+            this.sampleCountLabel.Text = "Time (ms)";
 
             // 
             // sampleCountLabel

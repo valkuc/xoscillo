@@ -8,7 +8,7 @@ namespace XOscillo
     {
         public AnalogArduino() 
             //: base(115200, 12000)
-            : base(1000000, 59250,2)
+            : base(1000000, 59250, 2)
         {
             
             //needs tunning

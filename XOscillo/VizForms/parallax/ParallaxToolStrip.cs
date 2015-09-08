@@ -43,7 +43,7 @@ namespace XOscillo
             // 
             this.triggerLabel.Name = "triggerLabel";
             this.triggerLabel.Size = new System.Drawing.Size(42, 22);
-            this.triggerLabel.Text = "trigger";
+            this.triggerLabel.Text = "Trigger";
             this.toolStrip.Items.Add(this.triggerLabel);
 
             // 

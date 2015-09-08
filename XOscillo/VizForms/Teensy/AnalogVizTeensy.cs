@@ -17,7 +17,7 @@ namespace XOscillo
         override public bool Init()
         {
             Autodetection<AnalogTeensy> au = new Autodetection<AnalogTeensy>();
-            AnalogTeensy oscillo = new AnalogTeensy();
+            oscillo = new AnalogTeensy();
             oscillo.Open("COM25");
             return base.Init();
         }

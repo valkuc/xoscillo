@@ -8,21 +8,22 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   public partial class DecodeBeeper : BaseForm
+   public partial class DecodeBeeper : Form, DataBlockAware
    {
       DataBlock m_db;
       Dictionary<int, int> m_histo = new Dictionary<int, int>();
 
-      override public DataBlock GetDataBlock()
-      {
-         return m_db;
-      }
       public DecodeBeeper()
       {
          InitializeComponent();
       }
 
-      override public void SetDataBlock(DataBlock db)
+      public DataBlock GetDataBlock()
+      {
+          return m_db;
+      }
+
+      public void SetDataBlock(DataBlock db)
       {
           m_db = new DataBlock();
          m_db.Copy(db);

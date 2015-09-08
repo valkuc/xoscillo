@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   public partial class DecodeFrequency : XOscillo.BaseForm
+   public partial class DecodeFrequency : Form, DataBlockAware
    {
        DataBlock m_db;
       
@@ -17,13 +17,7 @@ namespace XOscillo
          InitializeComponent();
       }
 
-      override public DataBlock GetDataBlock()
-      {
-         return m_db;
-      }
-
-
-      double correlate(DataBlock db, int offset)
+      private double Correlate(DataBlock db, int offset)
       {
          int length = db.GetChannelLength();
 
@@ -45,7 +39,12 @@ namespace XOscillo
          return (double)res / (double)(Math.Sqrt(n1) * Math.Sqrt(n2));
       }
 
-      override public void SetDataBlock(DataBlock db)
+      public DataBlock GetDataBlock()
+      {
+          return m_db;
+      }
+
+      public void SetDataBlock(DataBlock db)
       {
          m_db = db;
 
@@ -80,7 +79,7 @@ namespace XOscillo
          double old = 10;
          for (int i = 0; i < db.GetChannelLength() / 2; i++)
          {
-            double c = correlate(db, i);
+            double c = Correlate(db, i);
             if (c > old)
             {
                double waveLength = 2* (double)i / (double)db.m_sampleRate;

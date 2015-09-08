@@ -49,5 +49,22 @@ namespace XOscillo
             graphControl.SetRenderer(gd);
         }
 
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // graphControl
+            // 
+            this.graphControl.Size = new System.Drawing.Size(787, 443);
+            // 
+            // DigitalVizArduino
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.ClientSize = new System.Drawing.Size(787, 443);
+            this.Name = "DigitalVizArduino";
+            this.ResumeLayout(false);
+
+        }
+
     }
 }

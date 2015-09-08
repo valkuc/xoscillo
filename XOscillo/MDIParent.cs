@@ -205,31 +205,31 @@ namespace XOscillo
 
         private void decodeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            BaseForm childForm = new DecodeFSK();
+            Form childForm = new DecodeFSK();
             // Make it a child of this MDI form before showing it.
             childForm.MdiParent = this;
             childForm.Text = ActiveMdiChild.Text;
-            childForm.SetDataBlock(((BaseForm)ActiveMdiChild).GetDataBlock());
+            ((DataBlockAware)childForm).SetDataBlock(((DataBlockAware)ActiveMdiChild).GetDataBlock());
             childForm.Show();
         }
 
         private void decodeBeeperToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            BaseForm childForm = new DecodeBeeper();
+            Form childForm = new DecodeBeeper();
             // Make it a child of this MDI form before showing it.
             childForm.MdiParent = this;
             childForm.Text = ActiveMdiChild.Text;
-            childForm.SetDataBlock(((BaseForm)ActiveMdiChild).GetDataBlock());
+            ((DataBlockAware)childForm).SetDataBlock(((DataBlockAware)ActiveMdiChild).GetDataBlock());
             childForm.Show();
         }
 
         private void decodeFrequencyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            BaseForm childForm = new DecodeFrequency();
+            Form childForm = new DecodeFrequency();
             // Make it a child of this MDI form before showing it.
             childForm.MdiParent = this;
             childForm.Text = ActiveMdiChild.Text;
-            childForm.SetDataBlock(((BaseForm)ActiveMdiChild).GetDataBlock());
+            ((DataBlockAware)childForm).SetDataBlock(((DataBlockAware)ActiveMdiChild).GetDataBlock());
             childForm.Show();
         }
 

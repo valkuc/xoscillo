@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace XOscillo
 {
-   public partial class DecodeFSK : BaseForm
+   public partial class DecodeFSK : Form, DataBlockAware
    {
        DataBlock m_db;
 
@@ -18,11 +18,6 @@ namespace XOscillo
       public DecodeFSK()
       {
          InitializeComponent();
-      }
-
-      override public DataBlock GetDataBlock()
-      {
-         return m_db;
       }
 
       public string ReverseString(string s)
@@ -184,7 +179,12 @@ namespace XOscillo
          return str;
       }
 
-      override public void SetDataBlock(DataBlock db)
+      public DataBlock GetDataBlock()
+      {
+          return m_db;
+      }
+
+      public void SetDataBlock(DataBlock db)
       {
           m_db = new DataBlock();
          m_db.Copy(db);

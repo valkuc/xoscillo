@@ -39,6 +39,9 @@
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -49,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acquirers\Acquirer.cs" />
+    <Compile Include="DataBlockAware.cs" />
     <Compile Include="OscilloSerial.cs" />
     <Compile Include="tools\BitDecoder.cs" />
     <Compile Include="tools\PeakFinder.cs" />
@@ -250,12 +254,6 @@
     <None Include="Resources\play.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BaseForm.Designer.cs">
-      <DependentUpon>BaseForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="VizForms\parallax\ParallaxToolStrip.cs" />
     <Compile Include="PID\PID.cs">
       <SubType>Form</SubType>
@@ -266,6 +264,9 @@
     <Compile Include="ToolStrips\FftToolstrip.cs">
     </Compile>
     <None Include="Resources\pause.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
