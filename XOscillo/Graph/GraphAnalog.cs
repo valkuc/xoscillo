@@ -99,7 +99,10 @@ namespace XOscillo
             float time = RectToValueX(m_mouse.X);
             float voltage = RectToValueY(m_mouse.Y);
 
-            string info = string.Format("{0} ({1}, {2})", db.m_sample, ToEngineeringNotation(time), voltage);
+            float voltageI = (voltage > 255 ? 255 : (voltage < 0 ? 0 : (int)voltage));
+            float voltageV = voltageI * 5 / 255;
+
+            string info = string.Format("{0} ({1}, {2}/255, {3:0.###}v)", db.m_sample, ToEngineeringNotation(time), (int)voltageI, voltageV);
             g.DrawString(info, parent.Font, Brushes.White, pp);
             pp.Y += 16;
 
